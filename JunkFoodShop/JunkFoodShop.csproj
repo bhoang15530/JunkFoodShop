@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
-    <Folder Include="Views\Food\" />
     <Folder Include="Views\Order\" />
   </ItemGroup>
 
