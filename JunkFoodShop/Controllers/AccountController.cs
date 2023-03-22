@@ -1,11 +1,11 @@
-﻿using System.Security.Claims;
-using JunkFoodShop.Data;
+﻿using JunkFoodShop.Data;
 using JunkFoodShop.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace JunkFoodShop.Controllers
 {
@@ -41,7 +41,8 @@ namespace JunkFoodShop.Controllers
             {
                 ViewBag.Error = "Email is already exist";
                 return View(signUp);
-            } else
+            }
+            else
             {
                 // Encode Password 
                 byte[] encode = new byte[KeyLen];
@@ -102,7 +103,8 @@ namespace JunkFoodShop.Controllers
 
                 await HttpContext.SignInAsync(claimsPrincipal);
                 return RedirectToAction("Index", "Admin");
-            } else if (CheckUsername || CheckEmail)
+            }
+            else if (CheckUsername || CheckEmail)
             {
                 byte[] encode = new byte[KeyLen];
                 encode = System.Text.Encoding.UTF8.GetBytes(KeyName);
@@ -150,5 +152,6 @@ namespace JunkFoodShop.Controllers
         {
             return View();
         }
+
     }
 }

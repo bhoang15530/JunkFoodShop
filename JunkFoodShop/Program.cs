@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using JunkFoodShop.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -8,8 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Lowercase Route URL
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
 // Connect Database
-builder.Services.AddDbContext<JunkFoodShopContext>(option 
+builder.Services.AddDbContext<JunkFoodShopContext>(option
     => option.UseSqlServer(builder.Configuration.GetConnectionString("") ?? throw new InvalidOperationException("The connect string is wrong or database not found")));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(
