@@ -17,7 +17,7 @@ public partial class Food
 
     public string FoodDescription { get; set; } = null!;
 
-    public int? CategoryId { get; set; }
+    public int CategoryId { get; set; }
 
     public virtual ICollection<Cart> Carts { get; } = new List<Cart>();
 

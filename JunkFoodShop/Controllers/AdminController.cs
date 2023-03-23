@@ -27,18 +27,33 @@ namespace JunkFoodShop.Controllers
         public async Task<IActionResult> FoodManage()
         {
             // Get food data follow specify column
-            var FoodData = await _context.Foods.Select(x => new FoodManage
+            /*var FoodData = await _context.Foods.Select(x => new FoodManage
             {
                 FoodId = x.FoodId,
                 FoodImage = x.FoodImage,
                 FoodName = x.FoodName,
-            }).ToListAsync();
+                FoodPrice = x.FoodPrice,
+                FoodStock = x.FoodStock,
+            }).ToListAsync();*/
+            var FoodData =  await (from food in _context.Foods
+                        join category in _context.FoodCategories on food.CategoryId equals category.Categoryid
+                        select new FoodManage
+                        {
+                            FoodId = food.FoodId,
+                            FoodImage = food.FoodImage,
+                            FoodName = food.FoodName,
+                            FoodPrice = food.FoodPrice,
+                            FoodStock = food.FoodStock,
+                            CategoryName = category.CategoryName,
+                            Categoryid = food.CategoryId,
+                        }).ToListAsync();
 
             ViewBag.EditSuccess = TempData["EditSuccess"]?.ToString();
             ViewBag.DeleteSuccess = TempData["DeleteSuccess"]?.ToString();
             ViewBag.FoodCreate = TempData["FoodCreate"]?.ToString();
 
             // Using ViewBag to display data without Model
+            ViewBag.CategoryList = await _context.FoodCategories.ToListAsync();
             ViewBag.FoodData = FoodData;
             return View();
         }
@@ -48,10 +63,10 @@ namespace JunkFoodShop.Controllers
         public async Task<IActionResult> CreateFood()
         {
             // Get category data
-            var CategoryData = await _context.FoodCategories.ToListAsync();
+            var CategoryList = await _context.FoodCategories.ToListAsync();
 
             // Using ViewBag to display data without Model
-            ViewBag.CategoryData = CategoryData;
+            ViewBag.CategoryList = CategoryList;
             return View();
         }
 
@@ -63,7 +78,7 @@ namespace JunkFoodShop.Controllers
         {
             // Check FoodName exist
             bool CheckFoodName = await _context.Foods.AnyAsync(x => x.FoodName == createFood.FoodName);
-
+            ViewBag.CategoryList = await _context.FoodCategories.ToListAsync();
             if (CheckFoodName)
             {
                 ViewBag.Error = "This food name already exist";
@@ -90,23 +105,25 @@ namespace JunkFoodShop.Controllers
 
         // GET - FOOD EDIT
         // CODE BY HOANG
-        public IActionResult FoodEdit(int fId)
+        public async Task<IActionResult> FoodEdit(int fId)
         {
             // Get data of Food join Category where FoodId selected Specify Column
-            var FoodData = (from foods in _context.Foods join categories in _context.FoodCategories on foods.CategoryId equals categories.Categoryid
-                            select new FoodEditViewModel
-                            {
-                                FoodId = foods.FoodId,
-                                FoodImage = foods.FoodImage,
-                                FoodName = foods.FoodName,
-                                FoodDescription = foods.FoodDescription,
-                                FoodPrice = foods.FoodPrice,
-                                FoodStock = foods.FoodStock,
-                                CategoryName = categories.CategoryName,
-                                CategoryId = categories.Categoryid
-                            }).Where(x => x.FoodId == fId).FirstOrDefault();
+            var FoodData = await (from foods in _context.Foods
+                                  join categories in _context.FoodCategories on foods.CategoryId equals categories.Categoryid
+                                  select new FoodEditViewModel
+                                  {
+                                      FoodId = foods.FoodId,
+                                      FoodImage = foods.FoodImage,
+                                      FoodName = foods.FoodName,
+                                      FoodDescription = foods.FoodDescription,
+                                      FoodPrice = foods.FoodPrice,
+                                      FoodStock = foods.FoodStock,
+                                      CategoryName = categories.CategoryName,
+                                      CategoryId = categories.Categoryid
+                                  }).Where(x => x.FoodId == fId).FirstOrDefaultAsync();
 
             // Using ViewBag to display data without Model
+            ViewBag.CategoryList = await _context.FoodCategories.ToListAsync();
             ViewBag.FoodData = FoodData;
             return View();
         }
@@ -123,6 +140,7 @@ namespace JunkFoodShop.Controllers
                 FoodName = editFood.FoodName,
                 FoodImage = editFood.FoodImage,
                 FoodPrice = editFood.FoodPrice,
+                FoodStock = editFood.FoodStock,
                 FoodDescription = editFood.FoodDescription,
                 CategoryId = editFood.CategoryId
             };
@@ -154,17 +172,16 @@ namespace JunkFoodShop.Controllers
         #region CATEGORY
         // GET - CATEGORY 
         // CODE BY HOANG
-        public IActionResult CategoryManage()
+        public async Task<IActionResult> CategoryManage()
         {
             // Get All Category
-            var CategoryData = (from categoryManage in _context.FoodCategories
-                                select new CategoryManage
-                                {
-                                    Categoryid = categoryManage.Categoryid,
-                                    CategoryImage = categoryManage.CategoryImage,
-                                    CategoryName = categoryManage.CategoryName
-                                }).ToListAsync();
-
+            var CategoryData = await (from categoryManage in _context.FoodCategories
+                                      select new CategoryManage
+                                      {
+                                          Categoryid = categoryManage.Categoryid,
+                                          CategoryImage = categoryManage.CategoryImage,
+                                          CategoryName = categoryManage.CategoryName,
+                                      }).ToListAsync();
             ViewBag.EditSuccess = TempData["EditSuccess"]?.ToString();
             ViewBag.DeleteSuccess = TempData["DeleteSuccess"]?.ToString();
 
@@ -223,7 +240,7 @@ namespace JunkFoodShop.Controllers
         //CODE BY HOANG
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CategoryEdit([Bind("CategoryId,CategoryImage,CategoryName")] CategoryManage editCategory )
+        public async Task<IActionResult> CategoryEdit([Bind("Categoryid,CategoryImage,CategoryName")] CategoryManage editCategory)
         {
             FoodCategory category = new()
             {
@@ -236,7 +253,7 @@ namespace JunkFoodShop.Controllers
             await _context.SaveChangesAsync();
 
             TempData["EditSuccess"] = "Edit successfully";
-            return RedirectToAction(nameof(CategoryEdit));
+            return RedirectToAction(nameof(CategoryManage));
         }
 
         // POST - CATEGORY DELETE
@@ -246,7 +263,7 @@ namespace JunkFoodShop.Controllers
         public async Task<IActionResult> CategoryDelete(int cid)
         {
             // Get Category by cid
-            var CategoryData = await _context.FoodCategories.Where(x => x.Categoryid ==cid).FirstOrDefaultAsync();
+            var CategoryData = await _context.FoodCategories.Where(x => x.Categoryid == cid).FirstOrDefaultAsync();
 
             _context.FoodCategories.Remove(CategoryData);
             await _context.SaveChangesAsync();
@@ -263,10 +280,11 @@ namespace JunkFoodShop.Controllers
         public IActionResult UserManage()
         {
             // Get all User
-            var UserData = (from user in _context.UserAccounts 
+            var UserData = (from user in _context.UserAccounts
                             select new UserManage
                             {
                                 UserId = user.UserId,
+                                Username = user.Username,
                                 FullName = user.FullName,
                                 Email = user.Email,
                                 PhoneNumber = user.PhoneNumber,
@@ -301,17 +319,20 @@ namespace JunkFoodShop.Controllers
         public async Task<IActionResult> OrderManage()
         {
             // Get all order
-            var OrderData = await (from order in _context.Orders 
-                             join status in _context.OrderStatuses on order.StatusId equals status.StatusId
-                             join payment in _context.OrderPaymentTypes on order.PaymentId equals payment.PaymentId
-                             select new OrderManage
-                             {
-                                 OrderId = order.OrderId,
-                                 TotalPrice = order.TotalPrice,
-                                 DateOrder = order.DateOrder,
-                                 StatusId = status.StatusId,
-                                 PaymentId = payment.PaymentId
-                             }).ToListAsync();
+            var OrderData = await (from order in _context.Orders
+                                   join status in _context.OrderStatuses on order.StatusId equals status.StatusId
+                                   join payment in _context.OrderPaymentTypes on order.PaymentId equals payment.PaymentId
+                                   join orderfood in _context.OrderFoods on order.OrderFoodId equals orderfood.OrderFoodId
+                                   join user in _context.UserAccounts on orderfood.UserId equals user.UserId
+                                   select new OrderManage
+                                   {
+                                       OrderId = order.OrderId,
+                                       TotalPrice = order.TotalPrice,
+                                       DateOrder = order.DateOrder,
+                                       StatusId = status.StatusId,
+                                       PaymentId = payment.PaymentId,
+                                       Username = user.Username
+                                   }).ToListAsync();
 
             ViewBag.OrderDelete = TempData["OrderDelete"]?.ToString();
 

@@ -11,6 +11,7 @@
         public int StatusId { get; set; }
 
         public int PaymentId { get; set; }
+        public string Username { get; set; }
 
     }
 }
