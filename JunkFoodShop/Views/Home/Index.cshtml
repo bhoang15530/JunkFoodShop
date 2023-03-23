@@ -6,3 +6,20 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+<div class="row">
+	<div class="col-lg-4 col-md-6 text-center">
+		@foreach (var food in ViewBag.FoodList)
+		{
+			<div class="single-product-item">
+				<div class="product-image">
+					<a href="single-product.html"><img src="~/assets/img/products/food1.png" alt=""></a>
+				</div>
+				<h3>@food.FoodName</h3>
+				<p class="product-price"><span>Per one</span>@food.FoodPrice.ToString("n0")₫</p>
+				<a href="cart.html" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+			</div>
+		}
+		
+	</div>
+</div>

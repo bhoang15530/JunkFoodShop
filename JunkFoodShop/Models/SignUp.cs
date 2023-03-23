@@ -16,7 +16,7 @@ namespace JunkFoodShop.Models
         public string Email { get; set; }
 
         [Required]
-        [StringLength(10 ,MinimumLength = 9, ErrorMessage = "The number have at least 9-10 number")]
+        // [StringLength(10 ,MinimumLength = 9, ErrorMessage = "The number have at least 9-10 number")]
         public int PhoneNumber { get; set; }
 
         [Required]

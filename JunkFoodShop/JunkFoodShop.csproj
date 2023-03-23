@@ -25,6 +25,7 @@
   <ItemGroup>
     <Folder Include="Data\" />
     <Folder Include="Views\Order\" />
+    <Folder Include="wwwroot\assets\" />
   </ItemGroup>
 
 </Project>

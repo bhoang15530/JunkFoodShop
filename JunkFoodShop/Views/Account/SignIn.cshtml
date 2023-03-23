@@ -1,3 +1,25 @@
-﻿
-@{
-}
+﻿<div class="row w-100 mx-0">
+    <div class="col-lg-4 mx-auto">
+        <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+            <div class="brand-logo">
+                <img src="~/images/logo.svg" alt="logo">
+            </div>
+            <h4>Hello! let's get started</h4>
+            <h6 class="font-weight-light">Sign in to continue.</h6>
+            <form class="pt-3" asp-action="SignIn" asp-controller="Account">
+                <div class="form-group">
+                    <input type="text" class="form-control form-control-lg" name="UsernameEmail" id="UsernameEmail" placeholder="Username/Email">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control form-control-lg" name="Password" id="Password" placeholder="Password">
+                </div>
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">SIGN IN</button>
+                </div>
+                <div class="text-center mt-4 font-weight-light">
+                    Don't have an account? <a asp-action="SignUp" asp-controller="Account" class="text-primary">Create now!</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
