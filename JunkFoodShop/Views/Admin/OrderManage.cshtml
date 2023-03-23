@@ -29,7 +29,9 @@
                 <td>@item.StatusId</td>
                 <td>@item.PaymentId</td>
                 <td>
-                    @*<a asp-controller="Admin" asp-action="UpdateOrderStatus" asp-route-sid="@item.">Edit</a>*@
+                    @*<a asp-controller="Admin" asp-action="UpdateOrderStatus" asp-route-sid="@item.OrderId"
+                                                                               asp-route-uid="@item.UserId"
+                    >Edit</a>*@
                 </td>
             </tr>
         }
