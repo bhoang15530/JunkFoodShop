@@ -76,9 +76,16 @@ namespace JunkFoodShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateFood([Bind("FoodName,FoodImage,FoodPrice,FoodStock,FoodDescription,CategoryId")] CreateFood createFood)
         {
+            ViewBag.CategoryList = await _context.FoodCategories.ToListAsync();
+            
+            if (!ModelState.IsValid)
+            {
+                return View(createFood);
+            }
+
             // Check FoodName exist
             bool CheckFoodName = await _context.Foods.AnyAsync(x => x.FoodName == createFood.FoodName);
-            ViewBag.CategoryList = await _context.FoodCategories.ToListAsync();
+            
             if (CheckFoodName)
             {
                 ViewBag.Error = "This food name already exist";
@@ -92,6 +99,7 @@ namespace JunkFoodShop.Controllers
                     FoodImage = createFood.FoodImage,
                     FoodPrice = createFood.FoodPrice,
                     FoodDescription = createFood.FoodDescription,
+                    FoodStock = createFood.FoodStock,
                     CategoryId = createFood.CategoryId
                 };
 
@@ -121,7 +129,6 @@ namespace JunkFoodShop.Controllers
                                       CategoryName = categories.CategoryName,
                                       CategoryId = categories.Categoryid
                                   }).Where(x => x.FoodId == fId).FirstOrDefaultAsync();
-
             // Using ViewBag to display data without Model
             ViewBag.CategoryList = await _context.FoodCategories.ToListAsync();
             ViewBag.FoodData = FoodData;
@@ -134,6 +141,11 @@ namespace JunkFoodShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> FoodEdit([Bind("FoodId,FoodName,FoodImage,FoodPrice,FoodStock,FoodDescription,CategoryId")] EditFood editFood)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(editFood);
+            }
+
             Food food = new()
             {
                 FoodId = editFood.FoodId,
@@ -160,7 +172,10 @@ namespace JunkFoodShop.Controllers
         {
             // Get food by fId
             var FoodData = await _context.Foods.Where(x => x.FoodId == fId).FirstOrDefaultAsync();
-
+            if (FoodData == null)
+            {
+                return NotFound();
+            }
             _context.Foods.Remove(FoodData);
             await _context.SaveChangesAsync();
 
@@ -203,9 +218,13 @@ namespace JunkFoodShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateCategory([Bind("CategoryName,CategoryImage")] CreateCategory createCategory)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(createCategory);
+            }
             // Check CategoryName exist
-            bool CheckCategoryName = await _context.FoodCategories.AnyAsync(x => x.CategoryName == createCategory.CategoryName);
-            if (CheckCategoryName)
+            bool isCategoryExists = await _context.FoodCategories.AnyAsync(x => x.CategoryName == createCategory.CategoryName);
+            if (isCategoryExists)
             {
                 ViewBag.Error = "This Category Name already exist";
                 return View(createCategory);
@@ -242,6 +261,11 @@ namespace JunkFoodShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CategoryEdit([Bind("Categoryid,CategoryImage,CategoryName")] CategoryManage editCategory)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(editCategory);
+            }
+
             FoodCategory category = new()
             {
                 Categoryid = editCategory.Categoryid,
@@ -265,6 +289,10 @@ namespace JunkFoodShop.Controllers
             // Get Category by cid
             var CategoryData = await _context.FoodCategories.Where(x => x.Categoryid == cid).FirstOrDefaultAsync();
 
+            if (CategoryData == null)
+            {
+                return NotFound();
+            }
             _context.FoodCategories.Remove(CategoryData);
             await _context.SaveChangesAsync();
 
@@ -304,6 +332,11 @@ namespace JunkFoodShop.Controllers
         {
             // Get user by uid
             var UserData = await _context.UserAccounts.Where(x => x.UserId == uid).FirstOrDefaultAsync();
+
+            if (UserData == null)
+            {
+                return NotFound();
+            }
 
             _context.UserAccounts.Remove(UserData);
             await _context.SaveChangesAsync();
@@ -406,6 +439,11 @@ namespace JunkFoodShop.Controllers
         {
             // Get order by oid
             var OrderData = await _context.Orders.Where(x => x.OrderId == oid).FirstOrDefaultAsync();
+
+            if (OrderData == null)
+            {
+                return NotFound();
+            }
 
             _context.Orders.Remove(OrderData);
             await _context.SaveChangesAsync();

@@ -3,37 +3,43 @@
     int count = 0;
 }
 
-<table>
-    <thead>
-        <tr>
-            <td>#</td>
-            <td>Order ID</td>
-            <td>By</td>
-            <td>Order Date</td>
-            <td>Total Price</td>
-            <td>Status</td>
-            <td>Payment</td>
-            <td>Action</td>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in ViewBag.OrderData)
-        {
-            count++;
+@if (ViewBag.OrderData.Count > 0)
+{
+    <table class="table">
+        <thead>
             <tr>
-                <td>@count</td>
-                <td>@item.OrderId</td>
-                <td>@item.Username</td>
-                <td>@item.DateOrder</td>
-                <td>@item.TotalPrice</td>
-                <td>@item.StatusId</td>
-                <td>@item.PaymentId</td>
-                <td>
-                    @*<a asp-controller="Admin" asp-action="UpdateOrderStatus" asp-route-sid="@item.OrderId"
-                                                                               asp-route-uid="@item.UserId"
-                    >Edit</a>*@
-                </td>
+                <td>#</td>
+                <td>Order ID</td>
+                <td>By</td>
+                <td>Order Date</td>
+                <td>Total Price</td>
+                <td>Status</td>
+                <td>Payment</td>
+                <td>Action</td>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.OrderData)
+            {
+                count++;
+                <tr>
+                    <td>@count</td>
+                    <td>@item.OrderId</td>
+                    <td>@item.Username</td>
+                    <td>@item.DateOrder</td>
+                    <td>@item.TotalPrice</td>
+                    <td>@item.StatusId</td>
+                    <td>@item.PaymentId</td>
+                    <td>
+                        @*<a asp-controller="Admin" asp-action="UpdateOrderStatus" asp-route-sid="@item.OrderId"
+                asp-route-uid="@item.UserId"
+                >Edit</a>*@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} else
+{
+    <h2>No data in database!</h2>
+}

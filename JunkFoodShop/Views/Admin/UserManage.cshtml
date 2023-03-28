@@ -2,35 +2,43 @@
     ViewData["Title"] = "User Management";
     int counter = 0;
 }
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Username</th>
-            <th scope="col">Full Name</th>
-            <th scope="col">Phone Number</th>
-            <th scope="col">Email</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
 
-        @foreach (var item in ViewBag.UserData)
-        {
-            counter++;
+@if (ViewBag.UserData.Count > 0)
+{
+    <table class="table">
+        <thead>
             <tr>
-                <th scope="row">@counter</th>
-                <td>@item.Username</td>
-                <td>@item.FullName</td>
-                <td>@item.PhoneNumber</td>
-                <td>@item.Email</td>
-                <td>
-                    <form asp-action="UserDelete" asp-controller="Admin">
-                        <input value="@item.UserId" type="hidden" name="uid"/>
-                        <button class="btn btn-danger" type="submit">Delete</button>
-                    </form>
-                </td>
+                <th scope="col">#</th>
+                <th scope="col">Username</th>
+                <th scope="col">Full Name</th>
+                <th scope="col">Phone Number</th>
+                <th scope="col">Email</th>
+                <th scope="col">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+
+            @foreach (var item in ViewBag.UserData)
+            {
+                counter++;
+                <tr>
+                    <th scope="row">@counter</th>
+                    <td>@item.Username</td>
+                    <td>@item.FullName</td>
+                    <td>@item.PhoneNumber</td>
+                    <td>@item.Email</td>
+                    <td>
+                        <form asp-action="UserDelete" asp-controller="Admin">
+                            <input value="@item.UserId" type="hidden" name="uid" />
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} else
+{
+    <h2>No data in database.</h2>
+}
+

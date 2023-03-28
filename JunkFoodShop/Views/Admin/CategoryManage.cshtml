@@ -2,33 +2,41 @@
     ViewData["Title"] = "Category Management";
     int counter = 0;
 }
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Category Image</th>
-            <th scope="col">Category Name</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
 
-        @foreach(var item in ViewBag.CategoryData)
-        {
-            counter++;
+@if (ViewBag.CategoryData.Count > 0)
+{
+    <table class="table">
+        <thead>
             <tr>
-                <th scope="row">@counter</th>
-                <td><img src="@item.CategoryImage" width="50" height="50" style="object-fit: cover; border-radius: 5px" /></td>
-                <td>@item.CategoryName</td>
-                <td>
-                    <a asp-route-cid="@item.Categoryid" asp-action="CategoryEdit" asp-controller="Admin">Edit</a>
-                    @*<a>Detail</a>*@
-                    <form asp-action="CategoryDelete" asp-controller="Admin">
-                        <input type="hidden" value="@item.Categoryid" name="cid" />
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </td>
+                <th scope="col">#</th>
+                <th scope="col">Category Image</th>
+                <th scope="col">Category Name</th>
+                <th scope="col">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+
+            @foreach (var item in ViewBag.CategoryData)
+            {
+                counter++;
+                <tr>
+                    <th scope="row">@counter</th>
+                    <td><img src="@item.CategoryImage" width="50" height="50" style="object-fit: cover; border-radius: 5px" /></td>
+                    <td>@item.CategoryName</td>
+                    <td>
+                        <a asp-route-cid="@item.Categoryid" asp-action="CategoryEdit" asp-controller="Admin">Edit</a>
+                        @*<a>Detail</a>*@
+                        <form asp-action="CategoryDelete" asp-controller="Admin">
+                            <input type="hidden" value="@item.Categoryid" name="cid" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} else
+{
+    <h2>No data in database.</h2>
+}
+

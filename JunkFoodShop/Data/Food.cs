@@ -21,7 +21,7 @@ public partial class Food
 
     public virtual ICollection<Cart> Carts { get; } = new List<Cart>();
 
-    public virtual FoodCategory? Category { get; set; }
+    public virtual FoodCategory Category { get; set; }
 
     public virtual ICollection<Comment> Comments { get; } = new List<Comment>();
 
