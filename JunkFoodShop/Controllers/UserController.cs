@@ -112,7 +112,7 @@ namespace JunkFoodShop.Controllers
             else
             {
                 // if food exists, increment by one or by quantity
-                userCart.Quantity = quantity ?? userCart.Quantity + 1;
+                userCart.Quantity = userCart.Quantity + quantity ?? userCart.Quantity + 1;
                 _context.Carts.Update(userCart);
                 _context.SaveChanges();
             }

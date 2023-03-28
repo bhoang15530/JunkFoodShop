@@ -13,7 +13,7 @@
 </div>
 <!-- end breadcrumb section -->
 <!-- cart -->
-@if (ViewBag.CartList.Count <= 0)
+@if (ViewBag.CartList.Count <= 0 || ViewBag.CartList == null)
 {
     <div class="container">
         <h2>There's nothing in your cart! Go back to Homepage and continue shopping</h2>
