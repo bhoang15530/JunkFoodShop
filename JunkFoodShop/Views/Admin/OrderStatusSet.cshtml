@@ -1,3 +1,48 @@
 ﻿
 @{
 }
+
+@if (!string.IsNullOrEmpty(ViewBag.OrderDetails))
+{
+    <h3>@ViewBag.OrderDetails.OrderId</h3>
+<h3>@ViewBag.OrderDetails.PhoneReceive</h3>
+<h3>@ViewBag.OrderDetails.Address</h3>
+<h3>@ViewBag.OrderDetails.TotalPrice</h3>
+} 
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>#</td>
+            <td>Food Name</td>
+            <td>Price</td>
+            <td>Number of Item</td>
+            <td>Subtotal</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ViewBag.FoodListOfOrder)
+        {
+            count++;
+            <tr>
+                <td>@count</td>
+                <td>@item.FoodName</td>
+                <td>@item.Username</td>
+                <td>@item.Quantity</td>
+                <td>@item.TotalPrice</td>
+                <td>
+                    @*<a asp-controller="Admin" asp-action="UpdateOrderStatus" asp-route-sid="@item.">Edit</a>*@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<select>
+    <option value="0" selected>Select Status</option>
+    @foreach (var item in ViewBag.Status)
+    {
+        <option value="@item.StatusId">@item.StatusName</option>
+    }
+</select>

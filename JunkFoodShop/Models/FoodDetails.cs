@@ -11,6 +11,7 @@ namespace JunkFoodShop.Models
         public int FoodStock { get; set; }
         public string FoodDescription { get; set; }
         public int CategoryId { get; set; }
+        public string CategoryName { get; set; }
         public int Star { get; set; }
         public List<Comment>? Comments { get; set; }
         public DateTime CommentTime { get; set; }

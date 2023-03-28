@@ -1,0 +1,49 @@
+﻿<!-- breadcrumb-section -->
+<div class="breadcrumb-section breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <p>See more Details</p>
+                    <h1>Single Product</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end breadcrumb section -->
+<div class="product-section mt-150 mb-150">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="section-title">
+                    <h3><span class="orange-text">Our</span> Products</h3>
+                    <p>Type description here</p>
+                </div>
+            </div>
+        </div>
+        @if (ViewBag.FoodList.Count == 0)
+        {
+            <h2>No item here.</h2>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var food in ViewBag.FoodList)
+                {
+                    <div class="col-lg-4 col-md-6 text-center">
+                        <div class="single-product-item">
+                            <div class="product-image">
+                                <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="assets/img/products/product-img-1.jpg" alt=""></a>
+                            </div>
+                            <h3>@food.FoodName</h3>
+                            <p class="product-price">@food.FoodPrice.ToString("n0")₫</p>
+                            @*<a href="cart.html" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>*@
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+    </div>
+</div>

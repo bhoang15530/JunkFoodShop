@@ -2,24 +2,127 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- home page slider -->
+<div class="homepage-slider">
+    <!-- single home slider -->
+    <div class="single-homepage-slider homepage-bg-1">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-7 offset-lg-1 offset-xl-0">
+                    <div class="hero-text">
+                        <div class="hero-text-tablecell">
+                            <p class="subtitle">Food To Taste</p>
+                            <h1>Delicious Seasonal Food</h1>
+                            <div class="hero-btns">
+                                <a href="food.html" class="boxed-btn">Food Collection</a>
+                                <a href="contact.html" class="bordered-btn">Contact Us</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- single home slider -->
+    <div class="single-homepage-slider homepage-bg-2">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 offset-lg-1 text-center">
+                    <div class="hero-text">
+                        <div class="hero-text-tablecell">
+                            <p class="subtitle">Fresh Everyday</p>
+                            <h1>100% Organic Collection</h1>
+                            <div class="hero-btns">
+                                <a href="Food.html" class="boxed-btn">Visit Food Shop</a>
+                                <a href="contact.html" class="bordered-btn">Contact Us</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- single home slider -->
+    <div class="single-homepage-slider homepage-bg-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 offset-lg-1 text-right">
+                    <div class="hero-text">
+                        <div class="hero-text-tablecell">
+                            <p class="subtitle">Mega Sale Going On!</p>
+                            <h1>Get March Discount</h1>
+                            <div class="hero-btns">
+                                <a href="food.html" class="boxed-btn">Visit Food Shop</a>
+                                <a href="contact.html" class="bordered-btn">Contact Us</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<!-- end home page slider -->
+<!-- product section -->
+<div class="product-section mt-150 mb-150">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="section-title">
+                    <h3><span class="orange-text">Our</span> Products</h3>
+                    <p>Type description here</p>
+                </div>
+            </div>
+        </div>
 
-<div class="row">
-	<div class="col-lg-4 col-md-6 text-center">
-		@foreach (var food in ViewBag.FoodList)
-		{
-			<div class="single-product-item">
-				<div class="product-image">
-					<a href="single-product.html"><img src="~/assets/img/products/food1.png" alt=""></a>
-				</div>
-				<h3>@food.FoodName</h3>
-				<p class="product-price"><span>Per one</span>@food.FoodPrice.ToString("n0")₫</p>
-				<a href="cart.html" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
-			</div>
-		}
-		
-	</div>
+        <div class="row">
+            @foreach (var food in ViewBag.FoodList)
+            {
+                <div class="col-lg-4 col-md-6 text-center">
+                    <div class="single-product-item">
+                        <div class="product-image">
+                            <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="assets/img/products/product-img-1.jpg" alt=""></a>
+                        </div>
+                        <h3>@food.FoodName</h3>
+                        <p class="product-price">@food.FoodPrice.ToString("n0")₫</p>
+                        @*<a asp-action="AddToCart" asp-controller="User" asp-route-fid="@food.FoodId" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>*@
+                    </div>
+                </div>
+            }
+        </div>
+        <p style="text-align: center">
+            <a asp-action="Index" asp-controller="Foods" class="cart-btn">More Food</a>
+        </p>
+    </div>
+</div>
+<!-- end product section -->
+
+<div class="product-section mt-150 mb-150">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="section-title">
+                    <h3><span class="orange-text">Our</span> Categories</h3>
+                    <p>Type description here</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            @foreach (var category in ViewBag.CategoryList)
+            {
+                <div class="col-lg-4 col-md-6 text-center">
+                    <div class="single-product-item">
+                        <div class="product-image">
+                            <a asp-action="Details" asp-controller="Categories" asp-route-cid="@category.Categoryid"><img src="~/assets/img/products/product-img-1.jpg" alt=""></a>
+                        </div>
+                        <h3>@category.CategoryName</h3>
+                    </div>
+                </div>
+            }
+        </div>
+        <p style="text-align: center">
+            <a asp-action="Index" asp-controller="Categories" class="cart-btn">More Categories</a>
+        </p>
+    </div>
 </div>

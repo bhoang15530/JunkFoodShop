@@ -2,38 +2,45 @@
     ViewData["Title"] = "Food Management";
     int counter = 0;
 }
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Food Image</th>
-            <th scope="col">Food Name</th>
-            <th scope="col">Food Category</th>
-            <th scope="col">Food Price</th>
-            <th scope="col">Food Stock</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
 
-        @foreach (var item in ViewBag.FoodData)
-        {
-            counter++;
+@if (ViewBag.FoodData.Count > 0)
+{
+    <table class="table">
+        <thead>
             <tr>
-                <th scope="row">@counter</th>
-                <td><img src="@item.FoodImage" width="50" height="50" style="object-fit: cover; border-radius: 5px" /></td>
-                <td>@item.FoodName</td>
-                <td>@item.CategoryName</td>
-                <td>@item.FoodPrice.ToString("n0")₫</td>
-                <td>@item.FoodStock</td>
-                <td>
-                    <a asp-route-fId="@item.FoodId" asp-action="FoodEdit" asp-controller="Admin">Edit</a>
-                    <form asp-action="FoodDelete" asp-controller="Admin">
-                        <input type="hidden" value="@item.FoodId" name="fId" />
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </td>
+                <th scope="col">#</th>
+                <th scope="col">Food Image</th>
+                <th scope="col">Food Name</th>
+                <th scope="col">Food Category</th>
+                <th scope="col">Food Price</th>
+                <th scope="col">Food Stock</th>
+                <th scope="col">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.FoodData)
+            {
+                counter++;
+                <tr>
+                    <th scope="row">@counter</th>
+                    <td><img src="@item.FoodImage" width="50" height="50" style="object-fit: cover; border-radius: 5px" /></td>
+                    <td>@item.FoodName</td>
+                    <td>@item.CategoryName</td>
+                    <td>@item.FoodPrice.ToString("n0")₫</td>
+                    <td>@item.FoodStock</td>
+                    <td>
+                        <a asp-route-fId="@item.FoodId" asp-action="FoodEdit" asp-controller="Admin">Edit</a>
+                        <form asp-action="FoodDelete" asp-controller="Admin">
+                            <input type="hidden" value="@item.FoodId" name="fId" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} else
+{
+    <h2>No data in database.</h2>
+}
+

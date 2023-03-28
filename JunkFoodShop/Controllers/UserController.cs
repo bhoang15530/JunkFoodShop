@@ -53,19 +53,90 @@ namespace JunkFoodShop.Controllers
 
         public async Task<IActionResult> Cart(string username)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return View(nameof(Index));
+            }
+
             // Get CartItemList by username
-            var CartItemsList = await (from cart in _context.Carts
-                                       join food in _context.Foods on cart.FoodId equals food.FoodId
-                                       join user in _context.UserAccounts on cart.UserId equals user.UserId
-                                       select new Models.Cart
-                                       {
-                                           FoodId = food.FoodId,
-                                           Foodname = food.FoodName,
-                                           Fullname = user.FullName,
-                                           FoodPrice = food.FoodPrice,
-                                           Username = user.Username
-                                       }).Where(x => x.Username == username).ToListAsync();
-            ViewBag.CartItems = CartItemsList;
+            // TODO: Sửa dùm t đi =)))) cái join t ko biết viết
+            var CartList = await (from cart in _context.Carts
+                                  join food in _context.Foods on cart.FoodId equals food.FoodId
+                                  join user in _context.UserAccounts on cart.UserId equals user.UserId
+                                  join orderfood in _context.OrderFoods on user.UserId equals orderfood.UserId
+                                  select new Models.Cart
+                                  {
+                                      FoodId = food.FoodId,
+                                      FoodName = food.FoodName,
+                                      FoodPrice = food.FoodPrice,
+                                      Username = user.Username,
+                                      Quantity = orderfood.Quantity,
+                                  }).Where(x => x.Username == User.Identity.Name).ToListAsync();
+            ViewBag.CartList = CartList;
+            return View();
+        }
+        public IActionResult AddToCart(int fid, int? quantity)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return BadRequest();
+            }
+
+            // Get the FoodStock and Check if item is in stock
+            var foodStock = _context.Foods.FirstOrDefault(x => x.FoodId == fid).FoodStock;
+
+            if (foodStock <= 0)
+            {
+                ViewBag.OutOfStock = "This item is currently out of stock. Please shop another item.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var user = _context.UserAccounts.Single(x => x.Username == User.Identity.Name);
+            var foodId = _context.Foods.Single(x => x.FoodId == fid).FoodId;
+
+            // Check if food is in cart
+            var userCart = _context.Carts.Where(x => x.UserId == user.UserId).Where(x => x.FoodId == foodId).FirstOrDefault();
+            if (userCart == null)
+            {
+                Data.Cart cart = new()
+                {
+                    FoodId = foodId,
+                    UserId = user.UserId,
+                    Quantity = 1,
+                    Address = "VN",
+                    PhoneReceive = user.PhoneNumber,
+                };
+                _context.Carts.Add(cart);
+                _context.SaveChanges();
+            }
+            else
+            {
+                // if food exists, increment by one or by quantity
+                userCart.Quantity = quantity ?? userCart.Quantity + 1;
+                _context.Carts.Update(userCart);
+                _context.SaveChanges();
+            }
+            return View(nameof(Cart));
+        }
+        public IActionResult OrderList(string username)
+        {
+            // Get order list by username
+            var OrderList = (from user in _context.UserAccounts
+                            join orderfood in _context.OrderFoods on user.UserId equals orderfood.UserId
+                            join order in _context.Orders on orderfood.OrderFoodId equals order.OrderFoodId
+                            join orderstatus in _context.OrderStatuses on order.StatusId equals orderstatus.StatusId
+                            join payment in _context.OrderPaymentTypes on order.PaymentId equals payment.PaymentId
+                            select new
+                            {
+                                OrderId = order.OrderId,
+                                StatusId = orderstatus.StatusId,
+                                PaymentType = payment.PaymentType,
+                                TotalPrice = order.TotalPrice,
+                                DateOrder = order.DateOrder,
+                                StatusName = orderstatus.StatusName,
+                                Username = user.Username
+                            }).Where(x => x.Username == username).ToList();
+            ViewBag.OrderList = OrderList;
             return View();
         }
     }
