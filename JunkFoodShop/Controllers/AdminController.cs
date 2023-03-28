@@ -359,6 +359,7 @@ namespace JunkFoodShop.Controllers
                                    join user in _context.UserAccounts on orderfood.UserId equals user.UserId
                                    select new OrderManage
                                    {
+                                       UserId = orderfood.UserId,
                                        OrderId = order.OrderId,
                                        TotalPrice = order.TotalPrice,
                                        DateOrder = order.DateOrder,
@@ -376,27 +377,38 @@ namespace JunkFoodShop.Controllers
 
         // GET - ORDER-STATUS-SET
         // CODE BT HOANG
-        public async Task<IActionResult> OrderStatusSet(int oid)
+        public async Task<IActionResult> OrderStatusSet(int oid, int uid)
         {
-            // Get details of order
-            var OrderData = await (from foods in _context.Foods
-                                   join orderfood in _context.OrderFoods on foods.FoodId equals orderfood.FoodId
-                                   join order in _context.Orders on orderfood.OrderFoodId equals order.OrderFoodId
-                                   join status in _context.OrderStatuses on order.StatusId equals status.StatusId
-                                   select new OrderStatusSet
-                                   {
-                                       PhoneReceive = orderfood.PhoneReceive,
-                                       Address = orderfood.Address,
-                                       OrderId = order.OrderId,
-                                       FoodName = foods.FoodName,
-                                       FoodPrice = foods.FoodPrice,
-                                       Quantity = orderfood.Quantity,
-                                       StatusId = status.StatusId,
-                                       TotalPrice = order.TotalPrice
-                                   }).Where(x => x.OrderId == oid).FirstOrDefaultAsync();
+
+            // Get details of order includes OrderId, Address, PhoneReceive, TotalPrice
+            var OrderDetails = await (from order in _context.Orders 
+                                      join orderfood in _context.OrderFoods on order.OrderFoodId equals orderfood.OrderFoodId
+                                      select new OrderDetails
+                                      {
+                                          OrderId= order.OrderId,
+                                          Address = orderfood.Address,
+                                          PhoneReceive = orderfood.PhoneReceive,
+                                          TotalPrice = order.TotalPrice
+                                      }).Where(x => x.OrderId == oid).FirstOrDefaultAsync();
+
+            // Get list food of order includes FoodName, Price, Quantity
+            var FoodListOfOrder = await (from orderfood in _context.OrderFoods
+                                         join food in _context.Foods on orderfood.FoodId equals food.FoodId
+                                         select new FoodListOfOrder
+                                         {
+                                             UserId = orderfood.UserId,
+                                             FoodName = food.FoodName,
+                                             FoodPrice = food.FoodPrice,
+                                             Quantity = orderfood.Quantity,
+                                         }).Where(x => x.UserId == uid).ToListAsync();
+
+            // Get StatusId and StatusName
+            var Status = await _context.OrderStatuses.ToListAsync();
 
             // Using ViewBag to display data without Model
-            ViewBag.OrderData = OrderData;
+            ViewBag.OrderDetails = OrderDetails;
+            ViewBag.FoodListOfOrder = FoodListOfOrder;
+            ViewBag.Status = Status;
             return View();
         }
 
