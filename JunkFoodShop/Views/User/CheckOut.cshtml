@@ -1,0 +1,153 @@
+﻿<!-- breadcrumb-section -->
+<div class="breadcrumb-section breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <p>Fresh and Organic</p>
+                    <h1>Check Out</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end breadcrumb section -->
+@if (ViewBag.CartList.Count <= 0)
+{
+    <div class="container">
+        <h2>There's nothing in your cart! Go back to Homepage and continue shopping</h2>
+        <a asp-action="Index" asp-controller="Home">Go back to Homepage</a>
+    </div>
+}
+else
+{
+    <div class="cart-section mt-150 mb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-12">
+                    <div class="cart-table-wrap">
+                        <table class="cart-table">
+                            <thead class="cart-table-head">
+                                <tr class="table-head-row">
+                                    <th class="product-image">Product Image</th>
+                                    <th class="product-name">Name</th>
+                                    <th class="product-price">Price</th>
+                                    <th class="product-quantity">Quantity</th>
+                                    <th class="product-total">Sub-Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cart in ViewBag.CartList)
+                                {
+                                    <tr class="table-body-row">
+                                        <td class="product-image"><img src="~/assets/img/products/product-img-1.jpg" alt="@cart.FoodName"></td>
+                                        <td class="product-name">@cart.FoodName</td>
+                                        <td class="product-price">@cart.FoodPrice.ToString("n0") ₫</td>
+                                        <td class="product-quantity" data-quantity="@cart.FoodId">@cart.Quantity</td>
+                                        <td class="product-subtotal-@cart.FoodId" data-subtotal="@cart.FoodId">@((cart.Quantity * cart.FoodPrice).ToString("n0")) ₫</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="total-section">
+                        <table class="total-table">
+                            <thead class="total-table-head">
+                                <tr class="table-total-row">
+                                    <th>Total</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="total-data">
+                                    <td><strong>Total: </strong></td>
+                                    <td class="total"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="cart-form">
+                            <h4 style="margin-top:20px">Payment Info:</h4>
+                            <form asp-action="Pay" asp-controller="User" id="payment-info-form">
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Address</label>
+                                    <input type="text" class="form-control" name="address" id="Address">
+                                    <span class="form-message"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Phone Number</label>
+                                    <input style="width: 100%; margin-bottom: 0px" type="number" class="form-control" name="phone" id="PhoneNumber">
+                                    <span class="form-message"></span>
+                                </div>
+                                <select class="form-select" id="select-form" name="PaymentType">
+                                    <option value="" selected>Select Payment Type</option>
+                                    <option value="1">By Cash</option>
+                                    <option value="2">By Bank</option>
+                                </select>
+                                <span class="form-message"></span>
+                                <div class="select-form-message"></div>
+                                <hr />
+                                <div class="mb-3 text-right">
+                                    <button type="submit" class="btn btn-primary">Pay</button>
+                                </div>
+                            </form>
+                            @*<a asp-action="Pay" asp-controller="User" class="boxed-btn black">Pay</a>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end cart -->
+    <div class="container">
+    </div>
+}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script src="~/js/validator.js"></script>
+<script>
+    function updateTotal() {
+        var total = 0;
+        $("td[class^='product-subtotal-']").each(function (index, element) {
+            total += parseInt($(element).text().replaceAll(".", "").replace("₫", "").trim());
+            //console.log($(this).text())
+        })
+        $(".total").text(total.toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND"
+        }));
+    }
+    updateTotal();
+
+    Validator({
+        form: "#payment-info-form",
+        errorSelector: ".form-message",
+        rules: [
+            Validator.isRequired(
+                "#Address",
+                "Address is required"
+            ),
+            Validator.isRequired(
+                "#PhoneNumber",
+                "Phone Number is required"
+            ),
+            Validator.isRequired(
+                "#select-form",
+                "Payment method is required"
+            ),
+        ],
+    });
+    $("#select-form").change(function () {
+        if ($(this).val() == "") {
+            $(".select-form-message").text("Please select payment method");
+        } else $(".select-form-message").text("");
+    });
+    
+</script>
+
+<style>
+    .form-message, .select-form-message {
+        color: red;
+    }
+</style>

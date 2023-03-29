@@ -106,6 +106,17 @@ Validator.isRequired = function (selector, message) {
     };
 };
 
+Validator.isSelectorRequired = function (selector, message) {
+    return {
+        selector,
+        test: function (value) {
+            return value.trim()
+                ? undefined
+                : message ?? "Please select the option above"
+        }
+    }
+}
+
 Validator.isEmail = function (selector, message) {
     return {
         selector,

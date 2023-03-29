@@ -13,7 +13,7 @@
 </div>
 <!-- end breadcrumb section -->
 <!-- cart -->
-@if (ViewBag.CartList.Count <= 0 || ViewBag.CartList == null)
+@if (ViewBag.CartList.Count <= 0)
 {
     <div class="container">
         <h2>There's nothing in your cart! Go back to Homepage and continue shopping</h2>
@@ -42,12 +42,12 @@ else
                                 @foreach (var cart in ViewBag.CartList)
                                 {
                                     <tr class="table-body-row">
-                                        <td class="product-remove"><a href="#"><i class="far fa-window-close"></i></a></td>
-                                        <td class="product-image"><img src="~/assets/img/products/product-img-1.jpg" alt=""></td>
+                                        <td class="product-remove"><a asp-action="RemoveFromCart" asp-controller="User" asp-route-fid="@cart.FoodId"><i class="far fa-window-close"></i></a></td>
+                                        <td class="product-image"><img src="~/assets/img/products/product-img-1.jpg" alt="@cart.FoodName"></td>
                                         <td class="product-name">@cart.FoodName</td>
-                                        <td class="product-price">@cart.FoodPrice</td>
-                                        <td class="product-quantity"><input type="number" placeholder="0"></td>
-                                        <td class="product-total">@cart.Quantity</td>
+                                        <td class="product-price">@cart.FoodPrice.ToString("n0") ₫</td>
+                                        <td class="product-quantity" data-quantity="@cart.FoodId"><input class="quantity-input-@cart.FoodId" type="number" min="1" data-foodid="@cart.FoodId" data-price="@cart.FoodPrice" value="@cart.Quantity"></td>
+                                        <td class="product-subtotal-@cart.FoodId" data-subtotal="@cart.FoodId">@((cart.Quantity * cart.FoodPrice).ToString("n0")) ₫</td>
                                     </tr>
                                 }
                             </tbody>
@@ -67,17 +67,16 @@ else
                             <tbody>
                                 <tr class="total-data">
                                     <td><strong>Subtotal: </strong></td>
-                                    <td class="subtotal">100.000VNĐ</td>
+                                    <td class="subtotal"></td>
                                 </tr>
                                 <tr class="total-data">
                                     <td><strong>Total: </strong></td>
-                                    <td class="total">100.000VNĐ</td>
+                                    <td class="total"></td>
                                 </tr>
                             </tbody>
                         </table>
                         <div class="cart-buttons">
-                            <a href="cart.html" class="boxed-btn">Update Cart</a>
-                            <a href="checkout.html" class="boxed-btn black">Check Out</a>
+                            <a asp-action="CheckOut" asp-controller="User" class="boxed-btn black">Check Out</a>
                         </div>
                     </div>
 
@@ -96,3 +95,59 @@ else
     </div>
     <!-- end cart -->
 }
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        $("input[class^='quantity-input-']").each(function (index, element) {
+            $(element).css("backgroundColor", "yellow");
+            $(element).change(function () {
+                var foodId = $(this).attr("data-foodid");
+                var quantity = $(this).val();
+                var price = $(this).attr("data-price");
+                var subTotalEls = $(`td.product-subtotal-${foodId}`);
+                console.log(quantity, price, subTotalEls);
+                updateSubTotal(quantity, price, subTotalEls)
+                
+                updateTotal();
+                var data = { fid: foodId, quantity: $(this).val() }
+                // AJAX Call
+                $.ajax({
+                    type: "POST",
+                    url: "updatecartitem",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(data),
+                    dataType: "json",
+                    success: function (response) {
+                        alert(response)
+                    },
+                    error: function (response) {
+                        console.log(response.responseText)
+                        alert(respons.responseTexte)
+                    }
+                })
+            })
+        });
+
+        updateTotal();
+
+        function updateSubTotal(quantity, price, subTotalEls) {
+            var subTotal = parseInt(quantity) * parseInt(price)
+           
+            $(subTotalEls).text(subTotal.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND"
+            }))
+        }
+        function updateTotal() {
+            var total = 0;
+            $("td[class^='product-subtotal-']").each(function (index, element) {
+                total += parseInt($(element).text().replaceAll(".", "").replace("₫", "").trim());
+                //console.log($(this).text())
+            })
+            $(".subtotal").text(total.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND"
+            }));
+        }
+    })
+</script>
