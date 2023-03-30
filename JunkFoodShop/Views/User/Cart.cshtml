@@ -99,7 +99,6 @@ else
 <script>
     $(document).ready(function () {
         $("input[class^='quantity-input-']").each(function (index, element) {
-            $(element).css("backgroundColor", "yellow");
             $(element).change(function () {
                 var foodId = $(this).attr("data-foodid");
                 var quantity = $(this).val();
@@ -117,13 +116,6 @@ else
                     contentType: "application/json; charset=utf-8",
                     data: JSON.stringify(data),
                     dataType: "json",
-                    success: function (response) {
-                        alert(response)
-                    },
-                    error: function (response) {
-                        console.log(response.responseText)
-                        alert(respons.responseTexte)
-                    }
                 })
             })
         });

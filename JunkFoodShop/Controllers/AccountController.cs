@@ -145,7 +145,7 @@ namespace JunkFoodShop.Controllers
         public async Task<IActionResult> SignOut()
         {
             await HttpContext.SignOutAsync();
-            return RedirectToAction(nameof(SignUp));
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult Denied()

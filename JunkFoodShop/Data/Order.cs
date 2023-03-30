@@ -11,11 +11,11 @@ public partial class Order
 
     public DateTime DateOrder { get; set; }
 
-    public int? StatusId { get; set; }
+    public int StatusId { get; set; }
 
-    public int? PaymentId { get; set; }
+    public int PaymentId { get; set; }
 
-    public int? OrderFoodId { get; set; }
+    public int OrderFoodId { get; set; }
 
     public virtual OrderFood? OrderFood { get; set; }
 

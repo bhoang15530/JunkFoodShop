@@ -1,81 +1,89 @@
-﻿<div class="row w-100 mx-0">
-    <div class="col-lg-4 mx-auto">
-        <div class="auth-form-light text-left py-5 px-4 px-sm-5">
-            <h4>Food Management</h4>
-            <h6 class="font-weight-light">Create new Food.</h6>
-            <form id="food-form" class="pt-3" asp-action="CreateFood" asp-controller="Admin">
-                <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" name="FoodName" id="FoodName" placeholder="Food Name">
-                    <span class="form-message"></span>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" name="FoodImage" id="FoodImage" placeholder="Food Image">
-                    <span class="form-message"></span>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" name="FoodDescription" id="FoodDescription" placeholder="Food Description">
-                    <span class="form-message"></span>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" name="FoodStock" id="FoodStock" placeholder="Food Stock">
-                    <span class="form-message"></span>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" name="FoodPrice" id="FoodPrice" placeholder="Food Price">
-                    <span class="form-message"></span>
-                </div>
-                <div class="form-group">
-                    <select class="form-select" id="Categoryid" name="Categoryid">
-                        <option value="0" selected>Select Food Category</option>
-                        @foreach (var item in ViewBag.CategoryList)
-                        {
-                            <option value="@item.Categoryid">@item.CategoryName</option>
-                        }
-                    </select>
-                    <span class="form-message"></span>
-                </div>
-                <div class="mt-3 w-100">
-                    <button type="submit" id="btnSubmit" class="w-100 btn btn-block btn-primary btn-lg font-weight-medium btnSubmit">Create</button>
-                </div>
-            </form>
+﻿@if (ViewBag.CategoryList.Count <= 0)
+{
+    <h3>Please Create a Category first</h3>
+    <a asp-action="CreateCategory" asp-controller="Admin">Go to Create Category page</a>
+}
+else
+{
+    <div class="row w-100 mx-0">
+        <div class="col-lg-4 mx-auto">
+            <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+                <h4>Food Management</h4>
+                <h6 class="font-weight-light">Create new Food.</h6>
+                <form id="food-form" class="pt-3" asp-action="CreateFood" asp-controller="Admin">
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-lg" name="FoodName" id="FoodName" placeholder="Food Name">
+                        <span class="form-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-lg" name="FoodImage" id="FoodImage" placeholder="Food Image">
+                        <span class="form-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-lg" name="FoodDescription" id="FoodDescription" placeholder="Food Description">
+                        <span class="form-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-lg" name="FoodStock" id="FoodStock" placeholder="Food Stock">
+                        <span class="form-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-lg" name="FoodPrice" id="FoodPrice" placeholder="Food Price">
+                        <span class="form-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-select" id="Categoryid" name="Categoryid">
+                            <option value="0" selected>Select Food Category</option>
+                            @foreach (var item in ViewBag.CategoryList)
+                            {
+                                <option value="@item.Categoryid">@item.CategoryName</option>
+                            }
+                        </select>
+                        <span class="form-message"></span>
+                    </div>
+                    <div class="mt-3 w-100">
+                        <button type="submit" id="btnSubmit" class="w-100 btn btn-block btn-primary btn-lg font-weight-medium btnSubmit">Create</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-<script src="~/js/validator.js"></script>
-<script>
-    Validator({
-        form: "#food-form",
-        errorSelector: ".form-message",
-        rules: [
-            Validator.isRequired(
-                "#FoodName",
-                "Food name is required"
-            ),
-            Validator.isRequired(
-                "#FoodImage",
-                "Food image is required"
-            ),
-            Validator.isRequired(
-                "#FoodDescription",
-                "Food description is required"
-            ),
-            Validator.isRequired(
-                "#FoodStock",
-                "Food stock is required"
-            ),
-            Validator.isRequired(
-                "#FoodPrice",
-                "Food price is required"
-            ),
-            Validator.isRequired(
-                "#Categoryid",
-                "Category is required"
-            ),
-        ],
-    });
-</script>
-<style>
-    .form-message {
-        color: red;
-    }
-</style>
+    <script src="~/js/validator.js"></script>
+    <script>
+        Validator({
+            form: "#food-form",
+            errorSelector: ".form-message",
+            rules: [
+                Validator.isRequired(
+                    "#FoodName",
+                    "Food name is required"
+                ),
+                Validator.isRequired(
+                    "#FoodImage",
+                    "Food image is required"
+                ),
+                Validator.isRequired(
+                    "#FoodDescription",
+                    "Food description is required"
+                ),
+                Validator.isRequired(
+                    "#FoodStock",
+                    "Food stock is required"
+                ),
+                Validator.isRequired(
+                    "#FoodPrice",
+                    "Food price is required"
+                ),
+                Validator.isRequired(
+                    "#Categoryid",
+                    "Category is required"
+                ),
+            ],
+        });
+    </script>
+    <style>
+        .form-message {
+            color: red;
+        }
+    </style>
+}

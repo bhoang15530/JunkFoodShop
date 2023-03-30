@@ -1,0 +1,52 @@
+﻿<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <td>Username</td>
+                <td>Order ID</td>
+                <td>Total Price</td>
+                <td>Status</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@ViewBag.OrderData.Orders[0].Username</td>
+                <td>@ViewBag.OrderData.Orders[0].OrderId</td>
+                <td class="total-price">@ViewBag.OrderData.Orders[0].TotalPrice</td>
+                <td>
+                    <form asp-action="SetOrderStatus" asp-controller="Admin">
+                        <input type="hidden" value="@ViewBag.OrderData.Orders[0].OrderId" name="oid" />
+                        <select class="form-select" id="orderstatus" name="orderstatus">
+                            @foreach (var option in ViewBag.StatusList)
+                            {
+                                if (option.StatusName != ViewBag.OrderData.Orders[0].StatusName)
+                                {
+                                    <option value="@option.StatusId">@option.StatusName</option>
+                                }
+                                else
+                                {
+                                    <option selected value="@ViewBag.OrderData.Orders[0].StatusId">@ViewBag.OrderData.Orders[0].StatusName</option>
+                                }
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-outline-primary">Update</button>
+                    </form>
+                    
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        // Format thành đơn vị tiền tệ cho dễ nhìn
+        $("td[class='total-price']").each(function (index, element) {
+            var total = parseInt($(element).text());
+            $(element).text(total.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND"
+            }))
+        })
+    })
+</script>

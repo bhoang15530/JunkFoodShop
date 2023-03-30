@@ -2,7 +2,6 @@
 using JunkFoodShop.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace JunkFoodShop.Controllers
 {
@@ -15,7 +14,7 @@ namespace JunkFoodShop.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> AccountSetting(string username)
+        public async Task<IActionResult> AccountSetting()
         {
             // Get UserData by UserId
             var UserData = await (from user in _context.UserAccounts
@@ -25,30 +24,36 @@ namespace JunkFoodShop.Controllers
                                       FullName = user.FullName,
                                       PhoneNumber = user.PhoneNumber,
                                       Email = user.Email,
-                                  }).Where(x => x.Username == username).FirstOrDefaultAsync();
+                                  }).Where(x => x.Username == User.Identity.Name).FirstOrDefaultAsync();
 
             ViewBag.UserData = UserData;
             return View();
         }
 
-        public async Task<IActionResult> OrdersList(string username)
+        public async Task<IActionResult> OrderList()
         {
-            // Get OrderList by username
-            var OrderList = await (from order in _context.Orders
+            // Get userID
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).Select(x => x.UserId).FirstOrDefault();
+
+            // Get OrderList by UserId sort by OrderDate
+            var OrderData = await (from order in _context.Orders
                                    join orderfood in _context.OrderFoods on order.OrderFoodId equals orderfood.OrderFoodId
-                                   join user in _context.UserAccounts on orderfood.UserId equals user.UserId
                                    join orderstatus in _context.OrderStatuses on order.StatusId equals orderstatus.StatusId
-                                   join orderpayment in _context.OrderPaymentTypes on order.PaymentId equals orderpayment.PaymentId
-                                   select new OrderReview
+                                   join payment in _context.OrderPaymentTypes on order.PaymentId equals payment.PaymentId
+                                   where orderfood.UserId == userId
+                                   group new { order, payment, orderstatus } by order.DateOrder into dateGroup
+                                   select new
                                    {
-                                       DateOrder = order.DateOrder,
-                                       TotalPrice = order.TotalPrice,
-                                       Fullname = user.FullName,
-                                       OrderId = order.OrderId,
-                                       OrderStatus = orderstatus.StatusName,
-                                       PaymentType = orderpayment.PaymentType
-                                   }).Where(x => x.Username == username).ToListAsync();
-            ViewBag.OrderList = OrderList;
+                                       DateOrder = dateGroup.Key,
+                                       Orders = dateGroup.Select(x => new
+                                       {
+                                           x.order.TotalPrice,
+                                           x.payment.PaymentId,
+                                           x.orderstatus.StatusId,
+                                           x.orderstatus.StatusName
+                                       })
+                                   }).ToListAsync();
+            ViewBag.OrderData = OrderData;
             return View();
         }
 
@@ -183,13 +188,16 @@ namespace JunkFoodShop.Controllers
             return View();
         }
 
-        public IActionResult Pay(string address, int phone)
+        // TODO: Need fixing
+        public IActionResult Pay(string address, int phone, string paymentType)
         {
+            float total = 0;
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
             var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).FirstOrDefault().UserId;
+            
             var cart = _context.Carts.Where(x => x.UserId == userId).ToList();
             if (cart == null)
             {
@@ -198,6 +206,9 @@ namespace JunkFoodShop.Controllers
 
             foreach (var cartItem in cart)
             {
+                float FoodCost = _context.Foods.Where(x => x.FoodId == cartItem.FoodId).FirstOrDefault().FoodPrice;
+                total += cartItem.Quantity * FoodCost;
+                
                 OrderFood c = new()
                 {
                     Address = address,
@@ -210,29 +221,19 @@ namespace JunkFoodShop.Controllers
                 _context.Carts.Remove(cartItem);
                 _context.OrderFoods.Add(c);
                 _context.SaveChanges();
-            }
-            return View();
-        }
 
-        public IActionResult OrderList(string username)
-        {
-            // Get order list by username
-            var OrderList = (from user in _context.UserAccounts
-                             join orderfood in _context.OrderFoods on user.UserId equals orderfood.UserId
-                             join order in _context.Orders on orderfood.OrderFoodId equals order.OrderFoodId
-                             join orderstatus in _context.OrderStatuses on order.StatusId equals orderstatus.StatusId
-                             join payment in _context.OrderPaymentTypes on order.PaymentId equals payment.PaymentId
-                             select new
-                             {
-                                 OrderId = order.OrderId,
-                                 StatusId = orderstatus.StatusId,
-                                 PaymentType = payment.PaymentType,
-                                 TotalPrice = order.TotalPrice,
-                                 DateOrder = order.DateOrder,
-                                 StatusName = orderstatus.StatusName,
-                                 Username = user.Username
-                             }).Where(x => x.Username == username).ToList();
-            ViewBag.OrderList = OrderList;
+                Order o = new()
+                {
+                    DateOrder = DateTime.Now,
+                    PaymentId = int.Parse(paymentType),
+                    TotalPrice = (int)total,
+                    StatusId = 1,
+                    OrderFoodId = c.OrderFoodId,
+                };
+
+                _context.Orders.Add(o);
+                _context.SaveChanges();
+            }
             return View();
         }
     }

@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Your Order List";
+    int counter = 0;
+}
+<!-- breadcrumb-section -->
+<div class="breadcrumb-section breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <p>Fresh and Organic</p>
+                    <h1>Order List</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end breadcrumb section -->
+@if (ViewBag.OrderData.Count <= 0)
+{
+    <div class="container">
+        <h3>You have no Orders yet!</h3>
+    </div>
+}
+else
+{
+    <div class="container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Order Date</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ViewBag.OrderData)
+                {
+                    counter++;
+                    <tr>
+                        <td>@counter</td>
+                        <td>@item.DateOrder</td>
+                        <td class="total-price">@item.Orders[0].TotalPrice</td>
+                        <td>@item.Orders[0].StatusName</td>
+                        <td class="payment-type">@item.Orders[0].PaymentId</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        // Format thành đơn vị tiền tệ cho dễ nhìn
+        $("td[class='total-price']").each(function (index, element) {
+            var total = parseInt($(element).text());
+            $(element).text(total.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND"
+            }))
+        })
+    })
+
+    // Đổi từ chuỗi 1 và 2 thành từ dễ đọc
+    $("td[class='payment-type']").each(function (index, element) {
+        var paymentType = $(element).text();
+        $(element).text(paymentType == "1" ? "By Cash" : "By Bank")
+    })
+</script>

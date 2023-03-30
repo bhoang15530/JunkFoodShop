@@ -1,5 +1,46 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<!-- breadcrumb-section -->
+<div class="breadcrumb-section breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <p>Fresh and Organic</p>
+                    <h1>Account Settings</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end breadcrumb section -->
+<div class="container-sm">
+    <form asp-action="" asp-controller="User">
+            <div class="mb-3">
+                <label for="fullname" class="form-label">Full Name</label>
+                <input type="text" class="form-control" value="@ViewBag.UserData.FullName" name="fullname" id="FullName">
+                <span class="form-message"></span>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" value="@ViewBag.UserData.Email" name="email" id="Email">
+                <span class="form-message"></span>
+            </div>
+            <div class="mb-3">
+                <label for="phonenumber" class="form-label">Phone Number</label>
+                <input type="number" class="form-control" value="@ViewBag.UserData.PhoneNumber" name="newpassword" id="NewPassword">
+                <span class="form-message"></span>
+            </div>
+            <div class="mb-3">
+                <label for="phonenumber" class="form-label">New Password</label>
+                <input type="password" class="form-control" name="phonenumber" id="PhoneNumber">
+                <span class="form-message"></span>
+            </div>
+            <div class="mb-3">
+                <label for="phonenumber" class="form-label">Confirm New Password</label>
+                <input type="password" class="form-control" name="confirmnewpassword" id="ConfirmNewPassword">
+                <span class="form-message"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+
+<a asp-action="OrderList" asp-controller="User">View Your Orders!</a>

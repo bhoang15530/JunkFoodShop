@@ -9,12 +9,11 @@
         <thead>
             <tr>
                 <td>#</td>
-                <td>Order ID</td>
                 <td>By</td>
                 <td>Order Date</td>
                 <td>Total Price</td>
                 <td>Status</td>
-                <td>Payment</td>
+                <td>Payment Type</td>
                 <td>Action</td>
             </tr>
         </thead>
@@ -24,22 +23,47 @@
                 count++;
                 <tr>
                     <td>@count</td>
-                    <td>@item.OrderId</td>
-                    <td>@item.Username</td>
+                    <td>@item.Orders[0].Username</td>
                     <td>@item.DateOrder</td>
-                    <td>@item.TotalPrice</td>
-                    <td>@item.StatusId</td>
-                    <td>@item.PaymentId</td>
+                    <td class="total-price">@item.Orders[0].TotalPrice</td>
+                    <td>@item.Orders[0].StatusName</td>
+                    <td class="payment-type">@item.Orders[0].PaymentId</td>
                     <td>
-                        @*<a asp-controller="Admin" asp-action="UpdateOrderStatus" asp-route-sid="@item.OrderId"
-                asp-route-uid="@item.UserId"
-                >Edit</a>*@
+                        <a asp-controller="Admin" asp-action="UpdateOrderStatus" asp-route-oid="@item.Orders[0].OrderId" asp-route-uid="@item.Orders[0].UserId">Edit</a>
+                        <form asp-action="OrderDelete" asp-controller="Admin">
+                            <input type="hidden" name="oid" value="@item.Orders[0].OrderId" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-} else
+}
+else
 {
     <h2>No data in database!</h2>
 }
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        // Format thành đơn vị tiền tệ cho dễ nhìn
+        $("td[class='total-price']").each(function (index, element) {
+            var total = parseInt($(element).text());
+            $(element).text(total.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND"
+            }))
+        })
+
+        // Đổi từ chuỗi 1 và 2 thành từ dễ đọc
+        $("td[class='payment-type']").each(function (index, element) {
+            var paymentType = $(element).text();
+            $(element).text(paymentType == "1" ? "By Cash" : "By Bank")
+        })
+
+        $("#orderstatus").change(function () {
+            var statusId = $("option:selected", this).val();
+        })
+    })
+</script>
