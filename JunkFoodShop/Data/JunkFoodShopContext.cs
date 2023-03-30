@@ -100,10 +100,6 @@ public partial class JunkFoodShopContext : DbContext
 
             entity.Property(e => e.DateOrder).HasColumnType("datetime");
 
-            entity.HasOne(d => d.OrderFood).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.OrderFoodId)
-                .HasConstraintName("FK__Order__OrderFood__19DFD96B");
-
             entity.HasOne(d => d.Payment).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.PaymentId)
                 .HasConstraintName("FK__Order__PaymentId__18EBB532");
@@ -128,6 +124,10 @@ public partial class JunkFoodShopContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.OrderFoods)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__OrderFood__UserI__151B244E");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderFoods)
+                .HasForeignKey(d => d.OrderId)
+                .HasConstraintName("FK_OrderFood_Order");
         });
 
         modelBuilder.Entity<OrderPaymentType>(entity =>

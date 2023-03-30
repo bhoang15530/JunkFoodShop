@@ -41,10 +41,10 @@ else
                     counter++;
                     <tr>
                         <td>@counter</td>
-                        <td>@item.DateOrder</td>
-                        <td class="total-price">@item.Orders[0].TotalPrice</td>
-                        <td>@item.Orders[0].StatusName</td>
-                        <td class="payment-type">@item.Orders[0].PaymentId</td>
+                        <td>@item.DateOrder.ToShortDateString()</td>
+                        <td class="total-price">@item.TotalPrice</td>
+                        <td class="status-type">@item.StatusId</td>
+                        <td class="payment-type">@item.PaymentId</td>
                     </tr>
                 }
             </tbody>
@@ -69,4 +69,22 @@ else
         var paymentType = $(element).text();
         $(element).text(paymentType == "1" ? "By Cash" : "By Bank")
     })
+
+    $("td[class='status-type']").each(function (index, element) {
+        var statusType = $(element).text();
+        switch (statusType) {
+            case “1”:
+                $(element).text(“Checking”)
+            case “1”:
+                $(element).text(“Checking”)
+            case “2”:
+                $(element).text(“Delivering”)
+            case “3”:
+                $(element).text(“Delivery Completed”)
+            case “4”:
+                $(element).text(“Order Cancelled”)
+            default:
+                $(element).text(“Unknown”)
+        })
+    }
 </script>

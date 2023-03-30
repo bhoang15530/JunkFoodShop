@@ -30,30 +30,22 @@ namespace JunkFoodShop.Controllers
             return View();
         }
 
+        // Last update by Hoang: 3/30/2023
         public async Task<IActionResult> OrderList()
         {
             // Get userID
             var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).Select(x => x.UserId).FirstOrDefault();
 
             // Get OrderList by UserId sort by OrderDate
-            var OrderData = await (from order in _context.Orders
-                                   join orderfood in _context.OrderFoods on order.OrderFoodId equals orderfood.OrderFoodId
-                                   join orderstatus in _context.OrderStatuses on order.StatusId equals orderstatus.StatusId
-                                   join payment in _context.OrderPaymentTypes on order.PaymentId equals payment.PaymentId
-                                   where orderfood.UserId == userId
-                                   group new { order, payment, orderstatus } by order.DateOrder into dateGroup
-                                   select new
-                                   {
-                                       DateOrder = dateGroup.Key,
-                                       Orders = dateGroup.Select(x => new
-                                       {
-                                           x.order.TotalPrice,
-                                           x.payment.PaymentId,
-                                           x.orderstatus.StatusId,
-                                           x.orderstatus.StatusName
-                                       })
-                                   }).ToListAsync();
-            ViewBag.OrderData = OrderData;
+            var orders = _context.Orders
+                    .Include(o => o.OrderFoods)
+                    .ThenInclude(of => of.Food)
+                    .Include(o => o.Status)
+                    .Include(o => o.Payment)
+                    .Where(o => o.OrderFoods.Any(of => of.UserId == userId))
+                    .ToList();
+
+            ViewBag.OrderData = orders;
             return View();
         }
 
@@ -188,7 +180,8 @@ namespace JunkFoodShop.Controllers
             return View();
         }
 
-        // TODO: Need fixing
+        // STATUS: Fix successful
+        // Last update by Hoang: 3/30/2023
         public IActionResult Pay(string address, int phone, string paymentType)
         {
             float total = 0;
@@ -204,11 +197,21 @@ namespace JunkFoodShop.Controllers
                 return NotFound();
             }
 
+            Order o = new()
+            {
+                DateOrder = DateTime.Now,
+                PaymentId = int.Parse(paymentType),
+                StatusId = 1,
+            };
+
+            _context.Orders.Add(o);
+            _context.SaveChanges();
+
             foreach (var cartItem in cart)
             {
                 float FoodCost = _context.Foods.Where(x => x.FoodId == cartItem.FoodId).FirstOrDefault().FoodPrice;
                 total += cartItem.Quantity * FoodCost;
-                
+
                 OrderFood c = new()
                 {
                     Address = address,
@@ -216,24 +219,16 @@ namespace JunkFoodShop.Controllers
                     PhoneReceive = phone,
                     Quantity = cartItem.Quantity,
                     UserId = cartItem.UserId,
+                    OrderId = o.OrderId,
                 };
 
                 _context.Carts.Remove(cartItem);
                 _context.OrderFoods.Add(c);
-                _context.SaveChanges();
-
-                Order o = new()
-                {
-                    DateOrder = DateTime.Now,
-                    PaymentId = int.Parse(paymentType),
-                    TotalPrice = (int)total,
-                    StatusId = 1,
-                    OrderFoodId = c.OrderFoodId,
-                };
-
-                _context.Orders.Add(o);
-                _context.SaveChanges();
             }
+
+            o.TotalPrice = (int)total;
+            _context.SaveChanges();
+
             return View();
         }
     }

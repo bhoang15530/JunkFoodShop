@@ -17,9 +17,11 @@ public partial class OrderFood
 
     public int? UserId { get; set; }
 
+    public int? OrderId { get; set; }
+
     public virtual Food? Food { get; set; }
 
-    public virtual ICollection<Order> Orders { get; } = new List<Order>();
+    public virtual Order? Order { get; set; }
 
     public virtual UserAccount? User { get; set; }
 }

@@ -15,9 +15,7 @@ public partial class Order
 
     public int PaymentId { get; set; }
 
-    public int OrderFoodId { get; set; }
-
-    public virtual OrderFood? OrderFood { get; set; }
+    public virtual ICollection<OrderFood> OrderFoods { get; } = new List<OrderFood>();
 
     public virtual OrderPaymentType? Payment { get; set; }
 
