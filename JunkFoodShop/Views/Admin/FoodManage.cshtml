@@ -3,6 +3,28 @@
     int counter = 0;
 }
 
+@if (!string.IsNullOrEmpty(ViewBag.EditSuccess))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.EditSuccess</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (!string.IsNullOrEmpty(ViewBag.DeleteSuccess))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.DeleteSuccesss</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (!string.IsNullOrEmpty(ViewBag.FoodCreate))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.FoodCreate</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 @if (ViewBag.FoodData.Count > 0)
 {
     <table class="table">
@@ -43,4 +65,13 @@
 {
     <h2>No data in database.</h2>
 }
-
+<script>
+    document.querySelectorAll('.btn-danger').forEach(function (button) {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+            if (confirm('Are you sure you want to delete this foods?')) {
+                button.closest('form').submit();
+            }
+        });
+    });
+</script>

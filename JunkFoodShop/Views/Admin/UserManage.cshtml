@@ -3,6 +3,14 @@
     int counter = 0;
 }
 
+@if (!string.IsNullOrEmpty(ViewBag.DeleteUser))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.DeleteUser</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 @if (ViewBag.UserData.Count > 0)
 {
     <table class="table">
@@ -42,3 +50,13 @@
     <h2>No data in database.</h2>
 }
 
+<script>
+    document.querySelectorAll('.btn-danger').forEach(function (button) {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+            if (confirm('Are you sure you want to delete this user?')) {
+                button.closest('form').submit();
+            }
+        });
+    });
+</script>

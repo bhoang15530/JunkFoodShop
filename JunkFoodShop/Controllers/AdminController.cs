@@ -26,15 +26,6 @@ namespace JunkFoodShop.Controllers
         // CODE BY HOANG
         public async Task<IActionResult> FoodManage()
         {
-            // Get food data follow specify column
-            /*var FoodData = await _context.Foods.Select(x => new FoodManage
-            {
-                FoodId = x.FoodId,
-                FoodImage = x.FoodImage,
-                FoodName = x.FoodName,
-                FoodPrice = x.FoodPrice,
-                FoodStock = x.FoodStock,
-            }).ToListAsync();*/
             var FoodData =  await (from food in _context.Foods
                         join category in _context.FoodCategories on food.CategoryId equals category.Categoryid
                         select new FoodManage
@@ -76,11 +67,13 @@ namespace JunkFoodShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateFood([Bind("FoodName,FoodImage,FoodPrice,FoodStock,FoodDescription,CategoryId")] CreateFood createFood)
         {
+
             ViewBag.CategoryList = await _context.FoodCategories.ToListAsync();
-            
-            if (!ModelState.IsValid)
+
+            if (createFood.CategoryId == 0)
             {
-                return View(createFood);
+                ViewBag.CategoryError = "Please select the Category";
+                return View();
             }
 
             // Check FoodName exist
@@ -338,6 +331,22 @@ namespace JunkFoodShop.Controllers
                 return NotFound();
             }
 
+            // Get all relative to user
+            var GetCart = await _context.Carts.Where(x => x.UserId == uid).ToArrayAsync();
+            var GetComment = await _context.Comments.Where(x => x.UserId == uid).ToArrayAsync();
+            var GetRating = await _context.Ratings.Where(x => x.UserId == uid).ToArrayAsync();
+            // Get OrderId in OrderFoods and Orders
+            var GetOrderFoods = await _context.OrderFoods.Where(x => x.UserId == uid).ToArrayAsync();
+
+            var OrderId = await _context.OrderFoods.Where(x => x.UserId == uid).Select(x => x.OrderId).ToArrayAsync();
+            var GetOrder = await _context.Orders.Where(x => OrderId.Contains(x.OrderId)).ToArrayAsync();
+
+            _context.OrderFoods.RemoveRange(GetOrderFoods);
+            _context.Orders.RemoveRange(GetOrder);
+            _context.Carts.RemoveRange(GetCart);
+            _context.Comments.RemoveRange(GetComment);
+            _context.Ratings.RemoveRange(GetRating);
+
             _context.UserAccounts.Remove(UserData);
             await _context.SaveChangesAsync();
 
@@ -348,7 +357,7 @@ namespace JunkFoodShop.Controllers
 
         #region ORDER-MANAGEMENT
         // GET - ORDER
-        // CODE BY HOANG
+        // CODE BY HOANG: 16/3/2023
         // Last update: 3/30/2023
         public async Task<IActionResult> OrderManage()
         {
@@ -363,79 +372,18 @@ namespace JunkFoodShop.Controllers
             ViewBag.StatusList = await _context.OrderStatuses.ToListAsync();
 
             ViewBag.OrderDelete = TempData["OrderDelete"]?.ToString();
+            ViewBag.OrderStatus = TempData["Update"]?.ToString();
 
             // Using ViewBag to display data without Model
             ViewBag.OrderData = orders;
             return View();
         }
 
-        // GET - ORDER-STATUS-SET
-        // CODE BT HOANG
-        // TODO: Need Fix
-/*        public async Task<IActionResult> OrderStatusSet(int oid, int uid)
-        {
-
-            // Get details of order includes OrderId, Address, PhoneReceive, TotalPrice
-            var OrderDetails = await (from order in _context.Orders
-                                      join orderfood in _context.OrderFoods on order.OrderFoodId equals orderfood.OrderFoodId
-                                      select new OrderDetails
-                                      {
-                                          OrderId = order.OrderId,
-                                          Address = orderfood.Address,
-                                          PhoneReceive = orderfood.PhoneReceive,
-                                          TotalPrice = order.TotalPrice
-                                      }).Where(x => x.OrderId == oid).FirstOrDefaultAsync();
-
-            // Get list food of order includes FoodName, Price, Quantity
-            var FoodListOfOrder = await (from orderfood in _context.OrderFoods
-                                         join food in _context.Foods on orderfood.FoodId equals food.FoodId
-                                         select new FoodListOfOrder
-                                         {
-                                             UserId = orderfood.UserId,
-                                             FoodName = food.FoodName,
-                                             FoodPrice = food.FoodPrice,
-                                             Quantity = orderfood.Quantity,
-                                         }).Where(x => x.UserId == uid).ToListAsync();
-
-            // Get StatusId and StatusName
-            var Status = await _context.OrderStatuses.ToListAsync();
-
-            // Using ViewBag to display data without Model
-            ViewBag.OrderDetails = OrderDetails;
-            ViewBag.FoodListOfOrder = FoodListOfOrder;
-            ViewBag.Status = Status;
-            return View();
-        }*/
-
-        // POST - UPDATE-ORDER-STATUS
-        // CODE BY HOANG
-        // UPDATE BY TRUONG
-        // TODO: Need Fix
+        // GET - UPDATE-ORDER-STATUS
+        // CODE BY HOANG: 16/3/2023
+        // UPDATE BY TRUONG: 31/3/2023
         public async Task<IActionResult> UpdateOrderStatus(int oid, int uid)
         {
-            //var order = _context.Orders.Where(x => x.OrderId == oid).FirstOrDefault();
-            /*var OrderData = await(from order in _context.Orders
-                                    join orderfood in _context.OrderFoods on order.OrderFoodId equals orderfood.OrderFoodId
-                                    join user in _context.UserAccounts on orderfood.UserId equals user.UserId
-                                    join orderstatus in _context.OrderStatuses on order.StatusId equals orderstatus.StatusId
-                                    join payment in _context.OrderPaymentTypes on order.PaymentId equals payment.PaymentId
-                                    where user.UserId == uid
-                                    where order.OrderId == oid
-                                    group new { order, payment, orderstatus, user } by order.DateOrder into dateGroup
-                                    select new
-                                    {
-                                        DateOrder = dateGroup.Key,
-                                        Orders = dateGroup.Select(x => new
-                                        {
-                                            x.order.OrderId,
-                                            x.order.TotalPrice,
-                                            x.payment.PaymentId,
-                                            x.orderstatus.StatusId,
-                                            x.orderstatus.StatusName,
-                                            x.user.Username,
-                                            x.user.UserId
-                                        })
-                                    }).FirstOrDefaultAsync();*/
             var OrderData = _context.Orders
                     .Include(o => o.OrderFoods)
                     .ThenInclude(of => of.Food)
@@ -453,6 +401,9 @@ namespace JunkFoodShop.Controllers
             return View();
         }
 
+        // POST 
+        // CODE BY HOANG: 16/3/2023
+        // UPDATE BY TRUONG: 31/3/2023
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetOrderStatus(int oid, string orderstatus)
@@ -467,28 +418,33 @@ namespace JunkFoodShop.Controllers
             _context.Orders.Update(order);
             await _context.SaveChangesAsync();
 
+            TempData["Update"] = "Update Status Successful";
+
             return RedirectToAction(nameof(OrderManage));
 
         }
 
         // POST - ORDER-DELETE
-        // CODE BY HOANG
+        // CODE BY HOANG: 16/3/2023
+        // Last update: 31/3/2023
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> OrderDelete(int oid)
         {
             // Get order by oid
             var OrderData = await _context.Orders.Where(x => x.OrderId == oid).FirstOrDefaultAsync();
+            var OrderFoodData = await _context.OrderFoods.Where(x => x.OrderId == oid).ToArrayAsync();
 
             if (OrderData == null)
             {
                 return NotFound();
             }
 
+            _context.OrderFoods.RemoveRange(OrderFoodData);
             _context.Orders.Remove(OrderData);
             await _context.SaveChangesAsync();
 
-            TempData["OrderDelete"] = "The order with id " + oid + " has been deleted";
+            TempData["OrderDelete"] = "Delete Successful";
             return RedirectToAction(nameof(OrderManage));
         }
         #endregion

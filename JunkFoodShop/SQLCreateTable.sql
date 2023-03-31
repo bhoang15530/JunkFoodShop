@@ -72,7 +72,8 @@ Create Table OrderFood (
 	[Address] nvarchar(255) Not Null,
 	PhoneReceive int Not Null,
 	FoodId int FOREIGN KEY REFERENCES Foods(FoodId),
-	UserId int FOREIGN KEY REFERENCES UserAccount(UserId)
+	UserId int FOREIGN KEY REFERENCES UserAccount(UserId),
+	OrderId int FOREIGN KEY REFERENCES [Order](OrderId)
 );
 
 -- Order Table
@@ -81,8 +82,7 @@ Create Table [Order] (
 	TotalPrice int Not Null,
 	DateOrder DATETIME Not Null,
 	StatusId int FOREIGN KEY REFERENCES OrderStatus(StatusId),
-	PaymentId int FOREIGN KEY REFERENCES OrderPaymentType(PaymentId),
-	OrderFoodId int FOREIGN KEY REFERENCES OrderFood(OrderFoodId)
+	PaymentId int FOREIGN KEY REFERENCES OrderPaymentType(PaymentId)
 );
 
 

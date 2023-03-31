@@ -1,5 +1,8 @@
-﻿using JunkFoodShop.Data;
+﻿using System.Security.Claims;
+using JunkFoodShop.Data;
 using JunkFoodShop.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JunkFoodShop.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "User")]
     public class UserController : Controller
     {
         private readonly JunkFoodShopContext _context;
@@ -20,8 +23,23 @@ namespace JunkFoodShop.Controllers
             _context = context;
         }
 
+        #region Account Setting
         public async Task<IActionResult> AccountSetting()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("SignIn", "Account");
+            }
+
+            // Check if account exist
+            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
+            if (UserEXIST == null)
+            {
+                TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("SignIn", "Account");
+            }
+
             // Get UserData by UserId
             var UserData = await (from user in _context.UserAccounts
                                   select new
@@ -30,17 +48,32 @@ namespace JunkFoodShop.Controllers
                                       user.FullName,
                                       user.PhoneNumber,
                                       user.Email,
-                                  }).Where(x => x.Username == User.Identity.Name).FirstOrDefaultAsync();
+                                  }).Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefaultAsync();
 
             ViewBag.UserData = UserData;
             return View();
         }
+        #endregion
 
-        // Last update by Hoang: 3/30/2023
+        #region View Order List of User
         public async Task<IActionResult> OrderList()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("SignIn", "Account");
+            }
+
+            // Check if account exist
+            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
+            if (UserEXIST == null)
+            {
+                TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("SignIn", "Account");
+            }
+
             // Get userID
-            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).Select(x => x.UserId).FirstOrDefault();
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).Select(x => x.UserId).FirstOrDefault();
 
             // Get OrderList by UserId sort by OrderDate
             var orders = _context.Orders
@@ -54,16 +87,27 @@ namespace JunkFoodShop.Controllers
             ViewBag.OrderData = orders;
             return View();
         }
+        #endregion
 
+        #region View Cart
         public async Task<IActionResult> Cart()
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("SignIn", "Account");
+            }
+
+            // Check if account exist
+            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
+            if (UserEXIST == null)
+            {
+                TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("SignIn", "Account");
             }
 
             // Get CartItemList by username
-            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).Select(x => x.UserId).FirstOrDefault();
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).Select(x => x.UserId).FirstOrDefault();
 
             var CartList = await (from cart in _context.Carts
                                   where cart.UserId == userId
@@ -80,11 +124,23 @@ namespace JunkFoodShop.Controllers
             ViewBag.CartList = CartList;
             return View();
         }
-        public IActionResult AddToCart(int fid, int? quantity)
+        #endregion
+
+        #region Function Add Item To Cart
+        public async Task<IActionResult> AddToCart(int fid, int? quantity)
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return BadRequest();
+                return RedirectToAction("SignIn", "Account");
+            }
+
+            // Check if account exist
+            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
+            if (UserEXIST == null)
+            {
+                TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("SignIn", "Account");
             }
 
             // Get the FoodStock and Check if item is in stock
@@ -96,7 +152,7 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            var user = _context.UserAccounts.Single(x => x.Username == User.Identity.Name);
+            var user = _context.UserAccounts.Single(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name);
             var foodId = _context.Foods.Single(x => x.FoodId == fid).FoodId;
 
             // Check if food is in cart
@@ -123,12 +179,29 @@ namespace JunkFoodShop.Controllers
             }
             return RedirectToAction(nameof(Cart));
         }
+        #endregion
+
+        #region Function Update Cart
         [HttpPost]
-        public IActionResult UpdateCartItem([FromBody] UpdateCartItem updateCartItem)
+        public async Task<IActionResult> UpdateCartItem([FromBody] UpdateCartItem updateCartItem)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("SignIn", "Account");
+            }
+
+            // Check if account exist
+            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
+            if (UserEXIST == null)
+            {
+                TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("SignIn", "Account");
+            }
+
             int foodId = Int32.Parse(updateCartItem.fid);
             int foodQuantity = Int32.Parse(updateCartItem.quantity);
-            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).FirstOrDefault().UserId;
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault().UserId;
             var userCart = _context.Carts.Where(x => x.UserId == userId).Where(x => x.FoodId == foodId).FirstOrDefault();
             if (userCart != null)
             {
@@ -142,11 +215,27 @@ namespace JunkFoodShop.Controllers
             }
             return Ok();
         }
+        #endregion
 
-        public IActionResult RemoveFromCart(int fid)
+        #region Function Remove Item From Cart
+        public async Task<IActionResult> RemoveFromCart(int fid)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("SignIn", "Account");
+            }
+
+            // Check if account exist
+            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
+            if (UserEXIST == null)
+            {
+                TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("SignIn", "Account");
+            }
+
             // Get userID
-            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).Select(x => x.UserId).FirstOrDefault();
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).Select(x => x.UserId).FirstOrDefault();
 
             // Check if item is in cart
             var userCart = _context.Carts.Where(x => x.UserId == userId).Where(x => x.FoodId == fid).FirstOrDefault();
@@ -161,7 +250,9 @@ namespace JunkFoodShop.Controllers
             }
             return RedirectToAction(nameof(Cart));
         }
+        #endregion
 
+        #region Function Check Out
         public async Task<IActionResult> CheckOut()
         {
             if (!User.Identity.IsAuthenticated)
@@ -169,8 +260,17 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
+            // Check if account exist
+            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
+            if (UserEXIST == null)
+            {
+                TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("SignIn", "Account");
+            }
+
             // Get CartItemList by username
-            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).Select(x => x.UserId).FirstOrDefault();
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).Select(x => x.UserId).FirstOrDefault();
 
             var CartList = await (from cart in _context.Carts
                                   where cart.UserId == userId
@@ -187,17 +287,27 @@ namespace JunkFoodShop.Controllers
             ViewBag.CartList = CartList;
             return View();
         }
+        #endregion
 
-        // STATUS: Fix successful
-        // Last update by Hoang: 3/30/2023
-        public IActionResult Pay(string address, int phone, string paymentType)
+        #region Function Pay
+        public async Task<IActionResult> Pay(string address, int phone, string paymentType)
         {
-            float total = 0;
             if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("SignIn", "Account");
             }
-            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).FirstOrDefault().UserId;
+
+            // Check if account exist
+            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
+            if (UserEXIST == null)
+            {
+                TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("SignIn", "Account");
+            }
+
+            float total = 0;
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault().UserId;
             
             var cart = _context.Carts.Where(x => x.UserId == userId).ToList();
             if (cart == null)
@@ -239,10 +349,26 @@ namespace JunkFoodShop.Controllers
 
             return View();
         }
+        #endregion
 
-        public IActionResult OrderDetails(int oid)
+        #region View Order Details
+        public async Task<IActionResult> OrderDetails(int oid)
         {
-            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).FirstOrDefault().UserId;
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("SignIn", "Account");
+            }
+
+            // Check if account exist
+            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
+            if (UserEXIST == null)
+            {
+                TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("SignIn", "Account");
+            }
+
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault().UserId;
             var OrderData = _context.Orders
                     .Include(o => o.OrderFoods)
                     .ThenInclude(of => of.Food)
@@ -258,13 +384,26 @@ namespace JunkFoodShop.Controllers
             ViewBag.OrderData = OrderData;
             return View();
         }
-        public IActionResult UpdateUserData([Bind("FullName,Email,PhoneNumber")] AccountSetting accountSetting, string? NewPassword)
+        #endregion
+
+        #region Function Update User Info
+        public async Task<IActionResult> UpdateUserData([Bind("FullName,Email,PhoneNumber")] AccountSetting accountSetting, string? NewPassword)
         {
-            if (!ModelState.IsValid)
+            if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction(nameof(AccountSetting));
+                return RedirectToAction("SignIn", "Account");
             }
-            var user = _context.UserAccounts.Where(x => x.Username == User.Identity!.Name).FirstOrDefault();
+
+            // Check if account exist
+            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
+            if (UserEXIST == null)
+            {
+                TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("SignIn", "Account");
+            }
+
+            var user = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault();
             
             if (user == null)
             {
@@ -291,5 +430,6 @@ namespace JunkFoodShop.Controllers
             _context.SaveChanges();
             return RedirectToAction(nameof(AccountSetting));
         }
+        #endregion
     }
 }

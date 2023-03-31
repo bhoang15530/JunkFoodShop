@@ -1,4 +1,18 @@
-﻿
+﻿@if (!string.IsNullOrEmpty(ViewBag.Error))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.Error</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.Message</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <div class="row w-100 mx-0" style="margin-top: 100px">
     <div class="col-lg-4 mx-auto">
         <div class="auth-form-light text-left py-5 px-4 px-sm-5">
@@ -21,6 +35,7 @@
                     Don't have an account? <a asp-action="SignUp" asp-controller="Account" class="text-primary">Create now!</a>
                 </div>
             </form>
+            
         </div>
     </div>
 </div>

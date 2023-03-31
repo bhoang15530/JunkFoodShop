@@ -3,6 +3,21 @@
     int count = 0;
 }
 
+@if (!string.IsNullOrEmpty(ViewBag.OrderDelete))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.OrderDelete</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (!string.IsNullOrEmpty(ViewBag.OrderStatus))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.OrderStatus</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 @if (ViewBag.OrderData.Count > 0)
 {
     <table class="table">
@@ -29,7 +44,7 @@
                     <td>@order.Status.StatusName</td>
                     <td class="payment-type">@order.PaymentId</td>
                     <td>
-                        <a asp-controller="Admin" asp-action="UpdateOrderStatus" asp-route-oid="@order.OrderId" asp-route-uid="@order.OrderFoods[0].User.UserId">Edit</a>
+                        <a class="btn btn-primary" asp-controller="Admin" asp-action="UpdateOrderStatus" asp-route-oid="@order.OrderId" asp-route-uid="@order.OrderFoods[0].User.UserId">Edit</a>
                         <form asp-action="OrderDelete" asp-controller="Admin">
                             <input type="hidden" name="oid" value="@order.OrderId" />
                             <button type="submit" class="btn btn-danger">Delete</button>
@@ -66,4 +81,13 @@ else
             var statusId = $("option:selected", this).val();
         })
     })
+
+    document.querySelectorAll('.btn-danger').forEach(function (button) {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+            if (confirm('Are you sure you want to delete this order?')) {
+                button.closest('form').submit();
+            }
+        });
+    });
 </script>

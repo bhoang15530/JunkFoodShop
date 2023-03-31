@@ -78,6 +78,7 @@ namespace JunkFoodShop.Controllers
 
         public IActionResult SignIn()
         {
+            ViewBag.Message = TempData["Message"]?.ToString();
             return View();
         }
 
