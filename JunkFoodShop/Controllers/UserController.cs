@@ -1,13 +1,19 @@
 ﻿using JunkFoodShop.Data;
 using JunkFoodShop.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace JunkFoodShop.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly JunkFoodShopContext _context;
+        private const int KeyLen = 10000;
+        private const string KeyName = "JunkFoodShop";
 
         public UserController(JunkFoodShopContext context)
         {
@@ -18,12 +24,12 @@ namespace JunkFoodShop.Controllers
         {
             // Get UserData by UserId
             var UserData = await (from user in _context.UserAccounts
-                                  select new AccountSetting
+                                  select new
                                   {
-                                      Username = user.Username,
-                                      FullName = user.FullName,
-                                      PhoneNumber = user.PhoneNumber,
-                                      Email = user.Email,
+                                      user.Username,
+                                      user.FullName,
+                                      user.PhoneNumber,
+                                      user.Email,
                                   }).Where(x => x.Username == User.Identity.Name).FirstOrDefaultAsync();
 
             ViewBag.UserData = UserData;
@@ -62,13 +68,14 @@ namespace JunkFoodShop.Controllers
             var CartList = await (from cart in _context.Carts
                                   where cart.UserId == userId
                                   join foods in _context.Foods on cart.FoodId equals foods.FoodId
-                                  select new Models.Cart
+                                  select new
                                   {
-                                      FoodName = foods.FoodName,
-                                      FoodId = foods.FoodId,
-                                      FoodPrice = foods.FoodPrice,
-                                      Quantity = cart.Quantity,
-                                      UserId = cart.UserId
+                                      foods.FoodName,
+                                      foods.FoodId,
+                                      foods.FoodPrice,
+                                      cart.Quantity,
+                                      cart.UserId,
+                                      foods.FoodImage
                                   }).ToListAsync();
             ViewBag.CartList = CartList;
             return View();
@@ -168,13 +175,14 @@ namespace JunkFoodShop.Controllers
             var CartList = await (from cart in _context.Carts
                                   where cart.UserId == userId
                                   join foods in _context.Foods on cart.FoodId equals foods.FoodId
-                                  select new Models.Cart
+                                  select new
                                   {
-                                      FoodName = foods.FoodName,
-                                      FoodId = foods.FoodId,
-                                      FoodPrice = foods.FoodPrice,
-                                      Quantity = cart.Quantity,
-                                      UserId = cart.UserId
+                                      foods.FoodName,
+                                      foods.FoodId,
+                                      foods.FoodPrice,
+                                      cart.Quantity,
+                                      cart.UserId,
+                                      foods.FoodImage
                                   }).ToListAsync();
             ViewBag.CartList = CartList;
             return View();
@@ -230,6 +238,58 @@ namespace JunkFoodShop.Controllers
             _context.SaveChanges();
 
             return View();
+        }
+
+        public IActionResult OrderDetails(int oid)
+        {
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).FirstOrDefault().UserId;
+            var OrderData = _context.Orders
+                    .Include(o => o.OrderFoods)
+                    .ThenInclude(of => of.Food)
+                    .Include(o => o.Status)
+                    .Include(o => o.Payment)
+                    .Where(o => o.OrderFoods.Any(of => of.UserId == userId))
+                    .Where(o => o.OrderId == oid)
+                    .FirstOrDefault();
+            if (OrderData == null)
+            {
+                return NotFound();
+            }
+            ViewBag.OrderData = OrderData;
+            return View();
+        }
+        public IActionResult UpdateUserData([Bind("FullName,Email,PhoneNumber")] AccountSetting accountSetting, string? NewPassword)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(AccountSetting));
+            }
+            var user = _context.UserAccounts.Where(x => x.Username == User.Identity!.Name).FirstOrDefault();
+            
+            if (user == null)
+            {
+                return NotFound();
+            }
+            user.FullName = accountSetting.FullName;
+            user.PhoneNumber = accountSetting.PhoneNumber;
+            user.Email = accountSetting.Email;
+            
+            if (NewPassword != null)
+            {
+                byte[] encode = new byte[KeyLen];
+                encode = System.Text.Encoding.UTF8.GetBytes(KeyName);
+
+                string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                    password: NewPassword!,
+                    salt: encode,
+                    prf: KeyDerivationPrf.HMACSHA256,
+                    iterationCount: 100000,
+                    numBytesRequested: 256 / 8));
+                user.Password = hashed;
+            }
+            _context.UserAccounts.Update(user);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(AccountSetting));
         }
     }
 }

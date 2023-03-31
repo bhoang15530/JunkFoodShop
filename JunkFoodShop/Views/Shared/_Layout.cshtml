@@ -76,6 +76,7 @@
                                                 @if (User.Identity.IsAuthenticated)
                                                 {
                                                     <li style="width: 100%"><a style="color: #333" class="dropdown-item" asp-action="AccountSetting" asp-controller="User"><i class="fas fa-user-circle"></i> @User.Identity.Name</a></li>
+                                                    <li style="width: 100%"><a style="color: #333" class="dropdown-item" asp-action="OrderList" asp-controller="User"><i class="fas fa-list-ul"></i> Your Orders</a></li>
                                                     <li style="width: 100%"><a style="color: #333" class="dropdown-item" asp-action="SignOut" asp-controller="Account"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
                                                 }
                                                 else

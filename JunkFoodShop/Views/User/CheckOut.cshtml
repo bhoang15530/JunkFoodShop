@@ -40,7 +40,7 @@ else
                                 @foreach (var cart in ViewBag.CartList)
                                 {
                                     <tr class="table-body-row">
-                                        <td class="product-image"><img src="~/assets/img/products/product-img-1.jpg" alt="@cart.FoodName"></td>
+                                        <td class="product-image"><img src="@cart.FoodImage" alt="@cart.FoodName"></td>
                                         <td class="product-name">@cart.FoodName</td>
                                         <td class="product-price">@cart.FoodPrice.ToString("n0") ₫</td>
                                         <td class="product-quantity" data-quantity="@cart.FoodId">@cart.Quantity</td>

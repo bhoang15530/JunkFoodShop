@@ -70,7 +70,7 @@
             <div class="col-lg-8 offset-lg-2 text-center">
                 <div class="section-title">
                     <h3><span class="orange-text">Our</span> Products</h3>
-                    <p>Type description here</p>
+                    <p>Happy Shopping!</p>
                 </div>
             </div>
         </div>
@@ -81,7 +81,7 @@
                 <div class="col-lg-4 col-md-6 text-center">
                     <div class="single-product-item">
                         <div class="product-image">
-                            <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="assets/img/products/product-img-1.jpg" alt=""></a>
+                            <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName"></a>
                         </div>
                         <h3>@food.FoodName</h3>
                         <p class="product-price">@food.FoodPrice.ToString("n0")₫</p>
@@ -103,7 +103,6 @@
             <div class="col-lg-8 offset-lg-2 text-center">
                 <div class="section-title">
                     <h3><span class="orange-text">Our</span> Categories</h3>
-                    <p>Type description here</p>
                 </div>
             </div>
         </div>
@@ -114,7 +113,7 @@
                 <div class="col-lg-4 col-md-6 text-center">
                     <div class="single-product-item">
                         <div class="product-image">
-                            <a asp-action="Details" asp-controller="Categories" asp-route-cid="@category.Categoryid"><img src="~/assets/img/products/product-img-1.jpg" alt=""></a>
+                            <a asp-action="Details" asp-controller="Categories" asp-route-cid="@category.Categoryid"><img src="@category.CategoryImage" alt="@category.CategoryName"></a>
                         </div>
                         <h3>@category.CategoryName</h3>
                     </div>

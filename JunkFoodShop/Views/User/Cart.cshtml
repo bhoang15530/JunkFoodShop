@@ -43,7 +43,7 @@ else
                                 {
                                     <tr class="table-body-row">
                                         <td class="product-remove"><a asp-action="RemoveFromCart" asp-controller="User" asp-route-fid="@cart.FoodId"><i class="far fa-window-close"></i></a></td>
-                                        <td class="product-image"><img src="~/assets/img/products/product-img-1.jpg" alt="@cart.FoodName"></td>
+                                        <td class="product-image"><img src="@cart.FoodImage" alt="@cart.FoodName"></td>
                                         <td class="product-name">@cart.FoodName</td>
                                         <td class="product-price">@cart.FoodPrice.ToString("n0") ₫</td>
                                         <td class="product-quantity" data-quantity="@cart.FoodId"><input class="quantity-input-@cart.FoodId" type="number" min="1" data-foodid="@cart.FoodId" data-price="@cart.FoodPrice" value="@cart.Quantity"></td>

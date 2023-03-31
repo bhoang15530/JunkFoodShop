@@ -411,39 +411,47 @@ namespace JunkFoodShop.Controllers
         // CODE BY HOANG
         // UPDATE BY TRUONG
         // TODO: Need Fix
-        /*        public async Task<IActionResult> UpdateOrderStatus(int oid, int uid)
-                {
-                    //var order = _context.Orders.Where(x => x.OrderId == oid).FirstOrDefault();
-                    var OrderData = await(from order in _context.Orders
-                                          join orderfood in _context.OrderFoods on order.OrderFoodId equals orderfood.OrderFoodId
-                                          join user in _context.UserAccounts on orderfood.UserId equals user.UserId
-                                          join orderstatus in _context.OrderStatuses on order.StatusId equals orderstatus.StatusId
-                                          join payment in _context.OrderPaymentTypes on order.PaymentId equals payment.PaymentId
-                                          where user.UserId == uid
-                                          where order.OrderId == oid
-                                          group new { order, payment, orderstatus, user } by order.DateOrder into dateGroup
-                                          select new
-                                          {
-                                              DateOrder = dateGroup.Key,
-                                              Orders = dateGroup.Select(x => new
-                                              {
-                                                  x.order.OrderId,
-                                                  x.order.TotalPrice,
-                                                  x.payment.PaymentId,
-                                                  x.orderstatus.StatusId,
-                                                  x.orderstatus.StatusName,
-                                                  x.user.Username,
-                                                  x.user.UserId
-                                              })
-                                          }).FirstOrDefaultAsync();
-                    if (OrderData == null)
-                    {
-                        return NotFound();
-                    }
-                    ViewBag.StatusList = _context.OrderStatuses.ToList();
-                    ViewBag.OrderData = OrderData;
-                    return View();
-                }*/
+        public async Task<IActionResult> UpdateOrderStatus(int oid, int uid)
+        {
+            //var order = _context.Orders.Where(x => x.OrderId == oid).FirstOrDefault();
+            /*var OrderData = await(from order in _context.Orders
+                                    join orderfood in _context.OrderFoods on order.OrderFoodId equals orderfood.OrderFoodId
+                                    join user in _context.UserAccounts on orderfood.UserId equals user.UserId
+                                    join orderstatus in _context.OrderStatuses on order.StatusId equals orderstatus.StatusId
+                                    join payment in _context.OrderPaymentTypes on order.PaymentId equals payment.PaymentId
+                                    where user.UserId == uid
+                                    where order.OrderId == oid
+                                    group new { order, payment, orderstatus, user } by order.DateOrder into dateGroup
+                                    select new
+                                    {
+                                        DateOrder = dateGroup.Key,
+                                        Orders = dateGroup.Select(x => new
+                                        {
+                                            x.order.OrderId,
+                                            x.order.TotalPrice,
+                                            x.payment.PaymentId,
+                                            x.orderstatus.StatusId,
+                                            x.orderstatus.StatusName,
+                                            x.user.Username,
+                                            x.user.UserId
+                                        })
+                                    }).FirstOrDefaultAsync();*/
+            var OrderData = _context.Orders
+                    .Include(o => o.OrderFoods)
+                    .ThenInclude(of => of.Food)
+                    .Include(o => o.Status)
+                    .Include(o => o.Payment)
+                    .Where(o => o.OrderFoods.Any(of => of.UserId == uid))
+                    .Where(o => o.OrderId == oid)
+                    .FirstOrDefault();
+            if (OrderData == null)
+            {
+                return NotFound();
+            }
+            ViewBag.StatusList = _context.OrderStatuses.ToList();
+            ViewBag.OrderData = OrderData;
+            return View();
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -19,6 +19,14 @@ namespace JunkFoodShop.Controllers
 
         public async Task<IActionResult> Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.Identity.Name == "Admin")
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+            }
+
             // Only take 8 as it'll slow the Homepage as the Food table is too large
             var FoodList = await _context.Foods.Select(f => new Food
             {

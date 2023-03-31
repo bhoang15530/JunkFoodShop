@@ -4,7 +4,7 @@
             <div class="col-lg-8 offset-lg-2 text-center">
                 <div class="breadcrumb-text">
                     <p>Fresh and Organic</p>
-                    <h1>Shop</h1>
+                    <h1>Category</h1>
                 </div>
             </div>
         </div>
@@ -16,7 +16,6 @@
             <div class="col-lg-8 offset-lg-2 text-center">
                 <div class="section-title">
                     <h3><span class="orange-text">Our</span> Categories</h3>
-                    <p>Type description here</p>
                 </div>
             </div>
         </div>
@@ -32,7 +31,7 @@
                     <div class="col-lg-4 col-md-6 text-center">
                         <div class="single-product-item">
                             <div class="product-image">
-                                <a asp-action="Details" asp-controller="Categories" asp-route-cid="@category.Categoryid"><img src="~/assets/img/products/product-img-1.jpg" alt=""></a>
+                                <a asp-action="Details" asp-controller="Categories" asp-route-cid="@category.Categoryid"><img src="@category.CategoryImage" alt="@category.CategoryName"></a>
                             </div>
                             <h3>@category.CategoryName</h3>
                         </div>

@@ -1,47 +1,98 @@
-﻿<div class="container">
+﻿@{
+    int counter = 0;
+}
+
+<div class="container d-flex flex-row" style="gap: 30px">
     <table class="table">
         <thead>
             <tr>
-                <td>Username</td>
-                <td>Order ID</td>
-                <td>Total Price</td>
-                <td>Status</td>
+                <th>#</th>
+                <th>Product Image</th>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Quantity</th>
+                <th>Sub-Total</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>@ViewBag.OrderData.Orders[0].Username</td>
-                <td>@ViewBag.OrderData.Orders[0].OrderId</td>
-                <td class="total-price">@ViewBag.OrderData.Orders[0].TotalPrice</td>
-                <td>
-                    <form asp-action="SetOrderStatus" asp-controller="Admin">
-                        <input type="hidden" value="@ViewBag.OrderData.Orders[0].OrderId" name="oid" />
-                        <select class="form-select" id="orderstatus" name="orderstatus">
-                            @foreach (var option in ViewBag.StatusList)
-                            {
-                                if (option.StatusName != ViewBag.OrderData.Orders[0].StatusName)
-                                {
-                                    <option value="@option.StatusId">@option.StatusName</option>
-                                }
-                                else
-                                {
-                                    <option selected value="@ViewBag.OrderData.Orders[0].StatusId">@ViewBag.OrderData.Orders[0].StatusName</option>
-                                }
-                            }
-                        </select>
-                        <button type="submit" class="btn btn-outline-primary">Update</button>
-                    </form>
-                    
-                </td>
-            </tr>
+            @foreach (var food in ViewBag.OrderData.OrderFoods)
+            {
+                counter++;
+                <tr>
+                    <td>@counter</td>
+                    <td>
+                        <img src="@food.Food.FoodImage" alt="@food.Food.FoodName" />
+                    </td>
+                    <td>
+                        @food.Food.FoodName
+                    </td>
+                    <td class="food-price">
+                        @food.Food.FoodPrice
+                    </td>
+                    <td>
+                        @food.Quantity
+                    </td>
+                    <td>@((food.Food.FoodPrice * food.Quantity).ToString("n0")) ₫</td>
+                </tr>
+            }
         </tbody>
     </table>
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Address</th>
+                    <th>Phone Number</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        @ViewBag.OrderData.OrderFoods[0].Address
+                    </td>
+                    <td>
+                        @ViewBag.OrderData.OrderFoods[0].PhoneReceive
+                    </td>
+                    <td class="total-price">
+                        @ViewBag.OrderData.TotalPrice
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <form asp-action="SetOrderStatus" asp-controller="Admin" class="d-flex flex-row" style="gap: 30px">
+            <input type="hidden" value="@ViewBag.OrderData.OrderId" name="oid" />
+            <select class="form-select" id="orderstatus" name="orderstatus">
+                @foreach (var option in ViewBag.StatusList)
+                {
+                    if (option.StatusName != ViewBag.OrderData.Status.StatusName)
+                    {
+                        <option value="@option.StatusId">@option.StatusName</option>
+                    }
+                    else
+                    {
+                        <option selected value="@ViewBag.OrderData.Status.StatusId">@ViewBag.OrderData.Status.StatusName</option>
+                    }
+                }
+            </select>
+            <button type="submit" class="btn btn-outline-primary">Update</button>
+        </form>
+    </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
 <script>
     $(document).ready(function () {
         // Format thành đơn vị tiền tệ cho dễ nhìn
         $("td[class='total-price']").each(function (index, element) {
+            var total = parseInt($(element).text());
+            $(element).text(total.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND"
+            }))
+        })
+
+        $("td[class='food-price']").each(function (index, element) {
             var total = parseInt($(element).text());
             $(element).text(total.toLocaleString("vi-VN", {
                 style: "currency",

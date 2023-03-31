@@ -1,0 +1,104 @@
+﻿@{
+    int counter = 0;
+}
+
+<!-- breadcrumb-section -->
+<div class="breadcrumb-section breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <p>Fresh and Organic</p>
+                    <h1>Your Order Details</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end breadcrumb section -->
+
+<div class="cart-section mt-150 mb-150">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-12">
+                <div class="cart-table-wrap">
+                    <table class="cart-table">
+                        <thead class="cart-table-head">
+                            <tr class="table-head-row">
+                                <th>#</th>
+                                <th class="product-image">Product Image</th>
+                                <th class="product-name">Name</th>
+                                <th class="product-price">Price</th>
+                                <th class="product-quantity">Quantity</th>
+                                <th class="product-total">Sub-Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var food in ViewBag.OrderData.OrderFoods)
+                            {
+                                counter++;
+                                <tr class="table-body-row">
+                                    <td>@counter</td>
+                                    <td class="product-image"><img src="@food.Food.FoodImage" alt="@food.Food.FoodName"></td>
+                                    <td class="product-name">@food.Food.FoodName</td>
+                                    <td class="product-price">@food.Food.FoodPrice.ToString("n0") ₫</td>
+                                    <td class="product-quantity" data-quantity="@food.Quantity">@food.Quantity</td>
+                                    <td class="product-subtotal-@food.Food.FoodId" data-subtotal="@food.Food.FoodId">@((food.Quantity * food.Food.FoodPrice).ToString("n0")) ₫</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="total-section cart-table-wrap">
+                    <table class="total-table cart-table">
+                        <thead class="total-table-head">
+                            <tr class="table-total-row">
+                                <th>Address</th>
+                                <th>Phone Number</th>
+                                <th>Total Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    @ViewBag.OrderData.OrderFoods[0].Address
+                                </td>
+                                <td>
+                                    @ViewBag.OrderData.OrderFoods[0].PhoneReceive
+                                </td>
+                                <td class="total-price">
+                                    @ViewBag.OrderData.TotalPrice
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        // Format thành đơn vị tiền tệ cho dễ nhìn
+        $("td[class='total-price']").each(function (index, element) {
+            var total = parseInt($(element).text());
+            $(element).text(total.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND"
+            }))
+        })
+
+        $("td[class='food-price']").each(function (index, element) {
+            var total = parseInt($(element).text());
+            $(element).text(total.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND"
+            }))
+        })
+    })
+</script>

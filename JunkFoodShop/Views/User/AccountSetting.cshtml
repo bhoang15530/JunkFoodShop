@@ -13,34 +13,67 @@
 </div>
 <!-- end breadcrumb section -->
 <div class="container-sm">
-    <form asp-action="" asp-controller="User">
+    <form asp-action="UpdateUserData" asp-controller="User" id="user-settings-form">
             <div class="mb-3">
                 <label for="fullname" class="form-label">Full Name</label>
-                <input type="text" class="form-control" value="@ViewBag.UserData.FullName" name="fullname" id="FullName">
+            <input type="text" class="form-control" value="@ViewBag.UserData.FullName" name="FullName" id="FullName">
                 <span class="form-message"></span>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" value="@ViewBag.UserData.Email" name="email" id="Email">
+                <input type="email" class="form-control" value="@ViewBag.UserData.Email" name="Email" id="Email">
                 <span class="form-message"></span>
             </div>
             <div class="mb-3">
                 <label for="phonenumber" class="form-label">Phone Number</label>
-                <input type="number" class="form-control" value="@ViewBag.UserData.PhoneNumber" name="newpassword" id="NewPassword">
+                <input type="number" class="form-control" value="@ViewBag.UserData.PhoneNumber" name="PhoneNumber" id="PhoneNumber">
                 <span class="form-message"></span>
             </div>
             <div class="mb-3">
                 <label for="phonenumber" class="form-label">New Password</label>
-                <input type="password" class="form-control" name="phonenumber" id="PhoneNumber">
+            <input type="password" class="form-control" name="NewPassword" id="NewPassword">
                 <span class="form-message"></span>
             </div>
             <div class="mb-3">
                 <label for="phonenumber" class="form-label">Confirm New Password</label>
-                <input type="password" class="form-control" name="confirmnewpassword" id="ConfirmNewPassword">
+            <input type="password" class="form-control" name="ConfirmNewPassword" id="ConfirmNewPassword">
                 <span class="form-message"></span>
             </div>
             <button type="submit" class="btn btn-primary">Save</button>
     </form>
 </div>
-
-<a asp-action="OrderList" asp-controller="User">View Your Orders!</a>
+<script src="~/js/validator.js"></script>
+<script>
+    Validator({
+        form: "#user-settings-form",
+        errorSelector: ".form-message",
+        rules: [
+            Validator.isRequired(
+                "#FullName",
+                "Full Name is required"
+            ),
+            Validator.isRequired(
+                "#Email",
+                "Email is required"
+            ),
+            Validator.isEmail("#Email"),
+            Validator.isRequired(
+                "#PhoneNumber",
+                "Phone Number is required"
+            ),
+            Validator.isPasswordConfirmed(
+                "#ConfirmNewPassword",
+                function () {
+                    return document.querySelector("#user-settings-form #NewPassword")
+                        .value;
+                },
+                "The passwords are not the same!"
+            ),
+        ],
+    });
+</script>
+<style>
+    .form-message {
+        color: red;
+    }
+</style>

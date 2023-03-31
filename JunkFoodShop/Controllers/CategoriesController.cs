@@ -37,14 +37,14 @@ namespace JunkFoodShop.Controllers
 
             var FoodListByCategory = await (from food in _context.Foods
                                             join foodCategory in _context.FoodCategories on food.CategoryId equals foodCategory.Categoryid
-                                            select new FoodManage
+                                            select new
                                             {
-                                                FoodId = food.FoodId,
-                                                FoodImage = food.FoodImage,
-                                                FoodName = food.FoodName,
-                                                FoodPrice = food.FoodPrice,
-                                                Categoryid = foodCategory.Categoryid,
-                                                CategoryName = foodCategory.CategoryName
+                                                food.FoodId,
+                                                food.FoodImage,
+                                                food.FoodName,
+                                                food.FoodPrice,
+                                                foodCategory.Categoryid,
+                                                foodCategory.CategoryName
                                             }).Where(x => x.Categoryid == cid).ToListAsync();
             ViewBag.FoodListByCategory = FoodListByCategory;
             return View();

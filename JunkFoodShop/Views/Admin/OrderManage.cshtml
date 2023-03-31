@@ -18,20 +18,20 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in ViewBag.OrderData)
+            @foreach (var order in ViewBag.OrderData)
             {
                 count++;
                 <tr>
                     <td>@count</td>
-                    <td>@item.OrderFoods[0].User.Username</td>
-                    <td>@item.DateOrder</td>
-                    <td class="total-price">@item.TotalPrice</td>
-                    <td>@item.Status.StatusName</td>
-                    <td class="payment-type">@item.PaymentId</td>
+                    <td>@order.OrderFoods[0].User.Username</td>
+                    <td>@order.DateOrder</td>
+                    <td class="total-price">@order.TotalPrice</td>
+                    <td>@order.Status.StatusName</td>
+                    <td class="payment-type">@order.PaymentId</td>
                     <td>
-                        <a asp-controller="Admin" asp-action="UpdateOrderStatus" asp-route-oid="@item.OrderId" asp-route-uid="@item.OrderFoods[0].User.UserId">Edit</a>
+                        <a asp-controller="Admin" asp-action="UpdateOrderStatus" asp-route-oid="@order.OrderId" asp-route-uid="@order.OrderFoods[0].User.UserId">Edit</a>
                         <form asp-action="OrderDelete" asp-controller="Admin">
-                            <input type="hidden" name="oid" value="@item.OrderId" />
+                            <input type="hidden" name="oid" value="@order.OrderId" />
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
                     </td>

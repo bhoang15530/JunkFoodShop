@@ -33,6 +33,7 @@ else
                     <th>Total Price</th>
                     <th>Status</th>
                     <th>Payment</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,6 +46,7 @@ else
                         <td class="total-price">@item.TotalPrice</td>
                         <td class="status-type">@item.StatusId</td>
                         <td class="payment-type">@item.PaymentId</td>
+                        <td><a asp-action="OrderDetails" asp-controller="User" asp-route-oid="@item.OrderId">More Details</a></td>
                     </tr>
                 }
             </tbody>
@@ -60,31 +62,33 @@ else
             $(element).text(total.toLocaleString("vi-VN", {
                 style: "currency",
                 currency: "VND"
-            }))
-        })
-    })
+            }));
+        });
+    });
 
     // Đổi từ chuỗi 1 và 2 thành từ dễ đọc
     $("td[class='payment-type']").each(function (index, element) {
         var paymentType = $(element).text();
-        $(element).text(paymentType == "1" ? "By Cash" : "By Bank")
-    })
+        $(element).text(paymentType == "1" ? "By Cash" : "By Bank");
+    });
 
     $("td[class='status-type']").each(function (index, element) {
         var statusType = $(element).text();
         switch (statusType) {
-            case “1”:
-                $(element).text(“Checking”)
-            case “1”:
-                $(element).text(“Checking”)
-            case “2”:
-                $(element).text(“Delivering”)
-            case “3”:
-                $(element).text(“Delivery Completed”)
-            case “4”:
-                $(element).text(“Order Cancelled”)
+            case "1":
+                $(element).text("Checking");
+                break;
+            case "2":
+                $(element).text("Delivering");
+                break;
+            case "3":
+                $(element).text("Delivery Completed");
+                break;
+            case "4":
+                $(element).text("Order Cancelled");
+                break;
             default:
-                $(element).text(“Unknown”)
-        })
-    }
+                $(element).text("Unknown");
+        }
+    });
 </script>
