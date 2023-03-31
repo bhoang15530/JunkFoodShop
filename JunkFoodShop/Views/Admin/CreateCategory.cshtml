@@ -46,6 +46,11 @@
                 "#CategoryName",
                 "Category name is required"
             ),
+            Validator.minLength(
+                "#CategoryName",
+                3,
+                "The Category name must greater than 3 characters"
+            ),
             Validator.isRequired(
                 "#CategoryImage",
                 "Category image is required"

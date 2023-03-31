@@ -1,6 +1,7 @@
 ﻿using JunkFoodShop.Data;
 using JunkFoodShop.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,18 +27,18 @@ namespace JunkFoodShop.Controllers
         // CODE BY HOANG
         public async Task<IActionResult> FoodManage()
         {
-            var FoodData =  await (from food in _context.Foods
-                        join category in _context.FoodCategories on food.CategoryId equals category.Categoryid
-                        select new FoodManage
-                        {
-                            FoodId = food.FoodId,
-                            FoodImage = food.FoodImage,
-                            FoodName = food.FoodName,
-                            FoodPrice = food.FoodPrice,
-                            FoodStock = food.FoodStock,
-                            CategoryName = category.CategoryName,
-                            Categoryid = food.CategoryId,
-                        }).ToListAsync();
+            var FoodData = await (from food in _context.Foods
+                                  join category in _context.FoodCategories on food.CategoryId equals category.Categoryid
+                                  select new FoodManage
+                                  {
+                                      FoodId = food.FoodId,
+                                      FoodImage = food.FoodImage,
+                                      FoodName = food.FoodName,
+                                      FoodPrice = food.FoodPrice,
+                                      FoodStock = food.FoodStock,
+                                      CategoryName = category.CategoryName,
+                                      Categoryid = food.CategoryId,
+                                  }).ToListAsync();
 
             ViewBag.EditSuccess = TempData["EditSuccess"]?.ToString();
             ViewBag.DeleteSuccess = TempData["DeleteSuccess"]?.ToString();
@@ -78,7 +79,7 @@ namespace JunkFoodShop.Controllers
 
             // Check FoodName exist
             bool CheckFoodName = await _context.Foods.AnyAsync(x => x.FoodName == createFood.FoodName);
-            
+
             if (CheckFoodName)
             {
                 ViewBag.Error = "This food name already exist";
@@ -413,15 +414,55 @@ namespace JunkFoodShop.Controllers
             {
                 return NotFound();
             }
-            order.StatusId = Int32.Parse(orderstatus);
 
+            // 3 = Delivery Complete
+            if (orderstatus == "3")
+            {
+                var orderfoods = _context.OrderFoods.Where(x => x.OrderId == oid).ToList();
+                bool isOutOfStock = false;
+                List<string> outOfStockItems = new();
+
+                // Loop though each item to check if is out of stock or not
+                foreach (var item in orderfoods)
+                {
+                    var food = _context.Foods.Where(x => x.FoodId == item.FoodId).FirstOrDefault()!;
+                    int foodStock = food.FoodStock;
+                    int orderQuantity = item.Quantity;
+
+                    if (foodStock < orderQuantity)
+                    {
+                        isOutOfStock = true;
+                        outOfStockItems.Add(item.Food!.FoodName);
+                    }
+                }
+
+                if (isOutOfStock)
+                {
+                    TempData["Update"] = $"The following items are currently out of stock: {string.Join(", ", outOfStockItems.ToArray())}";
+                    return RedirectToAction(nameof(OrderManage));
+                }
+
+                foreach (var item in orderfoods)
+                {
+                    // 1. Take each FoodQuantity in order
+                    // 2. Take each Quantity in Database
+                    // 3. Subtract and Update if Quantity is greater or equal to FoodQuantity
+                    var food = _context.Foods.Where(x => x.FoodId == item.FoodId).FirstOrDefault()!;
+                    int foodStock = food.FoodStock;
+                    int orderQuantity = item.Quantity;
+
+                    food.FoodStock = foodStock - orderQuantity;
+                    order.StatusId = int.Parse(orderstatus);
+                    _context.Foods.Update(food);
+                    _context.SaveChanges();
+                }
+            }
+            order.StatusId = int.Parse(orderstatus);
             _context.Orders.Update(order);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
-            TempData["Update"] = "Update Status Successful";
-
+            TempData["Update"] = "Update Status Successfully!!!";
             return RedirectToAction(nameof(OrderManage));
-
         }
 
         // POST - ORDER-DELETE

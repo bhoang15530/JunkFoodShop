@@ -129,6 +129,18 @@ Validator.isEmail = function (selector, message) {
     };
 };
 
+Validator.isImageLink = function (selector, message) {
+    return {
+        selector,
+        test: function (value) {
+            var regex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/;
+            return regex.test(value)
+                ? undefined
+                : message ?? "This field must be an image link";
+        },
+    };
+};
+
 Validator.minLength = function (selector, min, message) {
     return {
         selector,
@@ -136,6 +148,17 @@ Validator.minLength = function (selector, min, message) {
             return value.length >= min
                 ? undefined
                 : message ?? `Vui lòng nhập tối thiểu ${min} ký tự`;
+        },
+    };
+};
+
+Validator.exactLength = function (selector, exactLength, message) {
+    return {
+        selector,
+        test: function (value) {
+            return value.length === exactLength
+                ? undefined
+                : message ?? `Vui lòng nhập đúng ${exactLength} ký tự`;
         },
     };
 };

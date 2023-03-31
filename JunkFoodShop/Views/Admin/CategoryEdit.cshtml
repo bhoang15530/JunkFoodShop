@@ -3,7 +3,7 @@
         <div class="auth-form-light text-left py-5 px-4 px-sm-5">
             <h4>Category Management</h4>
             <h6 class="font-weight-light">Edit this Category.</h6>
-            <form class="pt-3" asp-action="CategoryEdit" asp-controller="Admin">
+            <form id="category-form" class="pt-3" asp-action="CategoryEdit" asp-controller="Admin">
                 <input type="hidden" name="CategoryId" value="@ViewBag.CategoryData.Categoryid" />
                 <div class="form-group">
                     <input type="text" value="@ViewBag.CategoryData.CategoryName" class="form-control form-control-lg" name="CategoryName" id="CategoryName" placeholder="Category Name">
@@ -30,6 +30,11 @@
             Validator.isRequired(
                 "#CategoryName",
                 "Category name is required"
+            ),
+            Validator.minLength(
+                "#CategoryName",
+                3,
+                "The Category name must greater than 3 characters"
             ),
             Validator.isRequired(
                 "#CategoryImage",

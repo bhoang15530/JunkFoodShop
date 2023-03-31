@@ -308,7 +308,7 @@ namespace JunkFoodShop.Controllers
 
             float total = 0;
             var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault().UserId;
-            
+
             var cart = _context.Carts.Where(x => x.UserId == userId).ToList();
             if (cart == null)
             {
@@ -387,7 +387,7 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region Function Update User Info
-        public async Task<IActionResult> UpdateUserData([Bind("FullName,Email,PhoneNumber")] AccountSetting accountSetting, string? NewPassword)
+        public async Task<IActionResult> UpdateUserData([Bind("FullName,Email,PhoneNumber")] AccountSetting accountSetting, string? OldPassword, string? NewPassword)
         {
             if (!User.Identity.IsAuthenticated)
             {
@@ -404,7 +404,7 @@ namespace JunkFoodShop.Controllers
             }
 
             var user = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault();
-            
+
             if (user == null)
             {
                 return NotFound();
@@ -412,20 +412,46 @@ namespace JunkFoodShop.Controllers
             user.FullName = accountSetting.FullName;
             user.PhoneNumber = accountSetting.PhoneNumber;
             user.Email = accountSetting.Email;
-            
-            if (NewPassword != null)
+
+            if (OldPassword != null)
             {
                 byte[] encode = new byte[KeyLen];
                 encode = System.Text.Encoding.UTF8.GetBytes(KeyName);
 
-                string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                    password: NewPassword!,
+                string hashedOldPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                    password: OldPassword!,
                     salt: encode,
                     prf: KeyDerivationPrf.HMACSHA256,
                     iterationCount: 100000,
                     numBytesRequested: 256 / 8));
-                user.Password = hashed;
+
+                // Check if hashed old password is the same with hashed password in user database
+                if (!String.Equals(user.Password, hashedOldPassword))
+                {
+                    TempData["WrongPassword"] = "Your password is incorrect!, Please try again!";
+                    return RedirectToAction(nameof(AccountSetting));
+                }
+
+                if (NewPassword != null)
+                {
+                    string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                        password: NewPassword!,
+                        salt: encode,
+                        prf: KeyDerivationPrf.HMACSHA256,
+                        iterationCount: 100000,
+                        numBytesRequested: 256 / 8));
+                    user.Password = hashed;
+                }
+                else
+                {
+                    TempData["TypeNewPassword"] = "Please input your new password!";
+                }
             }
+            else
+            {
+                TempData["TypeOldPassword"] = "Please input your old password!";
+            }
+
             _context.UserAccounts.Update(user);
             _context.SaveChanges();
             return RedirectToAction(nameof(AccountSetting));

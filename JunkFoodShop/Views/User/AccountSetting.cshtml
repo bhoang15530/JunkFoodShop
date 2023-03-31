@@ -14,32 +14,37 @@
 <!-- end breadcrumb section -->
 <div class="container-sm">
     <form asp-action="UpdateUserData" asp-controller="User" id="user-settings-form">
-            <div class="mb-3">
-                <label for="fullname" class="form-label">Full Name</label>
+        <div class="mb-3">
+            <label for="FullName" class="form-label">Full Name</label>
             <input type="text" class="form-control" value="@ViewBag.UserData.FullName" name="FullName" id="FullName">
-                <span class="form-message"></span>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" value="@ViewBag.UserData.Email" name="Email" id="Email">
-                <span class="form-message"></span>
-            </div>
-            <div class="mb-3">
-                <label for="phonenumber" class="form-label">Phone Number</label>
-                <input type="number" class="form-control" value="@ViewBag.UserData.PhoneNumber" name="PhoneNumber" id="PhoneNumber">
-                <span class="form-message"></span>
-            </div>
-            <div class="mb-3">
-                <label for="phonenumber" class="form-label">New Password</label>
+            <span class="form-message"></span>
+        </div>
+        <div class="mb-3">
+            <label for="Email" class="form-label">Email</label>
+            <input type="email" class="form-control" value="@ViewBag.UserData.Email" name="Email" id="Email">
+            <span class="form-message"></span>
+        </div>
+        <div class="mb-3">
+            <label for="PhoneNumber" class="form-label">Phone Number</label>
+            <input type="number" class="form-control" value="@ViewBag.UserData.PhoneNumber" name="PhoneNumber" id="PhoneNumber">
+            <span class="form-message"></span>
+        </div>
+        <div class="mb-3">
+            <label for="OldPassword" class="form-label">Old Password</label>
+            <input type="password" class="form-control" name="OldPassword" id="OldPassword">
+            <span class="form-message"></span>
+        </div>
+        <div class="mb-3">
+            <label for="NewPassword" class="form-label">New Password</label>
             <input type="password" class="form-control" name="NewPassword" id="NewPassword">
-                <span class="form-message"></span>
-            </div>
-            <div class="mb-3">
-                <label for="phonenumber" class="form-label">Confirm New Password</label>
+            <span class="form-message"></span>
+        </div>
+        <div class="mb-3">
+            <label for="ConfirmNewPassword" class="form-label">Confirm New Password</label>
             <input type="password" class="form-control" name="ConfirmNewPassword" id="ConfirmNewPassword">
-                <span class="form-message"></span>
-            </div>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <span class="form-message"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
     </form>
 </div>
 <script src="~/js/validator.js"></script>

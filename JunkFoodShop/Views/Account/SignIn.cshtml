@@ -1,11 +1,4 @@
-﻿@if (!string.IsNullOrEmpty(ViewBag.Error))
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>@ViewBag.Error</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
-@if (!string.IsNullOrEmpty(ViewBag.Message))
+﻿@if (!string.IsNullOrEmpty(ViewBag.Message))
 {
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <strong>@ViewBag.Message</strong>
@@ -21,12 +14,19 @@
             </div>
             <h4>Hello! let's get started</h4>
             <h6 class="font-weight-light">Sign in to continue.</h6>
-            <form class="pt-3" asp-action="SignIn" asp-controller="Account">
+            <form id="sign-in-form" class="pt-3" asp-action="SignIn" asp-controller="Account">
                 <div class="form-group">
                     <input type="text" class="form-control form-control-lg" name="UsernameEmail" id="UsernameEmail" placeholder="Username/Email">
+                    <span class="form-message"></span>
+                    @if (!string.IsNullOrEmpty(ViewBag.Error))
+                    {
+                        <strong class="form-message">@ViewBag.Error</strong>
+                    }
                 </div>
+                
                 <div class="form-group">
                     <input type="password" class="form-control form-control-lg" name="Password" id="Password" placeholder="Password">
+                    <span class="form-message"></span>
                 </div>
                 <div class="mt-3">
                     <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">SIGN IN</button>
@@ -35,7 +35,29 @@
                     Don't have an account? <a asp-action="SignUp" asp-controller="Account" class="text-primary">Create now!</a>
                 </div>
             </form>
-            
+
         </div>
     </div>
 </div>
+<script src="~/js/validator.js"></script>
+<script>
+    Validator({
+        form: "#sign-in-form",
+        errorSelector: ".form-message",
+        rules: [
+            Validator.isRequired(
+                "#UsernameEmail",
+                "Username or Email is required"
+            ),
+            Validator.isRequired(
+                "#Password",
+                "Password is required"
+            )
+        ],
+    });
+</script>
+<style>
+    .form-message {
+        color: red;
+    }
+</style>

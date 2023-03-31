@@ -60,23 +60,26 @@
                 </tr>
             </tbody>
         </table>
-        <form asp-action="SetOrderStatus" asp-controller="Admin" class="d-flex flex-row" style="gap: 30px">
-            <input type="hidden" value="@ViewBag.OrderData.OrderId" name="oid" />
-            <select class="form-select" id="orderstatus" name="orderstatus">
-                @foreach (var option in ViewBag.StatusList)
-                {
-                    if (option.StatusName != ViewBag.OrderData.Status.StatusName)
+        @if (ViewBag.OrderData.Status.StatusName != "Delivery Complete")
+        {
+            <form asp-action="SetOrderStatus" asp-controller="Admin" class="d-flex flex-row" style="gap: 30px">
+                <input type="hidden" value="@ViewBag.OrderData.OrderId" name="oid" />
+                <select class="form-select" id="orderstatus" name="orderstatus">
+                    @foreach (var option in ViewBag.StatusList)
                     {
-                        <option value="@option.StatusId">@option.StatusName</option>
+                        if (option.StatusName != ViewBag.OrderData.Status.StatusName)
+                        {
+                            <option value="@option.StatusId">@option.StatusName</option>
+                        }
+                        else
+                        {
+                            <option selected value="@ViewBag.OrderData.Status.StatusId">@ViewBag.OrderData.Status.StatusName</option>
+                        }
                     }
-                    else
-                    {
-                        <option selected value="@ViewBag.OrderData.Status.StatusId">@ViewBag.OrderData.Status.StatusName</option>
-                    }
-                }
-            </select>
-            <button type="submit" class="btn btn-outline-primary">Update</button>
-        </form>
+                </select>
+                <button type="submit" class="btn btn-outline-primary">Update</button>
+            </form>
+        }
     </div>
 </div>
 

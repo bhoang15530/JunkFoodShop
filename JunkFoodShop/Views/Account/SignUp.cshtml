@@ -51,6 +51,11 @@
                 "#Username",
                 "Username is required"
             ),
+            Validator.minLength(
+                "#Username",
+                3,
+                "Username is greater than 3 characters"
+            ),
             Validator.isRequired(
                 "#FullName",
                 "Full Name is required"
