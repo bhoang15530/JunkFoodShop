@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JunkFoodShop.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles ="User")]
     public class UserController : Controller
     {
         private readonly JunkFoodShopContext _context;
@@ -29,7 +29,7 @@ namespace JunkFoodShop.Controllers
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("SignIn", "Account");
-            }
+            } 
 
             // Check if account exist
             var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
@@ -49,8 +49,12 @@ namespace JunkFoodShop.Controllers
                                       user.PhoneNumber,
                                       user.Email,
                                   }).Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefaultAsync();
-
             ViewBag.UserData = UserData;
+
+            ViewBag.WrongPasswrod = TempData["WrongPassword"]?.ToString();
+            ViewBag.InputNewPassword = TempData["TypeNewPassword"]?.ToString();
+            ViewBag.InputOldPassword = TempData["TypeOldPassword"]?.ToString();
+
             return View();
         }
         #endregion
@@ -445,11 +449,13 @@ namespace JunkFoodShop.Controllers
                 else
                 {
                     TempData["TypeNewPassword"] = "Please input your new password!";
+                    return RedirectToAction(nameof(AccountSetting));
                 }
             }
             else
             {
                 TempData["TypeOldPassword"] = "Please input your old password!";
+                return RedirectToAction(nameof(AccountSetting));
             }
 
             _context.UserAccounts.Update(user);

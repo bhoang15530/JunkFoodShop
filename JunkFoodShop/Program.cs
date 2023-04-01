@@ -20,25 +20,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         option.LoginPath = "/Account/SignIn";
         option.AccessDeniedPath = "/Account/Denied";
-        option.Events = new CookieAuthenticationEvents()
-        {
-            OnSigningIn = async context =>
-            {
-                var principal = context.Principal;
-                if (principal.HasClaim(c => c.Type == ClaimTypes.NameIdentifier))
-                {
-                    if (principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value == "Admin")
-                    {
-                        var claimsIdentityAdmin = principal.Identity as ClaimsIdentity;
-                        claimsIdentityAdmin.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
-                    }
-                    var claimsIdentity = principal.Identity as ClaimsIdentity;
-                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, "User"));
-                }
-
-                await Task.CompletedTask;
-            }
-        };
     }
 );
 
@@ -65,6 +46,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

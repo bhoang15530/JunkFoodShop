@@ -151,6 +151,13 @@ namespace JunkFoodShop.Controllers
 
         public IActionResult Denied()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+            }
             return View();
         }
 

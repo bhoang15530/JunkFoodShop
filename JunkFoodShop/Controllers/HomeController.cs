@@ -17,6 +17,7 @@ namespace JunkFoodShop.Controllers
             _context = context;
         }
 
+        #region HOME
         public async Task<IActionResult> Index()
         {
             if (User.Identity.IsAuthenticated)
@@ -48,8 +49,9 @@ namespace JunkFoodShop.Controllers
             ViewBag.CategoryList = CategoryList;
             return View();
         }
+        #endregion
 
-        // Get All Food
+        #region List all foods
         public async Task<IActionResult> AllFoods()
         {
             // Get all Food
@@ -69,7 +71,9 @@ namespace JunkFoodShop.Controllers
             ViewBag.FoodList = FoodList;
             return View();
         }
+        #endregion
 
+        #region List all categories
         public async Task<IActionResult> AllFoodCategories()
         {
             // Get all Categories
@@ -88,7 +92,9 @@ namespace JunkFoodShop.Controllers
             ViewBag.CategoryList = CategoryList;
             return View();
         }
+        #endregion
 
+        #region Privacy/ Contact/ AboutUs
         public IActionResult Privacy()
         {
             return View();
@@ -101,6 +107,7 @@ namespace JunkFoodShop.Controllers
         {
             return View();
         }
+        #endregion
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

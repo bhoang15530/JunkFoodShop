@@ -12,6 +12,27 @@
     </div>
 </div>
 <!-- end breadcrumb section -->
+@if (!string.IsNullOrEmpty(ViewBag.WrongPasswrod))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.WrongPasswrod</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (!string.IsNullOrEmpty(ViewBag.InputNewPassword))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.InputNewPassword</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (!string.IsNullOrEmpty(ViewBag.InputOldPassword))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.InputOldPassword</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 <div class="container-sm">
     <form asp-action="UpdateUserData" asp-controller="User" id="user-settings-form">
         <div class="mb-3">
