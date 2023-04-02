@@ -106,17 +106,6 @@ Validator.isRequired = function (selector, message) {
     };
 };
 
-Validator.isSelectorRequired = function (selector, message) {
-    return {
-        selector,
-        test: function (value) {
-            return value.trim()
-                ? undefined
-                : message ?? "Please select the option above"
-        }
-    }
-}
-
 Validator.isEmail = function (selector, message) {
     return {
         selector,
@@ -124,19 +113,7 @@ Validator.isEmail = function (selector, message) {
             var regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
             return regex.test(value)
                 ? undefined
-                : message ?? "This field must be in email";
-        },
-    };
-};
-
-Validator.isImageLink = function (selector, message) {
-    return {
-        selector,
-        test: function (value) {
-            var regex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/;
-            return regex.test(value)
-                ? undefined
-                : message ?? "This field must be an image link";
+                : message ?? "Trường này phải là email";
         },
     };
 };
@@ -152,17 +129,6 @@ Validator.minLength = function (selector, min, message) {
     };
 };
 
-Validator.exactLength = function (selector, exactLength, message) {
-    return {
-        selector,
-        test: function (value) {
-            return value.length === exactLength
-                ? undefined
-                : message ?? `Vui lòng nhập đúng ${exactLength} ký tự`;
-        },
-    };
-};
-
 Validator.isPasswordConfirmed = function (selector, getConfirmValue, message) {
     return {
         selector,
@@ -170,6 +136,29 @@ Validator.isPasswordConfirmed = function (selector, getConfirmValue, message) {
             return value === getConfirmValue()
                 ? undefined
                 : message ?? "Giá trị nhập vào không chính xác";
+        },
+    };
+};
+
+Validator.isPhoneNumber = function (selector, number, message) {
+    return {
+        selector,
+        test: function (value) {
+            return value.length === number
+                ? undefined
+                : message ?? `Vui lòng nhập đúng ${number} số`;
+        },
+    };
+};
+
+Validator.isImageLink = function (selector, message) {
+    return {
+        selector,
+        test: function (value) {
+            var regex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/;
+            return regex.test(value)
+                ? undefined
+                : message ?? "Trường này phải là liên kết hình ảnh";
         },
     };
 };

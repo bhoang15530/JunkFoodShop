@@ -105,45 +105,51 @@ else
     </div>
 }
 <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-<script src="~/js/validator.js"></script>
+<script defer src="~/js/validator.js"></script>
 <script>
-    function updateTotal() {
-        var total = 0;
-        $("td[class^='product-subtotal-']").each(function (index, element) {
-            total += parseInt($(element).text().replaceAll(".", "").replace("₫", "").trim());
-            //console.log($(this).text())
-        })
-        $(".total").text(total.toLocaleString("vi-VN", {
-            style: "currency",
-            currency: "VND"
-        }));
-    }
-    updateTotal();
+    $(document).ready(function () {
+        function updateTotal() {
+            var total = 0;
+            $("td[class^='product-subtotal-']").each(function (index, element) {
+                total += parseInt($(element).text().replaceAll(".", "").replace("₫", "").trim());
+                //console.log($(this).text())
+            })
+            $(".total").text(total.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND"
+            }));
+        }
+        updateTotal();
 
-    Validator({
-        form: "#payment-info-form",
-        errorSelector: ".form-message",
-        rules: [
-            Validator.isRequired(
-                "#Address",
-                "Address is required"
-            ),
-            Validator.isRequired(
-                "#PhoneNumber",
-                "Phone Number is required"
-            ),
-            Validator.isRequired(
-                "#select-form",
-                "Payment method is required"
-            ),
-        ],
+        Validator({
+            form: "#payment-info-form",
+            errorSelector: ".form-message",
+            rules: [
+                Validator.isRequired(
+                    "#Address",
+                    "Address is required"
+                ),
+                Validator.isRequired(
+                    "#PhoneNumber",
+                    "Phone Number is required"
+                ),
+                Validator.isPhoneNumber(
+                    "#PhoneNumber",
+                    10,
+                    "The phone number must be exact 10 characters. Example: 09123456789"
+                )
+                Validator.isRequired(
+                    "#select-form",
+                    "Payment method is required"
+                ),
+            ],
+        });
+        $("#select-form").change(function () {
+            if ($(this).val() == "") {
+                $(".select-form-message").text("Please select payment method");
+            } else $(".select-form-message").text("");
+        });
     });
-    $("#select-form").change(function () {
-        if ($(this).val() == "") {
-            $(".select-form-message").text("Please select payment method");
-        } else $(".select-form-message").text("");
-    });
-    
 </script>
 
 <style>

@@ -36,27 +36,35 @@
         </div>
     </div>
 </div>
-<script src="~/js/validator.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script defer src="~/js/validator.js"></script>
 <script>
-    Validator({
-        form: "#category-form",
-        errorSelector: ".form-message",
-        rules: [
-            Validator.isRequired(
-                "#CategoryName",
-                "Category name is required"
-            ),
-            Validator.minLength(
-                "#CategoryName",
-                3,
-                "The Category name must greater than 3 characters"
-            ),
-            Validator.isRequired(
-                "#CategoryImage",
-                "Category image is required"
-            ),
-        ],
-    });
+    $(document).ready(function () {
+        Validator({
+            form: "#category-form",
+            errorSelector: ".form-message",
+            rules: [
+                Validator.isRequired(
+                    "#CategoryName",
+                    "Category name is required"
+                ),
+                Validator.minLength(
+                    "#CategoryName",
+                    3,
+                    "The Category name must greater than 3 characters"
+                ),
+                Validator.isRequired(
+                    "#CategoryImage",
+                    "Category image is required"
+                ),
+                Validator.isImageLink(
+                    "#CategoryImage",
+                    "This category image field must be an image link (ending with .jpg, .jpeg, or .png)"
+                )
+            ],
+        });
+    })
 </script>
 <style>
     .form-message {
