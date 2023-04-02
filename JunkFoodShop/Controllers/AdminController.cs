@@ -322,6 +322,7 @@ namespace JunkFoodShop.Controllers
         // POST - DELETE USER
         // CODE BY HOANG
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserDelete(int uid)
         {
             // Get user by uid

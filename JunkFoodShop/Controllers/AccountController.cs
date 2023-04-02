@@ -83,6 +83,7 @@ namespace JunkFoodShop.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SignIn([Bind("UsernameEmail,Password")] SignIn signIn)
         {
             // Check Username and Email

@@ -131,6 +131,7 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region Function Add Item To Cart
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToCart(int fid, int? quantity)
         {
             if (!User.Identity.IsAuthenticated)
@@ -187,6 +188,7 @@ namespace JunkFoodShop.Controllers
 
         #region Function Update Cart
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateCartItem([FromBody] UpdateCartItem updateCartItem)
         {
             if (!User.Identity.IsAuthenticated)
@@ -222,6 +224,7 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region Function Remove Item From Cart
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveFromCart(int fid)
         {
             if (!User.Identity.IsAuthenticated)
@@ -294,6 +297,7 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region Function Pay
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Pay(string address, int phone, string paymentType)
         {
             if (!User.Identity.IsAuthenticated)
@@ -391,6 +395,7 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region Function Update User Info
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateUserData([Bind("FullName,Email,PhoneNumber")] AccountSetting accountSetting, string? OldPassword, string? NewPassword)
         {
             if (!User.Identity.IsAuthenticated)
