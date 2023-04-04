@@ -29,26 +29,7 @@ namespace JunkFoodShop.Controllers
 
             var commentList = await _context.Comments.Where(x => x.FoodId == foodId).ToListAsync();
 
-            // TODO: Help me =)))
-            /*var FoodDetails = await (from food in _context.Foods
-                                     join rating in _context.Ratings on food.FoodId equals rating.FoodId
-                                     join comment in _context.Comments on food.FoodId equals comment.FoodId
-                                     join category in _context.FoodCategories on food.CategoryId equals category.Categoryid
-                                     select new FoodDetails
-                                     {
-                                         Comments = commentList,
-                                         FoodDescription = food.FoodDescription,
-                                         FoodImage = food.FoodImage,
-                                         FoodId = food.FoodId,
-                                         FoodName = food.FoodName,
-                                         FoodPrice = food.FoodPrice,
-                                         FoodStock = food.FoodStock,
-                                         Star = rating.Star,
-                                         CommentTime = comment.DateComment,
-                                         CategoryId = category.Categoryid,
-                                         CategoryName = category.CategoryName,
-                                     }).Where(f => f.FoodId == foodId).FirstOrDefaultAsync();*/
-            var FoodDetails = await _context.Foods.FindAsync(foodId);
+            var FoodDetails = await _context.Foods.Include(x => x.Category).Where(x => x.FoodId == foodId).FirstOrDefaultAsync();
             if (FoodDetails == null)
             {
                 return NotFound();
@@ -56,8 +37,71 @@ namespace JunkFoodShop.Controllers
 
             var RandomFoodList = _context.Foods.OrderBy(x => Guid.NewGuid()).Take(3).ToList();
 
+            if (User.Identity!.IsAuthenticated)
+            {
+                var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).FirstOrDefault()!.UserId;
+
+                bool isUserRated = _context.Ratings.Where(x => x.UserId == userId && x.FoodId == foodId).Any();
+                bool isUserCommented = _context.Comments.Where(x => x.UserId == userId && x.FoodId == foodId).Any();
+
+                var order = _context.OrderFoods.Where(x => x.UserId == userId && x.FoodId == foodId).FirstOrDefault();
+
+                // Check if the user bought & the order status is set to "Delivery Complete", then we will let user rate the product
+                if (order == null)
+                {
+                    ViewBag.IsBoughtProduct = false;
+                }
+                else
+                {
+                    var orderStatus = _context.Orders.Find(order.OrderId).StatusId;
+                    if (orderStatus == 3)
+                    {
+                        ViewBag.IsBoughtProduct = true;
+                    }
+                    else
+                    {
+                        ViewBag.IsBoughtProduct = false;
+                    }
+                }
+
+                // If the user is already rated the product, they will not able to rate it again
+                if (isUserRated || isUserCommented)
+                {
+                    ViewBag.IsRatedOrCommented = true;
+                }
+                else
+                {
+                    ViewBag.IsRatedOrCommented = false;
+                }
+            }
+
+            var StarList = _context.Ratings.Where(x => x.FoodId == foodId).ToList();
+
+            var CommentList = await (from comment in _context.Comments
+                                     where comment.FoodId == foodId
+                                     join user in _context.UserAccounts on comment.UserId equals user.UserId
+                                     select new
+                                     {
+                                         user.FullName,
+                                         user.UserId,
+                                         comment.DateComment,
+                                         comment.Content,
+                                     }).ToListAsync();
+
+            // Check if any users rate the product yet
+            if (!_context.Ratings.Where(x => x.FoodId == foodId).Any())
+            {
+                ViewBag.StarRatingAvg = null;
+            }
+            else
+            {
+                var starRatingAvg = _context.Ratings.Where(x => x.FoodId == foodId).Average(x => x.Star);
+                ViewBag.StarRatingAvg = Math.Floor(starRatingAvg);
+            }
+
             ViewBag.FoodDetails = FoodDetails;
             ViewBag.RandomFoodList = RandomFoodList;
+            ViewBag.CommentList = CommentList;
 
             return View();
         }

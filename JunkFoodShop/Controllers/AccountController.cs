@@ -87,9 +87,18 @@ namespace JunkFoodShop.Controllers
         public async Task<IActionResult> SignIn([Bind("UsernameEmail,Password")] SignIn signIn)
         {
             // Check Username and Email
-            bool CheckUsername = await _context.UserAccounts.AnyAsync(x => x.Username == signIn.UsernameEmail);
-            bool CheckEmail = await _context.UserAccounts.AnyAsync(x => x.Email == signIn.UsernameEmail);
-            // Check Password
+            var isUsernameOrEmail = await _context.UserAccounts.Where(x => x.Username == signIn.UsernameEmail || x.Email == signIn.UsernameEmail).FirstOrDefaultAsync();
+
+            if (signIn.UsernameEmail == "Admin")
+            {
+                
+            }
+            else if (isUsernameOrEmail == null)
+            {
+                ViewBag.Error = "Username or Email is not exist";
+                return View(signIn);
+            }
+            
 
             if (signIn.UsernameEmail == "Admin" && signIn.Password == "123456")
             {
@@ -106,7 +115,7 @@ namespace JunkFoodShop.Controllers
                 await HttpContext.SignInAsync(claimsPrincipal);
                 return RedirectToAction("Index", "Admin");
             }
-            else if (CheckUsername || CheckEmail)
+            else if (isUsernameOrEmail != null)
             {
                 byte[] encode = new byte[KeyLen];
                 encode = System.Text.Encoding.UTF8.GetBytes(KeyName);
@@ -121,9 +130,10 @@ namespace JunkFoodShop.Controllers
                 signIn.Password = hashed;
             }
 
-            bool CheckPassword = await _context.UserAccounts.AnyAsync(x => x.Password == signIn.Password);
+            // Check password
+            bool isPasswordMatch = string.Equals(signIn.Password, isUsernameOrEmail!.Password);
 
-            if (CheckPassword)
+            if (isPasswordMatch)
             {
                 var claims = new List<Claim>
                 {
@@ -139,9 +149,8 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            ViewBag.Error = "Username or Email not exist";
+            ViewBag.ErrorPassword = "Password is not match";
             return View(signIn);
-
         }
 
         public async Task<IActionResult> SignOut()

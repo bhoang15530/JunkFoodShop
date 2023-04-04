@@ -1,0 +1,42 @@
+﻿@{
+    int counter = 0;
+}
+
+@if (ViewBag.CommentList.Count <= 0)
+{
+    <h3>No comments yet!</h3>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th scope="col">Food Name</th>
+                <th scope="col">Full Name</th>
+                <th scope="col">Date Commented</th>
+                <th scope="col">Content</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var comment in ViewBag.CommentList)
+            {
+                counter++;
+                <tr>
+                    <td>@counter</td>
+                    <td>@comment.FoodName</td>
+                    <td>@comment.FullName</td>
+                    <td>@comment.DateComment</td>
+                    <td>@comment.Content</td>
+                    <td>
+                        <form asp-action="DeleteComment" asp-controller="Admin">
+                            <input type="hidden" name="commentId" value="@comment.CommentId" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

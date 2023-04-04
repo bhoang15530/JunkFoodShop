@@ -490,5 +490,41 @@ namespace JunkFoodShop.Controllers
             return RedirectToAction(nameof(OrderManage));
         }
         #endregion
+
+        #region USER-COMMENTS-MANAGE
+        public IActionResult UserCommentManage()
+        {
+            var CommentList = _context.Comments.Include(x => x.User).Select(x => new
+            {
+                x.CommentId,
+                x.Content,
+                x.DateComment,
+                x.Food.FoodName,
+                x.User.FullName,
+            }).OrderBy(x => x.FoodName).ToList();
+            ViewBag.CommentList = CommentList;
+            return View();
+        }
+        public IActionResult DeleteComment(int? commentId)
+        {
+            if (commentId == null)
+            {
+                return NotFound();
+            }
+
+            // Get comment by ID
+            var comment = _context.Comments.Where(x => x.CommentId == commentId).FirstOrDefault();
+
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            _context.Comments.Remove(comment);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(UserCommentManage));
+        }
+        #endregion
     }
 }

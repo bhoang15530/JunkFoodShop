@@ -26,7 +26,7 @@ namespace JunkFoodShop.Controllers
         #region Account Setting
         public async Task<IActionResult> AccountSetting()
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("SignIn", "Account");
             } 
@@ -62,7 +62,7 @@ namespace JunkFoodShop.Controllers
         #region View Order List of User
         public async Task<IActionResult> OrderList()
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("SignIn", "Account");
             }
@@ -96,7 +96,7 @@ namespace JunkFoodShop.Controllers
         #region View Cart
         public async Task<IActionResult> Cart()
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("SignIn", "Account");
             }
@@ -134,7 +134,7 @@ namespace JunkFoodShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToCart(int fid, int? quantity)
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("SignIn", "Account");
             }
@@ -149,7 +149,13 @@ namespace JunkFoodShop.Controllers
             }
 
             // Get the FoodStock and Check if item is in stock
-            var foodStock = _context.Foods.FirstOrDefault(x => x.FoodId == fid).FoodStock;
+            var food = _context.Foods.FirstOrDefault(x => x.FoodId == fid);
+            if (food == null)
+            {
+                return NotFound();
+            }
+
+            var foodStock = food.FoodStock;
 
             if (foodStock <= 0)
             {
@@ -191,7 +197,7 @@ namespace JunkFoodShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateCartItem([FromBody] UpdateCartItem updateCartItem)
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("SignIn", "Account");
             }
@@ -205,20 +211,20 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction("SignIn", "Account");
             }
 
-            int foodId = Int32.Parse(updateCartItem.fid);
-            int foodQuantity = Int32.Parse(updateCartItem.quantity);
-            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault().UserId;
+            int foodId = int.Parse(updateCartItem.fid);
+            int foodQuantity = int.Parse(updateCartItem.quantity);
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault()!.UserId;
             var userCart = _context.Carts.Where(x => x.UserId == userId).Where(x => x.FoodId == foodId).FirstOrDefault();
-            if (userCart != null)
-            {
-                userCart.Quantity = foodQuantity;
-                _context.Carts.Update(userCart);
-                _context.SaveChanges();
-            }
-            else
+            
+            if (userCart == null)
             {
                 return NotFound();
             }
+
+            userCart.Quantity = foodQuantity;
+            _context.Carts.Update(userCart);
+            _context.SaveChanges();
+
             return Ok();
         }
         #endregion
@@ -227,7 +233,7 @@ namespace JunkFoodShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveFromCart(int fid)
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("SignIn", "Account");
             }
@@ -262,7 +268,7 @@ namespace JunkFoodShop.Controllers
         #region Function Check Out
         public async Task<IActionResult> CheckOut()
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -300,7 +306,7 @@ namespace JunkFoodShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Pay(string address, int phone, string paymentType)
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("SignIn", "Account");
             }
@@ -315,7 +321,7 @@ namespace JunkFoodShop.Controllers
             }
 
             float total = 0;
-            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault().UserId;
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault()!.UserId;
 
             var cart = _context.Carts.Where(x => x.UserId == userId).ToList();
             if (cart == null)
@@ -335,7 +341,7 @@ namespace JunkFoodShop.Controllers
 
             foreach (var cartItem in cart)
             {
-                float FoodCost = _context.Foods.Where(x => x.FoodId == cartItem.FoodId).FirstOrDefault().FoodPrice;
+                float FoodCost = _context.Foods.Where(x => x.FoodId == cartItem.FoodId).FirstOrDefault()!.FoodPrice;
                 total += cartItem.Quantity * FoodCost;
 
                 OrderFood c = new()
@@ -362,7 +368,7 @@ namespace JunkFoodShop.Controllers
         #region View Order Details
         public async Task<IActionResult> OrderDetails(int oid)
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("SignIn", "Account");
             }
@@ -376,7 +382,7 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction("SignIn", "Account");
             }
 
-            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault().UserId;
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault()!.UserId;
             var OrderData = _context.Orders
                     .Include(o => o.OrderFoods)
                     .ThenInclude(of => of.Food)
@@ -398,14 +404,14 @@ namespace JunkFoodShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateUserData([Bind("FullName,Email,PhoneNumber")] AccountSetting accountSetting, string? OldPassword, string? NewPassword)
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("SignIn", "Account");
             }
 
             // Check if account exist
-            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
-            if (UserEXIST == null)
+            var UserExist = User.FindFirstValue(ClaimTypes.Name);
+            if (UserExist == null)
             {
                 TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
                 await HttpContext.SignOutAsync();
@@ -468,5 +474,41 @@ namespace JunkFoodShop.Controllers
             return RedirectToAction(nameof(AccountSetting));
         }
         #endregion
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveRatings(int foodId, string commentContent, string star)
+        {
+            // check user is login or not
+            if (!User.Identity!.IsAuthenticated)
+            {
+                TempData["NotLoggedIn"] = "You need to log in first";
+                return RedirectToAction("Details", "Foods");
+            }
+
+            int intStar = int.Parse(star);
+
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).FirstOrDefault()!.UserId;
+
+            var rating = new Rating
+            {
+                FoodId = foodId,
+                Star = intStar,
+                UserId = userId
+            };
+
+            var comment = new Comment
+            {
+                FoodId = foodId,
+                Content = commentContent,
+                DateComment = DateTime.Now,
+                UserId = userId
+            };
+
+            await _context.Ratings.AddAsync(rating);
+            await _context.Comments.AddAsync(comment);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "Foods", new { foodId });
+        }
     }
 }
