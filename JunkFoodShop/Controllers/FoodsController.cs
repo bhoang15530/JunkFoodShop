@@ -78,14 +78,17 @@ namespace JunkFoodShop.Controllers
             var StarList = _context.Ratings.Where(x => x.FoodId == foodId).ToList();
 
             var CommentList = await (from comment in _context.Comments
-                                     where comment.FoodId == foodId
                                      join user in _context.UserAccounts on comment.UserId equals user.UserId
+                                     join rating in _context.Ratings on user.UserId equals rating.UserId
+                                     where comment.FoodId == foodId
+                                     where rating.FoodId == foodId
                                      select new
                                      {
                                          user.FullName,
                                          user.UserId,
                                          comment.DateComment,
                                          comment.Content,
+                                         rating.Star
                                      }).ToListAsync();
 
             // Check if any users rate the product yet

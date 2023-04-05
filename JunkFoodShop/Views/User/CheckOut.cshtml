@@ -104,8 +104,8 @@ else
     <div class="container">
     </div>
 }
-<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-
+@*<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>*@
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/js/validator.js"></script>
 <script>
     $(document).ready(function () {
@@ -113,7 +113,7 @@ else
             var total = 0;
             $("td[class^='product-subtotal-']").each(function (index, element) {
                 total += parseInt($(element).text().replaceAll(".", "").replace("₫", "").trim());
-                //console.log($(this).text())
+                console.log($(this).text())
             })
             $(".total").text(total.toLocaleString("vi-VN", {
                 style: "currency",

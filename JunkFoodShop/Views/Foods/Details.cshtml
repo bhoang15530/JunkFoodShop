@@ -24,8 +24,8 @@
             <div class="col-md-7">
                 <div class="single-product-content">
                     <h3>@ViewBag.FoodDetails.FoodName</h3>
+                    <p><strong>Category: </strong><a asp-controller="Categories" asp-action="Details" asp-route-cid="@ViewBag.FoodDetails.CategoryId">@ViewBag.FoodDetails.Category.CategoryName</a></p>
                     <p class="single-product-pricing">@ViewBag.FoodDetails.FoodPrice.ToString("n0")₫</p>
-                    <p><b>Description:</b> @ViewBag.FoodDetails.FoodDescription</p>
                     @if (@ViewBag.FoodDetails.FoodStock <= 0)
                     {
                         <p>
@@ -42,10 +42,9 @@
                                 <input name="fid" value="@ViewBag.FoodDetails.FoodId" type="hidden" />
                                 <label for="quantity"><b>Quantity:</b></label>
                                 <br />
-                                <input name="quantity" type="number" placeholder="1">
+                                <input name="quantity" min="1" type="number" placeholder="1">
                                 <button type="submit" class="btn btn-outline">Add to Cart</button>
                             </form>
-                            @*<p><strong>Category: </strong><a asp-controller="Categories" asp-action="Index" asp-route-cid="@ViewBag.FoodDetails.CategoryId">@ViewBag.FoodDetails.CategoryName</a></p>*@
                         </div>
                     }
                     <div>
@@ -69,87 +68,90 @@
                 </div>
             </div>
 
-            <div class="col-lg-8">
-                <div class="comments-list-wrap">
-                    <h3 class="comment-count-title">@((ViewBag.CommentList.Count) == 0 ? $"Not yet commented" : (ViewBag.CommentList.Count) == 1 ? $"1 comment" : $"{ViewBag.CommentList.Count} comments")</h3>
-                    <div class="comment-list">
-                        @foreach (var comment in ViewBag.CommentList)
-                        {
-                            
-                            <div class="single-comment-body d-flex flex-row">
-                                <img src="https://www.pngkey.com/png/detail/115-1150152_default-profile-picture-avatar-png-green.png" width="30" height="30" style="border-radius: 100%" />
-                                <div class="comment-text-body" style="padding-left: 25px">
-                                    <h4>
-                                        @comment.FullName
-                                        <span class="comment-date">
-                                            @comment.DateComment.ToString("dd/MM/yyyy")
-                                        </span>
-                                    </h4>
-                                    <p>
-                                        @for (int i = 0; i < comment.Star; i++)
-                                        {
-                                            <i class="bi bi-star-fill" aria-hidden="true"></i>
-                                        }
-                                        @for (int i = 0; i < 5 - comment.Star; i++)
-                                        {
-                                            <i class="bi bi-star" aria-hidden="true"></i>
-                                        }
-                                    </p>
-                                    <p>@comment.Content</p>
+            <div class="col-lg-8 mt-5">
+                <h3>Description:</h3>
+                <p>@ViewBag.FoodDetails.FoodDescription</p>
+                <div class="col-lg-8">
+                    <div class="comments-list-wrap">
+                        <h3 class="comment-count-title">@((ViewBag.CommentList.Count) == 0 ? $"Not yet commented" : (ViewBag.CommentList.Count) == 1 ? $"1 comment" : $"{ViewBag.CommentList.Count} comments")</h3>
+                        <div class="comment-list">
+                            @foreach (var comment in ViewBag.CommentList)
+                            {
+                                <div class="single-comment-body d-flex flex-row">
+                                    <img src="~/images/default-profile-picture.png" width="30" height="30" style="border-radius: 100%" />
+                                    <div class="comment-text-body" style="padding-left: 25px">
+                                        <h4>
+                                            @comment.FullName
+                                            <span class="comment-date">
+                                                @comment.DateComment.ToString("dd/MM/yyyy")
+                                            </span>
+                                        </h4>
+                                        <p>
+                                            @for (int i = 0; i < comment.Star; i++)
+                                            {
+                                                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                                            }
+                                            @for (int i = 0; i < 5 - comment.Star; i++)
+                                            {
+                                                <i class="bi bi-star" aria-hidden="true"></i>
+                                            }
+                                        </p>
+                                        <p>@comment.Content</p>
+                                    </div>
                                 </div>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
-                </div>
 
-                @if (User.Identity!.IsAuthenticated)
-                {
-                    if (ViewBag.IsBoughtProduct)
+                    @if (User.Identity!.IsAuthenticated)
                     {
-                        if (ViewBag.IsRatedOrCommented)
+                        if (ViewBag.IsBoughtProduct)
                         {
-                            <h5>Looks like you're been rated this product. If you want to change your comment, go here</h5>
+                            if (ViewBag.IsRatedOrCommented)
+                            {
+                                <h5>Looks like you're been rated this product. If you want to change your comment, go here</h5>
+                            }
+                            else
+                            {
+                                <div class="comment-template">
+                                    <h4>Leave a comment</h4>
+                                    <p>If you have a comment dont feel hesitate to send us your opinion.</p>
+                                    <form asp-action="SaveRatings" asp-controller="User" method="post" id="form">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label>Ratings</label>
+                                                <p>
+                                                    <label id="first" class="bi bi-star">
+                                                        <input name="star" class="sr-only" type="radio" value="1">
+                                                    </label>
+                                                    <label id="second" class="bi bi-star">
+                                                        <input name="star" class="sr-only" type="radio" value="2">
+                                                    </label>
+                                                    <label id="third" class="bi bi-star">
+                                                        <input name="star" class="sr-only" type="radio" value="3">
+                                                    </label>
+                                                    <label id="fourth" class="bi bi-star">
+                                                        <input name="star" class="sr-only" type="radio" value="4">
+                                                    </label>
+                                                    <label id="fifth" class="bi bi-star">
+                                                        <input name="star" class="sr-only" type="radio" value="5">
+                                                    </label>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="foodId" value="@ViewBag.FoodDetails.FoodId" />
+                                        <p><textarea name="commentContent" cols="30" rows="10" placeholder="Your Message"></textarea></p>
+                                        <p><input type="submit" value="Submit"></p>
+                                    </form>
+                                </div>
+                            }
                         }
                         else
                         {
-                            <div class="comment-template">
-                                <h4>Leave a comment</h4>
-                                <p>If you have a comment dont feel hesitate to send us your opinion.</p>
-                                <form asp-action="SaveRatings" asp-controller="User" method="post" id="form">
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label>Ratings</label>
-                                            <p>
-                                                <label id="first" class="bi bi-star">
-                                                    <input name="star" class="sr-only" type="radio" value="1">
-                                                </label>
-                                                <label id="second" class="bi bi-star">
-                                                    <input name="star" class="sr-only" type="radio" value="2">
-                                                </label>
-                                                <label id="third" class="bi bi-star">
-                                                    <input name="star" class="sr-only" type="radio" value="3">
-                                                </label>
-                                                <label id="fourth" class="bi bi-star">
-                                                    <input name="star" class="sr-only" type="radio" value="4">
-                                                </label>
-                                                <label id="fifth" class="bi bi-star">
-                                                    <input name="star" class="sr-only" type="radio" value="5">
-                                                </label>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" name="foodId" value="@ViewBag.FoodDetails.FoodId" />
-                                    <p><textarea name="commentContent" cols="30" rows="10" placeholder="Your Message"></textarea></p>
-                                    <p><input type="submit" value="Submit"></p>
-                                </form>
-                            </div>
+                            <h5>You need to buy this in order to rate it.</h5>
                         }
                     }
-                    else
-                    {
-                        <h5>You need to buy this in order to rate it.</h5>
-                    }
-                }
+                </div>
             </div>
         </div>
     </div>

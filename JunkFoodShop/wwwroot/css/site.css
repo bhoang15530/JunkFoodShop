@@ -28,3 +28,8 @@ body img {
     background-size: cover;
 }
 
+input[type=number].no-spinner::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JunkFoodShop.Controllers
 {
-    [Authorize(Roles ="User")]
+    [Authorize(Roles = "User")]
     public class UserController : Controller
     {
         private readonly JunkFoodShopContext _context;
@@ -29,7 +29,7 @@ namespace JunkFoodShop.Controllers
             if (!User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("SignIn", "Account");
-            } 
+            }
 
             // Check if account exist
             var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
@@ -194,7 +194,6 @@ namespace JunkFoodShop.Controllers
 
         #region Function Update Cart
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateCartItem([FromBody] UpdateCartItem updateCartItem)
         {
             if (!User.Identity!.IsAuthenticated)
@@ -215,7 +214,7 @@ namespace JunkFoodShop.Controllers
             int foodQuantity = int.Parse(updateCartItem.quantity);
             var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault()!.UserId;
             var userCart = _context.Carts.Where(x => x.UserId == userId).Where(x => x.FoodId == foodId).FirstOrDefault();
-            
+
             if (userCart == null)
             {
                 return NotFound();
@@ -477,7 +476,7 @@ namespace JunkFoodShop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveRatings(int foodId, string commentContent, string star)
+        public async Task<IActionResult> SaveRatings(int foodId, int? commentId, int? ratingId, string? commentContent, string? star)
         {
             // check user is login or not
             if (!User.Identity!.IsAuthenticated)
@@ -486,29 +485,85 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction("Details", "Foods");
             }
 
-            int intStar = int.Parse(star);
+            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault()!.UserId;
 
-            var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).FirstOrDefault()!.UserId;
-
-            var rating = new Rating
+            // Lots of checking
+            if (commentId != null)
             {
-                FoodId = foodId,
-                Star = intStar,
-                UserId = userId
-            };
-
-            var comment = new Comment
+                var comment = _context.Comments.Where(x => x.FoodId == foodId && x.CommentId == commentId).FirstOrDefault();
+                if (comment != null)
+                {
+                    if (commentContent != null)
+                    {
+                        comment.Content = commentContent;
+                        _context.Comments.Update(comment);
+                    }
+                }
+            }
+            else
             {
-                FoodId = foodId,
-                Content = commentContent,
-                DateComment = DateTime.Now,
-                UserId = userId
-            };
+                var comment = new Comment
+                {
+                    FoodId = foodId,
+                    Content = commentContent ?? "",
+                    DateComment = DateTime.Now,
+                    UserId = userId
+                };
+                _context.Comments.Add(comment);
+            }
 
-            await _context.Ratings.AddAsync(rating);
-            await _context.Comments.AddAsync(comment);
+            if (ratingId != null)
+            {
+                var userRating = _context.Ratings.Where(x => x.UserId == userId && x.FoodId == foodId).FirstOrDefault();
+                if (userRating != null)
+                {
+                    if (star != null)
+                    {
+                        userRating.Star = int.Parse(star);
+                    }
+                }
+            }
+            else
+            {
+                if (star != null)
+                {
+                    var rating = new Rating
+                    {
+                        FoodId = foodId,
+                        Star = int.Parse(star),
+                        UserId = userId
+                    };
+                    _context.Ratings.Add(rating);
+                }
+            }
+
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", "Foods", new { foodId });
+        }
+        public IActionResult ViewComment(int? foodId)
+        {
+            if (foodId == null)
+            {
+                return NotFound();
+            }
+
+            var user = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault();
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var userId = user.UserId;
+
+            var Comment = _context.Comments.Where(x => x.FoodId == foodId && x.UserId == userId).FirstOrDefault();
+            var Rating = _context.Ratings.Where(x => x.FoodId == foodId && x.UserId == userId).FirstOrDefault();
+
+            ViewBag.Comment = Comment;
+            ViewBag.Rating = Rating;
+            ViewBag.FoodId = foodId;
+
+            return View();
         }
     }
 }

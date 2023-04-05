@@ -31,6 +31,7 @@
                                 <th class="product-price">Price</th>
                                 <th class="product-quantity">Quantity</th>
                                 <th class="product-total">Sub-Total</th>
+                                <th class="product-comment">Your Comment</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -44,6 +45,7 @@
                                     <td class="product-price">@food.Food.FoodPrice.ToString("n0") ₫</td>
                                     <td class="product-quantity" data-quantity="@food.Quantity">@food.Quantity</td>
                                     <td class="product-subtotal-@food.Food.FoodId" data-subtotal="@food.Food.FoodId">@((food.Quantity * food.Food.FoodPrice).ToString("n0")) ₫</td>
+                                    <td class=""><a asp-action="ViewComment" asp-controller="User" asp-route-foodId="@food.Food.FoodId">View Comment</a></td>
                                 </tr>
                             }
                         </tbody>

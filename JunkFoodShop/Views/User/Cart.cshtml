@@ -42,7 +42,12 @@ else
                                 @foreach (var cart in ViewBag.CartList)
                                 {
                                     <tr class="table-body-row">
-                                        <td class="product-remove"><a asp-action="RemoveFromCart" asp-controller="User" asp-route-fid="@cart.FoodId"><i class="far fa-window-close"></i></a></td>
+                                        <td class="product-remove">
+                                            <form asp-action="RemoveFromCart" asp-controller="User">
+                                                <input type="hidden" name="fid" value="@cart.FoodId" />
+                                                <button type="submit" class="btn"><i class="bi bi-trash3"></i></button>
+                                            </form>
+                                        </td>
                                         <td class="product-image"><img src="@cart.FoodImage" alt="@cart.FoodName"></td>
                                         <td class="product-name">@cart.FoodName</td>
                                         <td class="product-price">@cart.FoodPrice.ToString("n0") ₫</td>
@@ -81,7 +86,8 @@ else
     </div>
     <!-- end cart -->
 }
-<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+@*<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>*@
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
         $("input[class^='quantity-input-']").each(function (index, element) {

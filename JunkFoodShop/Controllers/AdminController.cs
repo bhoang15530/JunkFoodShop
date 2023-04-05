@@ -458,6 +458,33 @@ namespace JunkFoodShop.Controllers
                     _context.SaveChanges();
                 }
             }
+            // 2 == Delivering
+            else if (orderstatus == "2")
+            {
+                var orderfoods = _context.OrderFoods.Where(x => x.OrderId == oid).ToList();
+                bool isOutOfStock = false;
+                List<string> outOfStockItems = new();
+
+                // Loop though each item to check if is out of stock or not
+                foreach (var item in orderfoods)
+                {
+                    var food = _context.Foods.Where(x => x.FoodId == item.FoodId).FirstOrDefault()!;
+                    int foodStock = food.FoodStock;
+                    int orderQuantity = item.Quantity;
+
+                    if (foodStock < orderQuantity)
+                    {
+                        isOutOfStock = true;
+                        outOfStockItems.Add(item.Food!.FoodName);
+                    }
+                }
+
+                if (isOutOfStock)
+                {
+                    TempData["Update"] = $"The following items are currently out of stock: {string.Join(", ", outOfStockItems.ToArray())}";
+                    return RedirectToAction(nameof(OrderManage));
+                }
+            }
             order.StatusId = int.Parse(orderstatus);
             _context.Orders.Update(order);
             _context.SaveChanges();
@@ -518,6 +545,17 @@ namespace JunkFoodShop.Controllers
             if (comment == null)
             {
                 return NotFound();
+            }
+
+            var userId = comment.UserId;
+            var foodId = comment.FoodId;
+
+            var rating = _context.Ratings.Where(x => x.FoodId == foodId && x.UserId == userId).FirstOrDefault();
+
+            if (rating != null)
+            {
+                _context.Ratings.Remove(rating);
+                _context.SaveChanges();
             }
 
             _context.Comments.Remove(comment);
