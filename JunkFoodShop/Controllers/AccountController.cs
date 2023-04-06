@@ -95,11 +95,7 @@ namespace JunkFoodShop.Controllers
             // Check Username and Email
             var isUsernameOrEmail = await _context.UserAccounts.Where(x => x.Username == signIn.UsernameEmail || x.Email == signIn.UsernameEmail).FirstOrDefaultAsync();
 
-            if (isUsernameOrEmail == null)
-            {
-                ViewBag.Error = "Username or Email is not exist";
-                return View(signIn);
-            }
+            
             
             // Check if sign in as Admin
             if (signIn.UsernameEmail == "Admin" && signIn.Password == "123456")
@@ -131,6 +127,11 @@ namespace JunkFoodShop.Controllers
                     numBytesRequested: 256 / 8));
 
                 signIn.Password = hashed;
+            }
+            else
+            {
+                ViewBag.Error = "Username or Email is not exist";
+                return View(signIn);
             }
 
             // Check password

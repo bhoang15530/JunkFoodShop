@@ -122,11 +122,13 @@ namespace JunkFoodShop.Controllers
 
             if (!String.IsNullOrEmpty(keyword))
             {
-                FoodData = FoodData.Where(f => f.FoodName.Contains(keyword));
+                ViewBag.FoodList = FoodData.Where(f => f.FoodName.Contains(keyword)).ToList();
+                ViewBag.Keyword = keyword;
             }
-
-            ViewBag.FoodList = FoodData;
-
+            else
+            {
+                ViewBag.FoodList = FoodData.OrderBy(x => Guid.NewGuid()).ToList();
+            }
             return View();
         }
     }
