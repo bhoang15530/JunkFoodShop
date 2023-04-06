@@ -278,7 +278,7 @@ namespace JunkFoodShop.Controllers
             var CategoryData = await _context.FoodCategories.Where(x => x.Categoryid == cid).FirstOrDefaultAsync();
 
             // Get food by cid
-            var FoodData = await _context.Foods.Where(x => x.CategoryId == cid).ToArrayAsync();
+            var FoodData = await _context.Foods.Where(x => x.CategoryId == cid).ToListAsync();
 
             if (CategoryData == null)
             {
@@ -286,9 +286,17 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction(nameof(CategoryManage));
             }
 
-            _context.Foods.RemoveRange(FoodData);
-            _context.FoodCategories.Remove(CategoryData);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Foods.RemoveRange(FoodData);
+                _context.FoodCategories.Remove(CategoryData);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                TempData["NotFound"] = "You cannot delete this Category because it have data in Cart and Order of user. Please delete Order that contain this category! Note: If user have comment and rating Food that relative to this categoty then also cannot delete, so you just need to delete them!";
+                return RedirectToAction(nameof(CategoryManage));
+            }
 
             TempData["DeleteSuccess"] = "Delete successfully";
             return RedirectToAction(nameof(CategoryManage));

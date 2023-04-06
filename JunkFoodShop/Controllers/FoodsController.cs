@@ -44,7 +44,7 @@ namespace JunkFoodShop.Controllers
 
             if (User.Identity!.IsAuthenticated)
             {
-                var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name).FirstOrDefault()!.UserId;
+                var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name ).FirstOrDefault()!.UserId;
 
                 bool isUserRated = _context.Ratings.Where(x => x.UserId == userId && x.FoodId == foodId).Any();
                 bool isUserCommented = _context.Comments.Where(x => x.UserId == userId && x.FoodId == foodId).Any();
@@ -115,6 +115,7 @@ namespace JunkFoodShop.Controllers
         }
         #endregion
 
+        #region Searching
         public IActionResult SearchFood(string keyword)
         {
 
@@ -131,5 +132,6 @@ namespace JunkFoodShop.Controllers
             }
             return View();
         }
+        #endregion
     }
 }

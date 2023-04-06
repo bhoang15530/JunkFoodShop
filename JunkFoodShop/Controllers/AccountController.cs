@@ -94,8 +94,6 @@ namespace JunkFoodShop.Controllers
         {
             // Check Username and Email
             var isUsernameOrEmail = await _context.UserAccounts.Where(x => x.Username == signIn.UsernameEmail || x.Email == signIn.UsernameEmail).FirstOrDefaultAsync();
-
-            
             
             // Check if sign in as Admin
             if (signIn.UsernameEmail == "Admin" && signIn.Password == "123456")

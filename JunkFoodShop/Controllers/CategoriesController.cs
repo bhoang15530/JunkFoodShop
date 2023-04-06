@@ -13,6 +13,8 @@ namespace JunkFoodShop.Controllers
         {
             _context = context;
         }
+
+        #region Category
         public async Task<IActionResult> Index()
         {
             var CategoryList = await _context.FoodCategories.ToListAsync();
@@ -28,7 +30,9 @@ namespace JunkFoodShop.Controllers
 
             return View();
         }
+        #endregion
 
+        #region Category Details
         public async Task<IActionResult> Details(int? cid)
         {
             if (cid == null)
@@ -54,5 +58,6 @@ namespace JunkFoodShop.Controllers
             ViewBag.FoodListByCategory = FoodListByCategory;
             return View();
         }
+        #endregion
     }
 }
