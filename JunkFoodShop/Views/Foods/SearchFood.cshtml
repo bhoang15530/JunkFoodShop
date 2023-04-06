@@ -1,0 +1,19 @@
+﻿
+@{
+}
+
+<div class="row">
+    @foreach (var food in ViewBag.FoodList)
+    {
+        <div class="col-lg-4 col-md-6 text-center">
+            <div class="single-product-item">
+                <div class="product-image">
+                    <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName"></a>
+                </div>
+                <h3>@food.FoodName</h3>
+                <p class="product-price">@food.FoodPrice.ToString("n0")₫</p>
+                @*<a asp-action="AddToCart" asp-controller="User" asp-route-fid="@food.FoodId" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>*@
+            </div>
+        </div>
+    }
+</div>

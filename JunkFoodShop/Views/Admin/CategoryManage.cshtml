@@ -3,6 +3,30 @@
     int counter = 0;
 }
 
+@if (!string.IsNullOrEmpty(ViewBag.NotFound))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.NotFound</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.DeleteSuccess))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.DeleteSuccess</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.EditSuccess))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.EditSuccess</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 @if (ViewBag.CategoryData.Count > 0)
 {
     <table class="table">
@@ -36,6 +60,6 @@
     </table>
 } else
 {
-    <h2>No data in database.</h2>
+    <h2>There is no category!</h2>
 }
 

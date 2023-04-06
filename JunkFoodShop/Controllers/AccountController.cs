@@ -19,11 +19,14 @@ namespace JunkFoodShop.Controllers
         {
             _context = context;
         }
+
+        #region SignUp
         public IActionResult SignUp()
         {
             return View();
         }
 
+        // Function Sign Up
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SignUp([Bind("Username,FullName,Email,PhoneNumber,Password,ConfirmPassword")] SignUp signUp)
@@ -75,13 +78,16 @@ namespace JunkFoodShop.Controllers
             }
 
         }
+        #endregion
 
+        #region SignIn
         public IActionResult SignIn()
         {
-            ViewBag.Message = TempData["Message"]?.ToString();
+            ViewBag.SignUpSuccess = TempData["Success"]?.ToString();
             return View();
         }
 
+        // Function Sign In
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SignIn([Bind("UsernameEmail,Password")] SignIn signIn)
@@ -89,17 +95,13 @@ namespace JunkFoodShop.Controllers
             // Check Username and Email
             var isUsernameOrEmail = await _context.UserAccounts.Where(x => x.Username == signIn.UsernameEmail || x.Email == signIn.UsernameEmail).FirstOrDefaultAsync();
 
-            if (signIn.UsernameEmail == "Admin")
-            {
-                
-            }
-            else if (isUsernameOrEmail == null)
+            if (isUsernameOrEmail == null)
             {
                 ViewBag.Error = "Username or Email is not exist";
                 return View(signIn);
             }
             
-
+            // Check if sign in as Admin
             if (signIn.UsernameEmail == "Admin" && signIn.Password == "123456")
             {
                 var claims = new List<Claim>
@@ -115,6 +117,7 @@ namespace JunkFoodShop.Controllers
                 await HttpContext.SignInAsync(claimsPrincipal);
                 return RedirectToAction("Index", "Admin");
             }
+            // Check if sign in as user
             else if (isUsernameOrEmail != null)
             {
                 byte[] encode = new byte[KeyLen];
@@ -152,16 +155,22 @@ namespace JunkFoodShop.Controllers
             ViewBag.ErrorPassword = "Password is not match";
             return View(signIn);
         }
+        #endregion
 
+        #region SignOut
+        // Sign Out
         public async Task<IActionResult> SignOut()
         {
             await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
+        #endregion
 
+        #region Access Denied
+        // Access Denied
         public IActionResult Denied()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity!.IsAuthenticated)
             {
                 if (User.IsInRole("Admin"))
                 {
@@ -170,6 +179,7 @@ namespace JunkFoodShop.Controllers
             }
             return View();
         }
+        #endregion
 
     }
 }

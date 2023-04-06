@@ -24,15 +24,19 @@ namespace JunkFoodShop.Controllers
             ViewBag.FoodList = FoodList;
             ViewBag.CategoryList = CategoryList;
 
+            ViewBag.NotFound = TempData["NotFound"]?.ToString();
 
             return View();
         }
+
         public async Task<IActionResult> Details(int? cid)
         {
             if (cid == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Category not found";
+                return RedirectToAction(nameof(Index));
             }
+
             ViewBag.CategoryName = _context.FoodCategories.FirstOrDefault(x => x.Categoryid == cid).CategoryName;
 
             var FoodListByCategory = await (from food in _context.Foods
@@ -46,6 +50,7 @@ namespace JunkFoodShop.Controllers
                                                 foodCategory.Categoryid,
                                                 foodCategory.CategoryName
                                             }).Where(x => x.Categoryid == cid).ToListAsync();
+
             ViewBag.FoodListByCategory = FoodListByCategory;
             return View();
         }

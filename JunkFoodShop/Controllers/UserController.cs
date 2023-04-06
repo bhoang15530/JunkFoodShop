@@ -54,6 +54,7 @@ namespace JunkFoodShop.Controllers
             ViewBag.WrongPasswrod = TempData["WrongPassword"]?.ToString();
             ViewBag.InputNewPassword = TempData["TypeNewPassword"]?.ToString();
             ViewBag.InputOldPassword = TempData["TypeOldPassword"]?.ToString();
+            ViewBag.NotFound = TempData["NotFound"]?.ToString();
 
             return View();
         }
@@ -150,9 +151,11 @@ namespace JunkFoodShop.Controllers
 
             // Get the FoodStock and Check if item is in stock
             var food = _context.Foods.FirstOrDefault(x => x.FoodId == fid);
+
             if (food == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Food not found";
+                return RedirectToAction("Index", "Foods");
             }
 
             var foodStock = food.FoodStock;
@@ -217,7 +220,8 @@ namespace JunkFoodShop.Controllers
 
             if (userCart == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Cart have no item";
+                return RedirectToAction("Index", "Foods");
             }
 
             userCart.Quantity = foodQuantity;
@@ -253,7 +257,8 @@ namespace JunkFoodShop.Controllers
             var userCart = _context.Carts.Where(x => x.UserId == userId).Where(x => x.FoodId == fid).FirstOrDefault();
             if (userCart == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Cart have no item";
+                return RedirectToAction("Index", "Foods");
             }
             else
             {
@@ -325,7 +330,8 @@ namespace JunkFoodShop.Controllers
             var cart = _context.Carts.Where(x => x.UserId == userId).ToList();
             if (cart == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Cart have no item";
+                return RedirectToAction("Index", "Foods");
             }
 
             Order o = new()
@@ -392,7 +398,8 @@ namespace JunkFoodShop.Controllers
                     .FirstOrDefault();
             if (OrderData == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Orders not found";
+                return RedirectToAction(nameof(AccountSetting));
             }
             ViewBag.OrderData = OrderData;
             return View();
@@ -474,6 +481,7 @@ namespace JunkFoodShop.Controllers
         }
         #endregion
 
+        #region Function Save Rating and Comment
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveRatings(int foodId, int? commentId, int? ratingId, string? commentContent, string? star)
@@ -540,18 +548,29 @@ namespace JunkFoodShop.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", "Foods", new { foodId });
         }
-        public IActionResult ViewComment(int? foodId)
+        #endregion
+
+        #region View Comment
+        public async Task<IActionResult> ViewComment(int? foodId)
         {
+            if (!User.Identity!.IsAuthenticated)
+            {
+                return RedirectToAction("SignIn", "Account");
+            }
+
             if (foodId == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Food not found";
+                return RedirectToAction(nameof(AccountSetting));
             }
 
             var user = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault();
 
             if (user == null)
             {
-                return NotFound();
+                TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("SignIn", "Account");
             }
 
             var userId = user.UserId;
@@ -565,5 +584,6 @@ namespace JunkFoodShop.Controllers
 
             return View();
         }
+        #endregion
     }
 }

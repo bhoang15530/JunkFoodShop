@@ -23,10 +23,10 @@ namespace JunkFoodShop.Controllers
         }
 
         #region FOOD
-        // GET - FOOD MANAGE
-        // CODE BY HOANG
+        // View all food
         public async Task<IActionResult> FoodManage()
         {
+            // Get all food
             var FoodData = await (from food in _context.Foods
                                   join category in _context.FoodCategories on food.CategoryId equals category.Categoryid
                                   select new FoodManage
@@ -43,34 +43,32 @@ namespace JunkFoodShop.Controllers
             ViewBag.EditSuccess = TempData["EditSuccess"]?.ToString();
             ViewBag.DeleteSuccess = TempData["DeleteSuccess"]?.ToString();
             ViewBag.FoodCreate = TempData["FoodCreate"]?.ToString();
+            ViewBag.NotFound = TempData["NotFound"]?.ToString();
 
-            // Using ViewBag to display data without Model
             ViewBag.CategoryList = await _context.FoodCategories.ToListAsync();
             ViewBag.FoodData = FoodData;
             return View();
         }
 
-        // GET - CREATE FOOD
-        // CODE BY HOANG
+        // Create new food
         public async Task<IActionResult> CreateFood()
         {
             // Get category data
             var CategoryList = await _context.FoodCategories.ToListAsync();
 
-            // Using ViewBag to display data without Model
             ViewBag.CategoryList = CategoryList;
             return View();
         }
 
-        // POST - CREATE FOOD
-        // CODE BY HOANG
+        // Function create new food
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateFood([Bind("FoodName,FoodImage,FoodPrice,FoodStock,FoodDescription,CategoryId")] CreateFood createFood)
         {
-
+            // Get and display category data
             ViewBag.CategoryList = await _context.FoodCategories.ToListAsync();
 
+            // Check if admin selected category or not
             if (createFood.CategoryId == 0)
             {
                 ViewBag.CategoryError = "Please select the Category";
@@ -105,11 +103,19 @@ namespace JunkFoodShop.Controllers
             }
         }
 
-        // GET - FOOD EDIT
-        // CODE BY HOANG
+        // View food edit
         public async Task<IActionResult> FoodEdit(int fId)
         {
-            // Get data of Food join Category where FoodId selected Specify Column
+            // Check if food exist
+            bool IsFoodExist = _context.Foods.Any(x => x.FoodId == fId);
+
+            if (!IsFoodExist)
+            {
+                TempData["NotFound"] = "Cannot find that Food";
+                return RedirectToAction(nameof(FoodManage));
+            }
+
+            // Get data of Food follow foodid
             var FoodData = await (from foods in _context.Foods
                                   join categories in _context.FoodCategories on foods.CategoryId equals categories.Categoryid
                                   select new FoodEditViewModel
@@ -123,22 +129,17 @@ namespace JunkFoodShop.Controllers
                                       CategoryName = categories.CategoryName,
                                       CategoryId = categories.Categoryid
                                   }).Where(x => x.FoodId == fId).FirstOrDefaultAsync();
-            // Using ViewBag to display data without Model
+
             ViewBag.CategoryList = await _context.FoodCategories.ToListAsync();
             ViewBag.FoodData = FoodData;
             return View();
         }
 
-        // POST - FOOD EDIT
-        // CODE BY HOANG
+        // Function edit food
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> FoodEdit([Bind("FoodId,FoodName,FoodImage,FoodPrice,FoodStock,FoodDescription,CategoryId")] EditFood editFood)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(editFood);
-            }
 
             Food food = new()
             {
@@ -158,17 +159,18 @@ namespace JunkFoodShop.Controllers
             return RedirectToAction(nameof(FoodManage));
         }
 
-        // POST - FOOD DELETE
-        // CODE BY HOANG
+        // Function delete food
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> FoodDelete(int fId)
         {
             // Get food by fId
             var FoodData = await _context.Foods.Where(x => x.FoodId == fId).FirstOrDefaultAsync();
+
             if (FoodData == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Cannot find that Food";
+                return RedirectToAction(nameof(FoodManage));
             }
             _context.Foods.Remove(FoodData);
             await _context.SaveChangesAsync();
@@ -179,8 +181,7 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region CATEGORY
-        // GET - CATEGORY 
-        // CODE BY HOANG
+        // View all category
         public async Task<IActionResult> CategoryManage()
         {
             // Get All Category
@@ -191,33 +192,29 @@ namespace JunkFoodShop.Controllers
                                           CategoryImage = categoryManage.CategoryImage,
                                           CategoryName = categoryManage.CategoryName,
                                       }).ToListAsync();
+
             ViewBag.EditSuccess = TempData["EditSuccess"]?.ToString();
             ViewBag.DeleteSuccess = TempData["DeleteSuccess"]?.ToString();
+            ViewBag.NotFound = TempData["NotFound"]?.ToString();
 
-            // Using ViewBag to display data without Model
             ViewBag.CategoryData = CategoryData;
             return View();
         }
 
-        // GET - CREATE CATEGORY
-        // CODE BY HOANG
+        // View create category
         public IActionResult CreateCategory()
         {
             return View();
         }
 
-        // POST - CREATE CATEGORY
-        // CODE BY HOANG
+        // Function create category
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateCategory([Bind("CategoryName,CategoryImage")] CreateCategory createCategory)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(createCategory);
-            }
             // Check CategoryName exist
             bool isCategoryExists = await _context.FoodCategories.AnyAsync(x => x.CategoryName == createCategory.CategoryName);
+
             if (isCategoryExists)
             {
                 ViewBag.Error = "This Category Name already exist";
@@ -236,29 +233,27 @@ namespace JunkFoodShop.Controllers
             }
         }
 
-        // GET - CATEGORY EDIT
-        // CODE BY HOANG
+        // View category edit
         public async Task<IActionResult> CategoryEdit(int cid)
         {
             // Get Category by cid
             var CategoryData = await _context.FoodCategories.Where(x => x.Categoryid == cid).FirstOrDefaultAsync();
-            ViewBag.Success = TempData["Success"]?.ToString();
+            
+            if (CategoryData == null)
+            {
+                TempData["NotFound"] = "Category not found";
+                return RedirectToAction(nameof(CategoryManage));
+            }
 
-            // Using ViewBag to display data without Model
             ViewBag.CategoryData = CategoryData;
             return View();
         }
 
-        // POST - CATEGORY EDIT
-        //CODE BY HOANG
+        // Function category edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CategoryEdit([Bind("Categoryid,CategoryImage,CategoryName")] CategoryManage editCategory)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(editCategory);
-            }
 
             FoodCategory category = new()
             {
@@ -274,8 +269,7 @@ namespace JunkFoodShop.Controllers
             return RedirectToAction(nameof(CategoryManage));
         }
 
-        // POST - CATEGORY DELETE
-        // CODE BY HOANG
+        // Function delete category
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CategoryDelete(int cid)
@@ -283,10 +277,16 @@ namespace JunkFoodShop.Controllers
             // Get Category by cid
             var CategoryData = await _context.FoodCategories.Where(x => x.Categoryid == cid).FirstOrDefaultAsync();
 
+            // Get food by cid
+            var FoodData = await _context.Foods.Where(x => x.CategoryId == cid).ToArrayAsync();
+
             if (CategoryData == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Category not found";
+                return RedirectToAction(nameof(CategoryManage));
             }
+
+            _context.Foods.RemoveRange(FoodData);
             _context.FoodCategories.Remove(CategoryData);
             await _context.SaveChangesAsync();
 
@@ -297,8 +297,7 @@ namespace JunkFoodShop.Controllers
 
         #region USER-MANAGEMENT
 
-        // GET - USER
-        // CODE BY HOANG
+        // View all User
         public IActionResult UserManage()
         {
             // Get all User
@@ -313,14 +312,13 @@ namespace JunkFoodShop.Controllers
                             }).ToList();
 
             ViewBag.DeleteUser = TempData["DeleteUser"]?.ToString();
+            ViewBag.NotFound = TempData["NotFound"]?.ToString();
 
-            // Using ViewBag to display data without Model
             ViewBag.UserData = UserData;
             return View();
         }
 
-        // POST - DELETE USER
-        // CODE BY HOANG
+        // Function delete User
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserDelete(int uid)
@@ -330,7 +328,8 @@ namespace JunkFoodShop.Controllers
 
             if (UserData == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "User not found";
+                return RedirectToAction(nameof(UserManage));
             }
 
             // Get all relative to user
@@ -358,9 +357,7 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region ORDER-MANAGEMENT
-        // GET - ORDER
-        // CODE BY HOANG: 16/3/2023
-        // Last update: 3/30/2023
+        // View all Orders
         public async Task<IActionResult> OrderManage()
         {
             // Get all order
@@ -375,46 +372,41 @@ namespace JunkFoodShop.Controllers
 
             ViewBag.OrderDelete = TempData["OrderDelete"]?.ToString();
             ViewBag.OrderStatus = TempData["Update"]?.ToString();
+            ViewBag.NotFound = TempData["NotFound"]?.ToString();
 
-            // Using ViewBag to display data without Model
             ViewBag.OrderData = orders;
             return View();
         }
 
-        // GET - UPDATE-ORDER-STATUS
-        // CODE BY HOANG: 16/3/2023
-        // UPDATE BY TRUONG: 31/3/2023
+        // View update status
         public async Task<IActionResult> UpdateOrderStatus(int oid, int uid)
         {
-            var OrderData = _context.Orders
+            var OrderData = await _context.Orders
                     .Include(o => o.OrderFoods)
                     .ThenInclude(of => of.Food)
                     .Include(o => o.Status)
                     .Include(o => o.Payment)
                     .Where(o => o.OrderFoods.Any(of => of.UserId == uid))
                     .Where(o => o.OrderId == oid)
-                    .FirstOrDefault();
+                    .FirstOrDefaultAsync();
+
             if (OrderData == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Orders not found";
+                return RedirectToAction(nameof(OrderManage));
             }
+
             ViewBag.StatusList = _context.OrderStatuses.ToList();
             ViewBag.OrderData = OrderData;
             return View();
         }
 
-        // POST 
-        // CODE BY HOANG: 16/3/2023
-        // UPDATE BY TRUONG: 31/3/2023
+        // Function set order status
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetOrderStatus(int oid, string orderstatus)
         {
-            var order = _context.Orders.Where(x => x.OrderId == oid).FirstOrDefault();
-            if (order == null)
-            {
-                return NotFound();
-            }
+            var order = await _context.Orders.Where(x => x.OrderId == oid).FirstOrDefaultAsync();
 
             // 3 = Delivery Complete
             if (orderstatus == "3")
@@ -453,9 +445,9 @@ namespace JunkFoodShop.Controllers
                     int orderQuantity = item.Quantity;
 
                     food.FoodStock = foodStock - orderQuantity;
-                    order.StatusId = int.Parse(orderstatus);
+                    order!.StatusId = int.Parse(orderstatus);
                     _context.Foods.Update(food);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                 }
             }
             // 2 == Delivering
@@ -485,28 +477,27 @@ namespace JunkFoodShop.Controllers
                     return RedirectToAction(nameof(OrderManage));
                 }
             }
-            order.StatusId = int.Parse(orderstatus);
+            order!.StatusId = int.Parse(orderstatus);
             _context.Orders.Update(order);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             TempData["Update"] = "Update Status Successfully!!!";
             return RedirectToAction(nameof(OrderManage));
         }
 
-        // POST - ORDER-DELETE
-        // CODE BY HOANG: 16/3/2023
-        // Last update: 31/3/2023
+        // Function delete orders
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> OrderDelete(int oid)
         {
-            // Get order by oid
+            // Get order by oid and their relative
             var OrderData = await _context.Orders.Where(x => x.OrderId == oid).FirstOrDefaultAsync();
             var OrderFoodData = await _context.OrderFoods.Where(x => x.OrderId == oid).ToArrayAsync();
 
             if (OrderData == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Orders not found";
+                return RedirectToAction(nameof(OrderManage));
             }
 
             _context.OrderFoods.RemoveRange(OrderFoodData);
@@ -519,6 +510,7 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region USER-COMMENTS-MANAGE
+        // View all comment
         public IActionResult UserCommentManage()
         {
             var CommentList = _context.Comments.Include(x => x.User).Select(x => new
@@ -529,14 +521,20 @@ namespace JunkFoodShop.Controllers
                 x.Food.FoodName,
                 x.User.FullName,
             }).OrderBy(x => x.FoodName).ToList();
+
             ViewBag.CommentList = CommentList;
+
+            ViewBag.NotFound = TempData["NotFound"]?.ToString();
             return View();
         }
+
+        // Function delete comment
         public IActionResult DeleteComment(int? commentId)
         {
             if (commentId == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Comment not found";
+                return RedirectToAction(nameof(UserCommentManage));
             }
 
             // Get comment by ID
@@ -544,7 +542,8 @@ namespace JunkFoodShop.Controllers
 
             if (comment == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Comment not found";
+                return RedirectToAction(nameof(UserCommentManage));
             }
 
             var userId = comment.UserId;

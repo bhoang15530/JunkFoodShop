@@ -1,4 +1,12 @@
-﻿<div class="breadcrumb-section breadcrumb-bg">
+﻿@if (!string.IsNullOrEmpty(ViewBag.NotFound))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.NotFound</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="breadcrumb-section breadcrumb-bg">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 offset-lg-2 text-center">

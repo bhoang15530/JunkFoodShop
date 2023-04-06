@@ -104,12 +104,14 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <span class="close-btn"><i class="fas fa-window-close"></i></span>
+                    <span class="close-btn"><i class="bi bi-x-square-fill"></i></span>
                     <div class="search-bar">
                         <div class="search-bar-tablecell">
-                            <h3>Search For:</h3>
-                            <input type="text" placeholder="Keywords">
-                            <button type="submit">Search <i class="fas fa-search"></i></button>
+                            <h3>Search Food:</h3>
+                            <form asp-controller="Foods" asp-action="SearchFood">
+                                <input type="text" name="keyword" id="keyword" placeholder="Keywords">
+                                <button type="submit">Search <i class="bi bi-search"></i></button>
+                            </form>
                         </div>
                     </div>
                 </div>

@@ -2,6 +2,7 @@
 using JunkFoodShop.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging.Signing;
 
 namespace JunkFoodShop.Controllers
 {
@@ -16,15 +17,18 @@ namespace JunkFoodShop.Controllers
         {
             var FoodList = await _context.Foods.ToListAsync();
             ViewBag.FoodList = FoodList;
+            ViewBag.NotFound = TempData["NotFound"]?.ToString();
             return View();
         }
 
+        #region Get Food Details and comment
         // Get Food Details by FoodId
         public async Task<IActionResult> Details(int? foodId)
         {
             if (foodId == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Food not found";
+                return RedirectToAction(nameof(Index));
             }
 
             var commentList = await _context.Comments.Where(x => x.FoodId == foodId).ToListAsync();
@@ -32,7 +36,8 @@ namespace JunkFoodShop.Controllers
             var FoodDetails = await _context.Foods.Include(x => x.Category).Where(x => x.FoodId == foodId).FirstOrDefaultAsync();
             if (FoodDetails == null)
             {
-                return NotFound();
+                TempData["NotFound"] = "Food not found";
+                return RedirectToAction(nameof(Index));
             }
 
             var RandomFoodList = _context.Foods.OrderBy(x => Guid.NewGuid()).Take(3).ToList();
@@ -105,6 +110,22 @@ namespace JunkFoodShop.Controllers
             ViewBag.FoodDetails = FoodDetails;
             ViewBag.RandomFoodList = RandomFoodList;
             ViewBag.CommentList = CommentList;
+
+            return View();
+        }
+        #endregion
+
+        public IActionResult SearchFood(string keyword)
+        {
+
+            var FoodData = from f in _context.Foods select f;
+
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                FoodData = FoodData.Where(f => f.FoodName.Contains(keyword));
+            }
+
+            ViewBag.FoodList = FoodData;
 
             return View();
         }
