@@ -577,6 +577,24 @@ namespace JunkFoodShop.Controllers
 
             var Comment = _context.Comments.Where(x => x.FoodId == foodId && x.UserId == userId).FirstOrDefault();
             var Rating = _context.Ratings.Where(x => x.FoodId == foodId && x.UserId == userId).FirstOrDefault();
+            var order = _context.OrderFoods.Where(x => x.UserId == userId && x.FoodId == foodId).FirstOrDefault();
+
+            if (order == null)
+            {
+                ViewBag.IsBoughtProduct = false;
+            }
+            else
+            {
+                var orderStatus = _context.Orders.Find(order.OrderId).StatusId;
+                if (orderStatus == 3)
+                {
+                    ViewBag.IsBoughtProduct = true;
+                }
+                else
+                {
+                    ViewBag.IsBoughtProduct = false;
+                }
+            }
 
             ViewBag.Comment = Comment;
             ViewBag.Rating = Rating;

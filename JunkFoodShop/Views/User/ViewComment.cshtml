@@ -12,103 +12,109 @@
     </div>
 </div>
 <!-- end breadcrumb section -->
+@if (!ViewBag.IsBoughtProduct)
+{
+    <div class="container"><h3>You need to buy this product in order to rate it</h3></div>
+}
+else
+{
+    <div class="comment-template container">
+        <h4>Leave a comment</h4>
+        <p>If you have a comment dont feel hesitate to send us your opinion.</p>
+        <form asp-action="SaveRatings" asp-controller="User" method="post" id="form">
 
-<div class="comment-template container">
-    <h4>Leave a comment</h4>
-    <p>If you have a comment dont feel hesitate to send us your opinion.</p>
-    <form asp-action="SaveRatings" asp-controller="User" method="post" id="form">
-
-        <div class="col-lg-12">
-            <div class="form-group">
-                <label>Ratings</label>
-                <p>
-                    <label id="first" class="bi bi-star">
-                        <input name="star" class="sr-only" type="radio" value="1">
-                    </label>
-                    <label id="second" class="bi bi-star">
-                        <input name="star" class="sr-only" type="radio" value="2">
-                    </label>
-                    <label id="third" class="bi bi-star">
-                        <input name="star" class="sr-only" type="radio" value="3">
-                    </label>
-                    <label id="fourth" class="bi bi-star">
-                        <input name="star" class="sr-only" type="radio" value="4">
-                    </label>
-                    <label id="fifth" class="bi bi-star">
-                        <input name="star" class="sr-only" type="radio" value="5">
-                    </label>
-                </p>
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Ratings</label>
+                    <p>
+                        <label id="first" class="bi bi-star">
+                            <input name="star" class="sr-only" type="radio" value="1">
+                        </label>
+                        <label id="second" class="bi bi-star">
+                            <input name="star" class="sr-only" type="radio" value="2">
+                        </label>
+                        <label id="third" class="bi bi-star">
+                            <input name="star" class="sr-only" type="radio" value="3">
+                        </label>
+                        <label id="fourth" class="bi bi-star">
+                            <input name="star" class="sr-only" type="radio" value="4">
+                        </label>
+                        <label id="fifth" class="bi bi-star">
+                            <input name="star" class="sr-only" type="radio" value="5">
+                        </label>
+                    </p>
+                </div>
             </div>
-        </div>
 
-        @if (ViewBag.Rating != null)
-        {
-            <input type="hidden" name="ratingId" value="@ViewBag.Rating.RatingId" />
+            @if (ViewBag.Rating != null)
+            {
+                <input type="hidden" name="ratingId" value="@ViewBag.Rating.RatingId" />
+            }
+
+            @if (ViewBag.Comment != null)
+            {
+                <input type="hidden" name="commentId" value="@ViewBag.Comment.CommentId" />
+                <p><textarea name="commentContent" cols="30" rows="10" placeholder="Your Message">@ViewBag.Comment.Content</textarea></p>
+            }
+            else
+            {
+                <p><textarea name="commentContent" cols="30" rows="10" placeholder="Your Message"></textarea></p>
+            }
+            <input type="hidden" name="foodId" value="@ViewBag.FoodId" />
+            <p><input type="submit" value="Submit"></p>
+        </form>
+    </div>
+
+    <script>
+        const one = document.getElementById("first");
+        const two = document.getElementById("second");
+        const three = document.getElementById("third");
+        const four = document.getElementById("fourth");
+        const five = document.getElementById("fifth");
+
+        const arr = [one, two, three, four, five]
+
+        const handleStarSelect = (size) => {
+            for (let i = 0; i < arr.length; i++) {
+                if (i < size) {
+                    arr[i].classList.replace('bi-star', 'bi-star-fill');
+                }
+                else {
+                    arr[i].classList.replace('bi-star-fill', 'bi-star');
+                }
+            }
         }
 
-        @if (ViewBag.Comment != null)
-        {
-            <input type="hidden" name="commentId" value="@ViewBag.Comment.CommentId" />
-            <p><textarea name="commentContent" cols="30" rows="10" placeholder="Your Message">@ViewBag.Comment.Content</textarea></p>
-        }
-        else
-        {
-            <p><textarea name="commentContent" cols="30" rows="10" placeholder="Your Message"></textarea></p>
-        }
-        <input type="hidden" name="foodId" value="@ViewBag.FoodId" />
-        <p><input type="submit" value="Submit"></p>
-    </form>
-</div>
-
-<script>
-    const one = document.getElementById("first");
-    const two = document.getElementById("second");
-    const three = document.getElementById("third");
-    const four = document.getElementById("fourth");
-    const five = document.getElementById("fifth");
-
-    const arr = [one, two, three, four, five]
-
-    const handleStarSelect = (size) => {
-        for (let i = 0; i < arr.length; i++) {
-            if (i < size) {
-                arr[i].classList.replace('bi-star', 'bi-star-fill');
-            }
-            else {
-                arr[i].classList.replace('bi-star-fill', 'bi-star');
+        const handleSelect = (selection) => {
+            switch (selection) {
+                case 'first': {
+                    handleStarSelect(1);
+                    return
+                }
+                case 'second': {
+                    handleStarSelect(2);
+                    return
+                }
+                case 'third': {
+                    handleStarSelect(3);
+                    return
+                }
+                case 'fourth': {
+                    handleStarSelect(4);
+                    return
+                }
+                case 'fifth': {
+                    handleStarSelect(5);
+                    return
+                }
+                default: {
+                    handleStarSelect(0);
+                    return
+                }
             }
         }
-    }
-
-    const handleSelect = (selection) => {
-        switch (selection) {
-            case 'first': {
-                handleStarSelect(1);
-                return
-            }
-            case 'second': {
-                handleStarSelect(2);
-                return
-            }
-            case 'third': {
-                handleStarSelect(3);
-                return
-            }
-            case 'fourth': {
-                handleStarSelect(4);
-                return
-            }
-            case 'fifth': {
-                handleStarSelect(5);
-                return
-            }
-            default: {
-                handleStarSelect(0);
-                return
-            }
-        }
-    }
-    arr.forEach(item => item.addEventListener('mouseover', (event) => {
-        handleSelect(event.target.id)
-    }))
-</script>
+        arr.forEach(item => item.addEventListener('mouseover', (event) => {
+            handleSelect(event.target.id)
+        }))
+    </script>
+}
