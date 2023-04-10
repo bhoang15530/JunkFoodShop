@@ -5,7 +5,7 @@ Create Table UserAccount (
 	FullName nvarchar(255) Not Null,
 	Email nvarchar(255) Not Null,
 	PhoneNumber int Not Null,
-	[Password] nvarchar(20) Not Null
+	[Password] nvarchar(max) Not Null
 );
 
 -- Category Table
@@ -65,6 +65,15 @@ Create Table OrderPaymentType (
 	PaymentType nvarchar(100) Not Null
 );
 
+-- Order Table
+Create Table [Order] (
+	OrderId int Primary Key Identity(1, 1),
+	TotalPrice int Not Null,
+	DateOrder DATETIME Not Null,
+	StatusId int FOREIGN KEY REFERENCES OrderStatus(StatusId),
+	PaymentId int FOREIGN KEY REFERENCES OrderPaymentType(PaymentId)
+);
+
 -- OrderFood Table
 Create Table OrderFood (
 	OrderFoodId int Primary Key Identity(1, 1),
@@ -75,18 +84,6 @@ Create Table OrderFood (
 	UserId int FOREIGN KEY REFERENCES UserAccount(UserId),
 	OrderId int FOREIGN KEY REFERENCES [Order](OrderId)
 );
-
--- Order Table
-Create Table [Order] (
-	OrderId int Primary Key Identity(1, 1),
-	TotalPrice int Not Null,
-	DateOrder DATETIME Not Null,
-	StatusId int FOREIGN KEY REFERENCES OrderStatus(StatusId),
-	PaymentId int FOREIGN KEY REFERENCES OrderPaymentType(PaymentId)
-);
-
-
-
 
 
 
