@@ -174,7 +174,7 @@
                 <div class="col-lg-4 col-md-6 text-center">
                     <div class="single-product-item">
                         <div class="product-image">
-                            <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName"></a>
+                            <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName" width="300" height="200" style="object-fit: contain"></a>
                         </div>
                         <h3>@food.FoodName</h3>
                         <p class="product-price">@food.FoodPrice.ToString("n0")₫</p>

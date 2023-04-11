@@ -172,7 +172,15 @@ namespace JunkFoodShop.Controllers
                 TempData["NotFound"] = "Cannot find that Food";
                 return RedirectToAction(nameof(FoodManage));
             }
-            _context.Foods.Remove(FoodData);
+            try
+            {
+                _context.Foods.Remove(FoodData);
+            }
+            catch (Exception)
+            {
+                TempData["NotFound"] = "You cannot delete this food because it's maybe exist in cart, order of user. You maybe set the quantity to zero instead or delete order!";
+                return RedirectToAction(nameof(FoodManage));
+            }
             await _context.SaveChangesAsync();
 
             TempData["DeleteSuccess"] = "Delete successfully";
@@ -294,7 +302,7 @@ namespace JunkFoodShop.Controllers
             }
             catch (Exception)
             {
-                TempData["NotFound"] = "You cannot delete this Category because it have data in Cart and Order of user. Please delete Order that contain this category! Note: If user have comment and rating Food that relative to this categoty then also cannot delete, so you just need to delete them!";
+                TempData["NotFound"] = "You cannot delete this category. It maybe because there is food exist in Cart, Order of user. You may need to delete Order instead or set food quantity to zero if you do not want anyone can buy this!";
                 return RedirectToAction(nameof(CategoryManage));
             }
 

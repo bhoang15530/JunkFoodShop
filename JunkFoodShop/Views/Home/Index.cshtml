@@ -1,4 +1,6 @@
-﻿@{
+﻿@using System.Linq
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -75,21 +77,52 @@
             </div>
         </div>
 
-        <div class="row">
-            @foreach (var food in ViewBag.FoodList)
-            {
-                <div class="col-lg-4 col-md-6 text-center">
-                    <div class="single-product-item">
-                        <div class="product-image">
-                            <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName"></a>
+        <div id="foodCarousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                @for (int i = 0; i < ViewBag.FoodList.Count; i += 3)
+                {
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="row">
+                            @foreach (var food in ((List<JunkFoodShop.Data.Food>)ViewBag.FoodList).Skip(i).Take(3))
+                            {
+                                <div class="col-lg-4 col-md-6 text-center">
+                                    <div class="single-product-item">
+                                        <div class="product-image">
+                                            <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName" width="300" height="200" style="object-fit: contain"></a>
+                                        </div>
+                                        <h3>@food.FoodName</h3>
+                                        <p class="product-price">@food.FoodPrice.ToString("n0") ₫</p>
+                                    </div>
+                                </div>
+                            }
                         </div>
-                        <h3>@food.FoodName</h3>
-                        <p class="product-price">@food.FoodPrice.ToString("n0")₫</p>
-                        @*<a asp-action="AddToCart" asp-controller="User" asp-route-fid="@food.FoodId" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>*@
                     </div>
-                </div>
-            }
+                }
+            </div>
+            <a class="carousel-control-prev" href="#foodCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#foodCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
+        <style>
+            .carousel-control-prev-icon,
+            .carousel-control-next-icon {
+                filter: invert(1) grayscale(1) brightness(10);
+            }
+
+            .carousel-control-prev {
+                left: -10%;
+            }
+
+            .carousel-control-next {
+                right: -10%;
+            }
+        </style>
+
         <p style="text-align: center">
             <a asp-action="Index" asp-controller="Foods" class="cart-btn">More Food</a>
         </p>
@@ -113,7 +146,7 @@
                 <div class="col-lg-4 col-md-6 text-center">
                     <div class="single-product-item">
                         <div class="product-image">
-                            <a asp-action="Details" asp-controller="Categories" asp-route-cid="@category.Categoryid"><img src="@category.CategoryImage" alt="@category.CategoryName"></a>
+                            <a asp-action="Details" asp-controller="Categories" asp-route-cid="@category.Categoryid"><img src="@category.CategoryImage" alt="@category.CategoryName" width="300" height="200" style="object-fit: contain"></a>
                         </div>
                         <h3>@category.CategoryName</h3>
                     </div>

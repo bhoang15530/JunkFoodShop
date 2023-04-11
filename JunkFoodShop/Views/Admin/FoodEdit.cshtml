@@ -3,6 +3,9 @@
         <div class="auth-form-light text-left py-5 px-4 px-sm-5">
             <h4>Food Management</h4>
             <h6 class="font-weight-light">Edit Food.</h6>
+
+            <img src="@ViewBag.FoodData.FoodImage" width="300" height="200" style="object-fit: contain" />
+
             <form id="food-form" class="pt-3" asp-action="FoodEdit" asp-controller="Admin">
                 <input type="hidden" name="FoodId" value="@ViewBag.FoodData.FoodId" />
                 <div class="form-group">

@@ -1,4 +1,5 @@
-﻿using JunkFoodShop.Data;
+﻿using System.Drawing.Printing;
+using JunkFoodShop.Data;
 using JunkFoodShop.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,20 @@ namespace JunkFoodShop.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var FoodList = await _context.Foods.ToListAsync();
-            ViewBag.FoodList = FoodList;
+            // Set page size
+            const int pageSize = 15;
+            // Get total food count
+            var totalFood = await _context.Foods.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalFood / pageSize);
+            // Get paginated food list
+            var paginatedFood = await _context.Foods.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.FoodList = paginatedFood;
+
             ViewBag.NotFound = TempData["NotFound"]?.ToString();
             return View();
         }
