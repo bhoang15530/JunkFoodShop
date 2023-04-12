@@ -11,6 +11,9 @@ Version: 1.0
 # Base - Genral & Typography
 
 ----------------------------------------------------------------------------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&display=swap');
+
 html {
   font-size: 14px;
   font-weight: 400;
@@ -51,10 +54,20 @@ h3, .h3,
 h4, .h4,
 h5, .h5,
 h6, .h6 {
-  font-family: "Poppins", sans-serif;
-  font-weight: 700;
-  margin: 0 0 1.25rem 0;
-  color: #051922;
+    font-family: 'Noto Sans', sans-serif;
+    font-weight: 700;
+    margin: 0 0 1.25rem 0;
+    color: #051922;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield !important;
 }
 
 h1:last-child, .h1:last-child,
@@ -2393,10 +2406,13 @@ ul.social-link-team li a {
 .product-image {
   padding: 30px;
   padding-bottom: 0;
+  margin-bottom: 20px;
 }
 
 .product-image img {
-  width: 90%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   border-radius: 5px;
   margin-bottom: 20px;
 }
@@ -2433,10 +2449,15 @@ a.cart-btn i {
   margin-right: 5px;
 }
 
+.single-product-img {
+    width: 400px;
+    height: 400px;
+}
+
 .single-product-img img {
-  border-radius: 5px;
-  -webkit-box-shadow: 0 0 20px #ddd;
-  box-shadow: 0 0 20px #ddd;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 0 20px #ddd;
+    box-shadow: 0 0 20px #ddd;
 }
 
 .single-product-content h3 {
@@ -2708,15 +2729,33 @@ table.order-details tbody td {
   border-radius: 5px;
 }
 
-/* -----------------------------------------------------------------------------
+.single-product-item a {
+    display: inline-block;
+    width: 200px;
+    height: 200px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(1) grayscale(1) brightness(10);
+}
+
+.carousel-control-prev {
+    left: -10%;
+}
+
+.carousel-control-next {
+    right: -10%;
+}
+    /* -----------------------------------------------------------------------------
 
 # 404 Page Styles
 
 ----------------------------------------------------------------------------- */
-.error-text i {
-  font-size: 90px;
-  margin-bottom: 30px;
-}
+    .error-text i {
+        font-size: 90px;
+        margin-bottom: 30px;
+    }
 
 .error-text h1 {
   font-size: 40px;

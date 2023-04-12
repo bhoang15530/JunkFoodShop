@@ -1,4 +1,9 @@
-﻿@if (!string.IsNullOrEmpty(ViewBag.NotFound))
+﻿@{
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.NotFound))
 {
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <strong>@ViewBag.NotFound</strong>
@@ -38,8 +43,8 @@
                 {
                     <div class="col-lg-4 col-md-6 text-center">
                         <div class="single-product-item">
-                            <div class="product-image">
-                                <a asp-action="Details" asp-controller="Categories" asp-route-cid="@category.Categoryid"><img src="@category.CategoryImage" alt="@category.CategoryName" width="300" height="200" style="object-fit: contain"></a>
+                            <div class="product-image mb-4">
+                                <a asp-action="Details" asp-controller="Categories" asp-route-cid="@category.Categoryid"><img src="@category.CategoryImage" alt="@category.CategoryName"></a>
                             </div>
                             <h3>@category.CategoryName</h3>
                         </div>
@@ -47,5 +52,41 @@
                 }
             </div>
         }
+        <ul class="pagination justify-content-center gap-5">
+            <li class="page-item">
+                @if (currentPage > 1)
+                {
+                    <a class="page-link rounded mx-2 p-3 border-0" asp-action="Index" asp-route-page="@(currentPage - 1)" aria-label="Previous">
+                        <span aria-hidden="false">&laquo;</span>
+                    </a>
+                }
+                else
+                {
+                    <a class="page-link rounded mx-2 p-3 border-0" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                }
+            </li>
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link rounded mx-2 p-3 border-0" asp-action="Index" asp-route-page="@i">@i</a>
+                </li>
+            }
+            <li class="page-item">
+                @if (currentPage < totalPages)
+                {
+                    <a class="page-link rounded mx-2 p-3 border-0" asp-action="Index" asp-route-page="@(currentPage + 1)" aria-label="Next">
+                        <span aria-hidden="false">&raquo;</span>
+                    </a>
+                }
+                else
+                {
+                    <a class="page-link rounded mx-2 p-3 border-0" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                }
+            </li>
+        </ul>
     </div>
 </div>

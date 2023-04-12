@@ -88,7 +88,7 @@
                                 <div class="col-lg-4 col-md-6 text-center">
                                     <div class="single-product-item">
                                         <div class="product-image">
-                                            <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName" width="300" height="200" style="object-fit: contain"></a>
+                                            <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName"></a>
                                         </div>
                                         <h3>@food.FoodName</h3>
                                         <p class="product-price">@food.FoodPrice.ToString("n0") ₫</p>
@@ -108,21 +108,6 @@
                 <span class="sr-only">Next</span>
             </a>
         </div>
-        <style>
-            .carousel-control-prev-icon,
-            .carousel-control-next-icon {
-                filter: invert(1) grayscale(1) brightness(10);
-            }
-
-            .carousel-control-prev {
-                left: -10%;
-            }
-
-            .carousel-control-next {
-                right: -10%;
-            }
-        </style>
-
         <p style="text-align: center">
             <a asp-action="Index" asp-controller="Foods" class="cart-btn">More Food</a>
         </p>
@@ -145,8 +130,8 @@
             {
                 <div class="col-lg-4 col-md-6 text-center">
                     <div class="single-product-item">
-                        <div class="product-image">
-                            <a asp-action="Details" asp-controller="Categories" asp-route-cid="@category.Categoryid"><img src="@category.CategoryImage" alt="@category.CategoryName" width="300" height="200" style="object-fit: contain"></a>
+                        <div class="product-image mb-4">
+                            <a asp-action="Details" asp-controller="Categories" asp-route-cid="@category.Categoryid"><img src="@category.CategoryImage" alt="@category.CategoryName"></a>
                         </div>
                         <h3>@category.CategoryName</h3>
                     </div>

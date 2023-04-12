@@ -46,11 +46,11 @@
                     <th scope="row">@counter</th>
                     <td><img src="@item.CategoryImage" width="50" height="50" style="object-fit: cover; border-radius: 5px" /></td>
                     <td>@item.CategoryName</td>
-                    <td>
-                        <a class="btn btn-primary" asp-route-cid="@item.Categoryid" asp-action="CategoryEdit" asp-controller="Admin">Edit</a>
+                    <td class="d-flex">
+                        <a class="btn btn-primary text-white me-3" asp-route-cid="@item.Categoryid" asp-action="CategoryEdit" asp-controller="Admin">Edit</a>
                         <form asp-action="CategoryDelete" asp-controller="Admin">
                             <input type="hidden" value="@item.Categoryid" name="cid" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger text-white">Delete</button>
                         </form>
                     </td>
                 </tr>

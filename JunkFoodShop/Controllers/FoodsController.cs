@@ -17,7 +17,7 @@ namespace JunkFoodShop.Controllers
         public async Task<IActionResult> Index(int page = 1)
         {
             // Set page size
-            const int pageSize = 15;
+            const int pageSize = 12;
             // Get total food count
             var totalFood = await _context.Foods.CountAsync();
             var totalPages = (int)Math.Ceiling((double)totalFood / pageSize);
@@ -127,19 +127,38 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region Searching
-        public IActionResult SearchFood(string keyword)
+        public async Task<IActionResult> SearchFood(string keyword, int page = 1)
         {
 
             var FoodData = from f in _context.Foods select f;
 
+            // Set page size
+            const int pageSize = 12;
+
             if (!String.IsNullOrEmpty(keyword))
             {
-                ViewBag.FoodList = FoodData.Where(f => f.FoodName.Contains(keyword)).ToList();
+                // Get total food count that contains keyword
+                var totalFoodWithKeyword = await _context.Foods.Where(f => f.FoodName.Contains(keyword)).CountAsync();
+                var totalPagesWithKeyword = (int)Math.Ceiling((double)totalFoodWithKeyword / pageSize);
+                // Get paginated food list
+                var paginatedFoodWithKeyword = await FoodData.Where(f => f.FoodName.Contains(keyword)).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+                ViewBag.CurrentPage = page;
+                ViewBag.TotalPages = totalPagesWithKeyword;
+                ViewBag.FoodList = paginatedFoodWithKeyword;
                 ViewBag.Keyword = keyword;
             }
             else
             {
-                ViewBag.FoodList = FoodData.OrderBy(x => Guid.NewGuid()).ToList();
+                // Get total food count
+                var totalFoodRandom = await _context.Foods.CountAsync();
+                var totalPagesRandom = (int)Math.Ceiling((double)totalFoodRandom / pageSize);
+                // Get paginated food list
+                var paginatedFoodRandom = await _context.Foods.Skip((page - 1) * pageSize).Take(pageSize).OrderBy(x => Guid.NewGuid()).ToListAsync();
+
+                ViewBag.CurrentPage = page;
+                ViewBag.TotalPages = totalPagesRandom;
+                ViewBag.FoodList = paginatedFoodRandom;
             }
             return View();
         }

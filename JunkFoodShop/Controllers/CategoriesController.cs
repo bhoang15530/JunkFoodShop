@@ -15,7 +15,7 @@ namespace JunkFoodShop.Controllers
         }
 
         #region Category
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
             var CategoryList = await _context.FoodCategories.ToListAsync();
             var FoodList = await _context.FoodCategories.ToListAsync();
@@ -23,8 +23,20 @@ namespace JunkFoodShop.Controllers
             {
                 return NotFound();
             }
-            ViewBag.FoodList = FoodList;
-            ViewBag.CategoryList = CategoryList;
+
+            // Set page size
+            const int pageSize = 6;
+            // Get total food count
+            var totalCategory = await _context.FoodCategories.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalCategory / pageSize);
+            // Get paginated food list
+            var paginatedCategory = await _context.FoodCategories.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.CategoryList = paginatedCategory;
+
+            //ViewBag.FoodList = FoodList;
 
             ViewBag.NotFound = TempData["NotFound"]?.ToString();
 

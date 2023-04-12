@@ -36,7 +36,7 @@ namespace JunkFoodShop.Controllers
                 FoodName = f.FoodName,
                 FoodPrice = f.FoodPrice,
                 FoodDescription = f.FoodDescription,
-            }).Take(8).ToListAsync();
+            }).Take(9).ToListAsync();
 
             var CategoryList = await _context.FoodCategories.Select(c => new FoodCategory
             {

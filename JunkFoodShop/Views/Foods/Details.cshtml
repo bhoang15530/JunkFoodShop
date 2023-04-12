@@ -18,7 +18,7 @@
         <div class="row">
             <div class="col-md-5">
                 <div class="single-product-img">
-                    <img src="@ViewBag.FoodDetails.FoodImage" alt="">
+                    <img src="@ViewBag.FoodDetails.FoodImage" class="w-100 h-100 object-fit-cover" alt="@ViewBag.FoodDetails.FoodName">
                 </div>
             </div>
             <div class="col-md-7">
@@ -174,7 +174,7 @@
                 <div class="col-lg-4 col-md-6 text-center">
                     <div class="single-product-item">
                         <div class="product-image">
-                            <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName" width="300" height="200" style="object-fit: contain"></a>
+                            <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName"></a>
                         </div>
                         <h3>@food.FoodName</h3>
                         <p class="product-price">@food.FoodPrice.ToString("n0")₫</p>

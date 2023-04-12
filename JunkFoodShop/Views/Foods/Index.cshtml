@@ -48,7 +48,7 @@
                     <div class="col-lg-4 col-md-6 text-center">
                         <div class="single-product-item">
                             <div class="product-image">
-                                <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName" width="300" height="200" style="object-fit: contain"></a>
+                                <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName"></a>
                             </div>
                             <h3>@food.FoodName</h3>
                             <p class="product-price">@food.FoodPrice.ToString("n0") ₫</p>
@@ -58,40 +58,42 @@
             </div>
         }
     </div>
+    <ul class="pagination justify-content-center gap-5">
+        <li class="page-item">
+            @if (currentPage > 1)
+            {
+                <a class="page-link rounded mx-2 p-3 border-0" asp-action="Index" asp-route-page="@(currentPage - 1)" aria-label="Previous">
+                    <span aria-hidden="false">&laquo;</span>
+                </a>
+            }
+            else
+            {
+                <a class="page-link rounded mx-2 p-3 border-0" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            }
+        </li>
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="page-item @(i == currentPage ? "active" : "")">
+                <a class="page-link rounded mx-2 p-3 border-0" asp-action="Index" asp-route-page="@i">@i</a>
+            </li>
+        }
+        <li class="page-item">
+            @if (currentPage < totalPages)
+            {
+                <a class="page-link rounded mx-2 p-3 border-0" asp-action="Index" asp-route-page="@(currentPage + 1)" aria-label="Next">
+                    <span aria-hidden="false">&raquo;</span>
+                </a>
+            }
+            else
+            {
+                <a class="page-link rounded mx-2 p-3 border-0" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            }
+        </li>
+    </ul>
 </div>
 
-<ul class="pagination">
-    <li class="page-item">
-        @if( currentPage > 1 )
-        {
-            <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)" aria-label="Previous">
-                <span aria-hidden="false">&laquo;</span>
-            </a>
-        } else
-        {
-            <a class="page-link" href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        }
-    </li>
-    @for (int i = 1; i <= totalPages; i++)
-    {
-        <li class="page-item @(i == currentPage ? "active" : "")">
-            <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
-        </li>
-    }
-    <li class="page-item">
-        @if (currentPage < totalPages)
-        {
-            <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)" aria-label="Next">
-                <span aria-hidden="false">&raquo;</span>
-            </a>
-        }
-        else
-        {
-            <a class="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        }
-    </li>
-</ul>
+

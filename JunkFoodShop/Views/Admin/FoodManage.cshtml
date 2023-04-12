@@ -57,11 +57,11 @@
                     <td>@item.CategoryName</td>
                     <td>@item.FoodPrice.ToString("n0")₫</td>
                     <td>@item.FoodStock</td>
-                    <td>
-                        <a class="btn btn-primary" asp-route-fId="@item.FoodId" asp-action="FoodEdit" asp-controller="Admin">Edit</a>
+                    <td class="d-flex flex-row g-col-6">
+                        <a class="btn btn-primary text-white me-3" asp-route-fId="@item.FoodId" asp-action="FoodEdit" asp-controller="Admin">Edit</a>
                         <form asp-action="FoodDelete" asp-controller="Admin">
                             <input type="hidden" value="@item.FoodId" name="fId" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger text-white">Delete</button>
                         </form>
                     </td>
                 </tr>
