@@ -1375,6 +1375,18 @@ ul.product-share li:hover a {
     box-shadow: none;
 }
 
+.single-product-item h3 {
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 100%;
+    white-space: nowrap;
+    padding-inline: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
 .search-bar-tablecell button[type="submit"] {
     -webkit-transition: 0.3s;
     -o-transition: 0.3s;
@@ -2449,6 +2461,11 @@ table.order-details tbody td {
 .carousel-control-next {
     right: -10%;
 }
+
+.form-message {
+    color: red;
+}
+
 /* -----------------------------------------------------------------------------
 
 # 404 Page Styles

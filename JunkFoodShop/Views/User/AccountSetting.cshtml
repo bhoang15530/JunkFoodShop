@@ -33,8 +33,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
-<div class="container-sm">
-    <form asp-action="UpdateUserData" asp-controller="User" id="user-settings-form">
+<div class="container-sm mx-auto" style="margin-inline: 75%">
+    <form asp-action="UpdateUserData" asp-controller="User" id="user-settings-form" style="margin: 15px 25%">
         <div class="mb-3">
             <label for="FullName" class="form-label">Full Name</label>
             <input type="text" class="form-control" value="@ViewBag.UserData.FullName" name="FullName" id="FullName">
@@ -47,7 +47,7 @@
         </div>
         <div class="mb-3">
             <label for="PhoneNumber" class="form-label">Phone Number</label>
-            <input type="number" class="form-control" value="@ViewBag.UserData.PhoneNumber" name="PhoneNumber" id="PhoneNumber">
+            <input class="w-100" type="number" class="form-control" value="@ViewBag.UserData.PhoneNumber" name="PhoneNumber" id="PhoneNumber">
             <span class="form-message"></span>
         </div>
         <div class="mb-3">

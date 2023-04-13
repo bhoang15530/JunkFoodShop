@@ -51,7 +51,6 @@ else
                         </table>
                     </div>
                 </div>
-
                 <div class="col-lg-4">
                     <div class="total-section">
                         <table class="total-table">
@@ -72,28 +71,35 @@ else
                             <h4 style="margin-top:20px">Payment Info:</h4>
                             <form asp-action="Pay" asp-controller="User" id="payment-info-form">
                                 <div class="mb-3">
-                                    <label for="exampleInputEmail1" class="form-label">Address</label>
+                                    <label for="address" class="form-label">Address</label>
                                     <input type="text" class="form-control" name="address" id="Address">
                                     <span class="form-message"></span>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="exampleInputEmail1" class="form-label">Phone Number</label>
+                                    <label for="phone" class="form-label">Phone Number</label>
                                     <input style="width: 100%; margin-bottom: 0px" type="number" class="form-control" name="phone" id="PhoneNumber">
                                     <span class="form-message"></span>
                                 </div>
-                                <select class="form-select" id="select-form" name="PaymentType">
-                                    <option value="" selected>Select Payment Type</option>
-                                    <option value="1">By Cash</option>
-                                    <option value="2">By Bank</option>
-                                </select>
-                                <span class="form-message"></span>
-                                <div class="select-form-message"></div>
-                                <hr />
+                                <div class="mb-3">
+                                    <label for="PaymentType" class="form-label">Payment Type</label>
+                                    <br />
+                                    <select class="form-select mb-3" aria-label="Default select example" id="select-form" name="PaymentType">
+                                        <option value="" selected>Select Payment Type</option>
+                                        <option value="1">By Cash</option>
+                                        <option value="2">By Bank</option>
+                                    </select>
+                                    <br />
+                                    <span class="form-message"></span>
+                                    <div class="bank-info">
+                                        <p><strong>Bank:</strong> Vietcombank</p>
+                                        <p><strong>No:</strong> 123456789</p>
+                                    </div>
+                                    <hr />
+                                </div>
                                 <div class="mb-3 text-right">
                                     <button type="submit" class="btn btn-primary">Pay</button>
                                 </div>
                             </form>
-                            @*<a asp-action="Pay" asp-controller="User" class="boxed-btn black">Pay</a>*@
                         </div>
                     </div>
                 </div>
@@ -101,65 +107,65 @@ else
         </div>
     </div>
     <!-- end cart -->
-    <div class="container">
-    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/validator.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.bank-info').hide();
+
+            function updateTotal() {
+                var total = 0;
+                $("td[class^='product-subtotal-']").each(function (index, element) {
+                    total += parseInt($(element).text().replaceAll(".", "").replace("₫", "").trim());
+                    console.log($(this).text())
+                })
+                $(".total").text(total.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND"
+                }));
+            }
+            updateTotal();
+
+            Validator({
+                form: "#payment-info-form",
+                errorSelector: ".form-message",
+                rules: [
+                    Validator.isRequired(
+                        "#Address",
+                        "Address is required"
+                    ),
+                    Validator.minLength(
+                        "#Address",
+                        3,
+                        "Address must greater than 3 characters"
+                    ),
+                    Validator.isRequired(
+                        "#PhoneNumber",
+                        "Phone Number is required"
+                    ),
+                    Validator.isPhoneNumber(
+                        "#PhoneNumber",
+                        10,
+                        "The phone number must be exact 10 characters. Example: 09123456789"
+                    ),
+                    Validator.isRequired(
+                        "#select-form",
+                        "Payment method is required"
+                    ),
+                ],
+            });
+
+            $("#select-form").change(function () {
+                if ($(this).val() == '2') {
+                    $('.bank-info').show();
+                } else {
+                    $('.bank-info').hide();
+                }
+            });
+        });
+    </script>
+
+    <style>
+
+    </style>
 }
-@*<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>*@
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/js/validator.js"></script>
-<script>
-    $(document).ready(function () {
-        function updateTotal() {
-            var total = 0;
-            $("td[class^='product-subtotal-']").each(function (index, element) {
-                total += parseInt($(element).text().replaceAll(".", "").replace("₫", "").trim());
-                console.log($(this).text())
-            })
-            $(".total").text(total.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND"
-            }));
-        }
-        updateTotal();
-
-        Validator({
-            form: "#payment-info-form",
-            errorSelector: ".form-message",
-            rules: [
-                Validator.isRequired(
-                    "#Address",
-                    "Address is required"
-                ),
-                Validator.minLength(
-                    "#Address",
-                    3,
-                    "Address must greater than 3 characters"
-                ),
-                Validator.isRequired(
-                    "#PhoneNumber",
-                    "Phone Number is required"
-                ),
-                Validator.isPhoneNumber(
-                    "#PhoneNumber",
-                    10,
-                    "The phone number must be exact 10 characters. Example: 09123456789"
-                ),
-                Validator.isRequired(
-                    "#select-form",
-                    "Payment method is required"
-                ),
-            ],
-        });
-        $("#select-form").change(function () {
-            if ($(this).val() == "") {
-                $(".select-form-message").text("Please select payment method");
-            } else $(".select-form-message").text("");
-        });
-    });
-</script>
-
-<style>
-    .form-message, .select-form-message {
-        color: red;
-    }
-</style>
