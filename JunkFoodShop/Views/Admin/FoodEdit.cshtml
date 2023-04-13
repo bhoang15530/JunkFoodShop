@@ -3,9 +3,7 @@
         <div class="auth-form-light text-left py-5 px-4 px-sm-5">
             <h4>Food Management</h4>
             <h6 class="font-weight-light">Edit Food.</h6>
-
-            <img src="@ViewBag.FoodData.FoodImage" width="300" height="200" style="object-fit: contain" />
-
+            <img id="foodImgTag" src="@ViewBag.FoodData.FoodImage" class="w-100 rounded mb-4" />
             <form id="food-form" class="pt-3" asp-action="FoodEdit" asp-controller="Admin">
                 <input type="hidden" name="FoodId" value="@ViewBag.FoodData.FoodId" />
                 <div class="form-group">
@@ -49,7 +47,6 @@
     </div>
 </div>
 
-@*<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>*@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script defer src="~/js/validator.js"></script>
 <script>
@@ -84,6 +81,10 @@
                 ),
             ],
         });
+
+        $("#FoodImage").on("change", function () {
+            $("#foodImgTag").attr("src", $(this).val())
+        })
     });
 </script>
 <style>

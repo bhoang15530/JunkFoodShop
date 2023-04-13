@@ -3,9 +3,7 @@
         <div class="auth-form-light text-left py-5 px-4 px-sm-5">
             <h4>Category Management</h4>
             <h6 class="font-weight-light">Edit this Category.</h6>
-
-            <img src="@ViewBag.CategoryData.CategoryImage" width="300" height="200" style="object-fit: contain" />
-
+            <img src="@ViewBag.CategoryData.CategoryImage" class="w-100 rounded mb-4" />
             <form id="category-form" class="pt-3" asp-action="CategoryEdit" asp-controller="Admin">
                 <input type="hidden" name="CategoryId" value="@ViewBag.CategoryData.Categoryid" />
                 <div class="form-group">
@@ -24,7 +22,6 @@
     </div>
 </div>
 
-@*<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>*@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script defer src="~/js/validator.js"></script>
 <script>
@@ -51,6 +48,10 @@
                     "This category image field must be an image link (ending with .jpg, .jpeg, or .png)"
                 )
             ],
+        });
+
+        $("#CategoryImage").on("change", function () {
+            $("#categoryImgTag").attr("src", $(this).val())
         });
     });
 </script>

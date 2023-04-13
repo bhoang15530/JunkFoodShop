@@ -3,6 +3,7 @@
         <div class="auth-form-light text-left py-5 px-4 px-sm-5">
             <h4>Category Management</h4>
             <h6 class="font-weight-light">Create new Category.</h6>
+            <img id="categoryImgTag" class="w-100 rounded mb-4" />
             <form id="category-form" class="pt-3" asp-action="CreateCategory" asp-controller="Admin">
                 <div class="form-group">
                     <input type="text" class="form-control form-control-lg" name="CategoryName" id="CategoryName" placeholder="Category Name">
@@ -64,6 +65,10 @@
                     "This category image field must be an image link (ending with .jpg, .jpeg, or .png)"
                 )
             ],
+        });
+
+        $("#CategoryImage").on("change", function () {
+            $("#categoryImgTag").attr("src", $(this).val())
         });
     })
 </script>
