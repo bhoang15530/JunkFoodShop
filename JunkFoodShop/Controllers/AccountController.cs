@@ -84,6 +84,7 @@ namespace JunkFoodShop.Controllers
         public IActionResult SignIn()
         {
             ViewBag.SignUpSuccess = TempData["Success"]?.ToString();
+            ViewBag.Message = TempData["Message"]?.ToString();
             return View();
         }
 

@@ -32,8 +32,9 @@ namespace JunkFoodShop.Controllers
             }
 
             // Check if account exist
-            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
-            if (UserEXIST == null)
+            var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
+            bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
+            if (UserEXIST is false)
             {
                 TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
                 await HttpContext.SignOutAsync();
@@ -69,8 +70,9 @@ namespace JunkFoodShop.Controllers
             }
 
             // Check if account exist
-            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
-            if (UserEXIST == null)
+            var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
+            bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
+            if (UserEXIST is false)
             {
                 TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
                 await HttpContext.SignOutAsync();
@@ -103,8 +105,9 @@ namespace JunkFoodShop.Controllers
             }
 
             // Check if account exist
-            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
-            if (UserEXIST == null)
+            var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
+            bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
+            if (UserEXIST is false)
             {
                 TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
                 await HttpContext.SignOutAsync();
@@ -140,9 +143,9 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction("SignIn", "Account");
             }
 
-            // Check if account exist
-            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
-            if (UserEXIST == null)
+            var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
+            bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
+            if (UserEXIST is false)
             {
                 TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
                 await HttpContext.SignOutAsync();
@@ -205,8 +208,9 @@ namespace JunkFoodShop.Controllers
             }
 
             // Check if account exist
-            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
-            if (UserEXIST == null)
+            var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
+            bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
+            if (UserEXIST is false)
             {
                 TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
                 await HttpContext.SignOutAsync();
@@ -242,8 +246,9 @@ namespace JunkFoodShop.Controllers
             }
 
             // Check if account exist
-            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
-            if (UserEXIST == null)
+            var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
+            bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
+            if (UserEXIST is false)
             {
                 TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
                 await HttpContext.SignOutAsync();
@@ -278,8 +283,9 @@ namespace JunkFoodShop.Controllers
             }
 
             // Check if account exist
-            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
-            if (UserEXIST == null)
+            var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
+            bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
+            if (UserEXIST is false)
             {
                 TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
                 await HttpContext.SignOutAsync();
@@ -316,8 +322,9 @@ namespace JunkFoodShop.Controllers
             }
 
             // Check if account exist
-            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
-            if (UserEXIST == null)
+            var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
+            bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
+            if (UserEXIST is false)
             {
                 TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
                 await HttpContext.SignOutAsync();
@@ -379,8 +386,9 @@ namespace JunkFoodShop.Controllers
             }
 
             // Check if account exist
-            var UserEXIST = User.FindFirstValue(ClaimTypes.Name);
-            if (UserEXIST == null)
+            var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
+            bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
+            if (UserEXIST is false)
             {
                 TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
                 await HttpContext.SignOutAsync();
@@ -416,8 +424,9 @@ namespace JunkFoodShop.Controllers
             }
 
             // Check if account exist
-            var UserExist = User.FindFirstValue(ClaimTypes.Name);
-            if (UserExist == null)
+            var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
+            bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
+            if (UserEXIST is false)
             {
                 TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
                 await HttpContext.SignOutAsync();
@@ -493,6 +502,15 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction("Details", "Foods");
             }
 
+            var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
+            bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
+            if (UserEXIST is false)
+            {
+                TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("SignIn", "Account");
+            }
+
             var userId = _context.UserAccounts.Where(x => x.Username == User.Identity.Name || x.Email == User.Identity.Name).FirstOrDefault()!.UserId;
 
             // Lots of checking
@@ -555,6 +573,15 @@ namespace JunkFoodShop.Controllers
         {
             if (!User.Identity!.IsAuthenticated)
             {
+                return RedirectToAction("SignIn", "Account");
+            }
+
+            var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
+            bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
+            if (UserEXIST is false)
+            {
+                TempData["Message"] = "Your account has been deleted. Please contact an administrator for more information.";
+                await HttpContext.SignOutAsync();
                 return RedirectToAction("SignIn", "Account");
             }
 
