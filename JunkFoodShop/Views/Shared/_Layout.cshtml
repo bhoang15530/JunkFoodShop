@@ -10,10 +10,6 @@
 
     <!-- favicon -->
     <link rel="shortcut icon" type="image/png" href="~/assets/img/favicon.png">
-    <!-- google font -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
-    <!-- fontawesome -->
     <!-- bootstrap -->
     <link rel="stylesheet" href="~/assets/bootstrap/css/bootstrap.min.css">
     <!-- owl carousel -->
@@ -104,13 +100,16 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <span class="close-btn"><i class="bi bi-x-square-fill"></i></span>
+                    <span style="width: 50px; height: 50px" class="close-btn btn btn-lg">
+                        @*<img src="~/assets/img/delete.png" />*@
+                        <i class="bi bi-x-square"></i>
+                    </span>
                     <div class="search-bar">
                         <div class="search-bar-tablecell">
                             <h3>Search Food:</h3>
                             <form asp-controller="Foods" asp-action="SearchFood">
                                 <input type="text" name="keyword" id="keyword" placeholder="Keywords">
-                                <button type="submit">Search <i class="bi bi-search"></i></button>
+                                <button type="submit" class="">Search <i class="bi bi-search"></i></button>
                             </form>
                         </div>
                     </div>

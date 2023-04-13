@@ -45,7 +45,7 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region Category Details
-        public async Task<IActionResult> Details(int? cid)
+        public async Task<IActionResult> Details(int? cid, int page = 1)
         {
             if (cid == null)
             {
@@ -53,9 +53,9 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.CategoryName = _context.FoodCategories.FirstOrDefault(x => x.Categoryid == cid).CategoryName;
+            ViewBag.CategoryInfo = _context.FoodCategories.FirstOrDefault(x => x.Categoryid == cid);
 
-            var FoodListByCategory = await (from food in _context.Foods
+            var FoodListByCategory = (from food in _context.Foods
                                             join foodCategory in _context.FoodCategories on food.CategoryId equals foodCategory.Categoryid
                                             select new
                                             {
@@ -65,9 +65,19 @@ namespace JunkFoodShop.Controllers
                                                 food.FoodPrice,
                                                 foodCategory.Categoryid,
                                                 foodCategory.CategoryName
-                                            }).Where(x => x.Categoryid == cid).ToListAsync();
+                                            }).Where(x => x.Categoryid == cid);
 
-            ViewBag.FoodListByCategory = FoodListByCategory;
+            // Set page size
+            const int pageSize = 6;
+            // Get total food count
+            var totalFoodListByCategory = FoodListByCategory.Count();
+            var totalPages = (int)Math.Ceiling((double)totalFoodListByCategory / pageSize);
+            // Get paginated food list
+            var paginatedFoodListByCategory = await FoodListByCategory.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.FoodListByCategory = paginatedFoodListByCategory;
             return View();
         }
         #endregion

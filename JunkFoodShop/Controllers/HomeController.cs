@@ -8,12 +8,10 @@ namespace JunkFoodShop.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly JunkFoodShopContext _context;
 
-        public HomeController(ILogger<HomeController> logger, JunkFoodShopContext context)
+        public HomeController(JunkFoodShopContext context)
         {
-            _logger = logger;
             _context = context;
         }
 
@@ -35,8 +33,7 @@ namespace JunkFoodShop.Controllers
                 FoodImage = f.FoodImage,
                 FoodName = f.FoodName,
                 FoodPrice = f.FoodPrice,
-                FoodDescription = f.FoodDescription,
-            }).Take(9).ToListAsync();
+            }).OrderBy(x => Guid.NewGuid()).Take(9).ToListAsync();
 
             var CategoryList = await _context.FoodCategories.Select(c => new FoodCategory
             {

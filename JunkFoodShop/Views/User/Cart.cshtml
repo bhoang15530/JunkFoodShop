@@ -52,22 +52,22 @@ else
                                         <td class="product-name">@cart.FoodName</td>
                                         <td class="product-price">@cart.FoodPrice.ToString("n0") ₫</td>
                                         <td class="product-quantity" data-quantity="@cart.FoodId">
-                                            <button
-                                                   data-price="@cart.FoodPrice" 
-                                                   data-foodid="@cart.FoodId"
-                                                   class="decrease btn">
-                                                   -
-                                             </button>
+                                            <button data-price="@cart.FoodPrice"
+                                                    data-foodid="@cart.FoodId"
+                                                    class="decrease btn">
+                                                -
+                                            </button>
                                             <input class="quantity-input-@cart.FoodId"
                                                    type="number"
                                                    min="1"
                                                    data-foodid="@cart.FoodId"
                                                    data-price="@cart.FoodPrice"
                                                    value="@cart.Quantity">
-                                            <button 
-                                                   data-price="@cart.FoodPrice" 
-                                                   data-foodid="@cart.FoodId" 
-                                                   class="increase btn">+</button>
+                                            <button data-price="@cart.FoodPrice"
+                                                    data-foodid="@cart.FoodId"
+                                                    class="increase btn">
+                                                +
+                                            </button>
                                         </td>
                                         <td class="product-subtotal-@cart.FoodId" data-subtotal="@cart.FoodId">@((cart.Quantity * cart.FoodPrice).ToString("n0")) ₫</td>
                                     </tr>
@@ -102,124 +102,124 @@ else
         </div>
     </div>
     <!-- end cart -->
-}
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("input[class^='quantity-input-']").each(function (index, element) {
+                $(element).change(function () {
+                    var foodId = $(this).attr("data-foodid");
+                    var quantity = $(this).val();
+                    var price = $(this).attr("data-price");
+                    var subTotalEls = $(`td.product-subtotal-${foodId}`);
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $("input[class^='quantity-input-']").each(function (index, element) {
-            $(element).change(function () {
-                var foodId = $(this).attr("data-foodid");
-                var quantity = $(this).val();
-                var price = $(this).attr("data-price");
-                var subTotalEls = $(`td.product-subtotal-${foodId}`);
+                    console.log(quantity, price, subTotalEls);
+                    if (quantity < 1) {
+                        quantity = 1;
+                        $(this).val(1);
+                    }
+                    updateSubTotal(quantity, price, subTotalEls)
 
-                console.log(quantity, price, subTotalEls);
-                if (quantity < 1) {
-                    quantity = 1;
-                    $(this).val(1);
-                }
-                updateSubTotal(quantity, price, subTotalEls)
+                    updateTotal();
 
-                updateTotal();
+                    var data = { fid: foodId, quantity: $(this).val() }
 
-                var data = { fid: foodId, quantity: $(this).val() }
-
-                // AJAX Call
-                $.ajax({
-                    type: "POST",
-                    url: "updatecartitem",
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify(data),
-                    dataType: "json",
+                    // AJAX Call
+                    $.ajax({
+                        type: "POST",
+                        url: "updatecartitem",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(data),
+                        dataType: "json",
+                    })
                 })
-            })
-        });
+            });
 
-        updateTotal();
+            updateTotal();
 
-        function updateSubTotal(quantity, price, subTotalEls) {
-            var subTotal = parseInt(quantity) * parseInt(price)
+            function updateSubTotal(quantity, price, subTotalEls) {
+                var subTotal = parseInt(quantity) * parseInt(price)
 
-            $(subTotalEls).text(subTotal.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND"
-            }))
-        }
-        function updateTotal() {
-            var total = 0;
-            $("td[class^='product-subtotal-']").each(function (index, element) {
-                total += parseInt($(element).text().replaceAll(".", "").replace("₫", "").trim());
-            })
-            $(".subtotal").text(total.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND"
-            }));
-        }
+                $(subTotalEls).text(subTotal.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND"
+                }))
+            }
+            function updateTotal() {
+                var total = 0;
+                $("td[class^='product-subtotal-']").each(function (index, element) {
+                    total += parseInt($(element).text().replaceAll(".", "").replace("₫", "").trim());
+                })
+                $(".subtotal").text(total.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND"
+                }));
+            }
 
-        $("button[class^='decrease']").each(function (index, element) {
-            $(element).click(function () {
-                var foodId = $(this).attr("data-foodid");
-                var foodQuantityInput = $(".quantity-input-" + foodId);
-                var quantity = parseInt(foodQuantityInput.val()) - 1;
-                var price = parseInt($(element).attr("data-price"));
-                var subTotalEls = $(`td.product-subtotal-${foodId}`);
-                var data = { fid: foodId, quantity: quantity.toString() };
+            $("button[class^='decrease']").each(function (index, element) {
+                $(element).click(function () {
+                    var foodId = $(this).attr("data-foodid");
+                    var foodQuantityInput = $(".quantity-input-" + foodId);
+                    var quantity = parseInt(foodQuantityInput.val()) - 1;
+                    var price = parseInt($(element).attr("data-price"));
+                    var subTotalEls = $(`td.product-subtotal-${foodId}`);
+                    var data = { fid: foodId, quantity: quantity.toString() };
 
-                if (quantity < 1) {
-                    return;
-                }
-                foodQuantityInput.val(quantity);
+                    if (quantity < 1) {
+                        return;
+                    }
+                    foodQuantityInput.val(quantity);
 
-                if (quantity < 1) {
-                    quantity = 1;
-                    $(this).val(1);
-                }
+                    if (quantity < 1) {
+                        quantity = 1;
+                        $(this).val(1);
+                    }
 
-                updateSubTotal(quantity, price, subTotalEls);
-                updateTotal();
+                    updateSubTotal(quantity, price, subTotalEls);
+                    updateTotal();
 
 
-                // AJAX Call
-                $.ajax({
-                    type: "POST",
-                    url: "updatecartitem",
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify(data),
-                    dataType: "json",
+                    // AJAX Call
+                    $.ajax({
+                        type: "POST",
+                        url: "updatecartitem",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(data),
+                        dataType: "json",
+                    });
                 });
             });
-        });
 
-        $("button[class^='increase']").each(function (index, element) {
-            $(element).click(function () {
-                var foodId = $(this).attr("data-foodid");
-                var foodQuantityInput = $(".quantity-input-" + foodId);
-                var quantity = parseInt(foodQuantityInput.val()) + 1;
-                var price = parseInt($(element).attr("data-price"));
-                var subTotalEls = $(`td.product-subtotal-${foodId}`);
-                var data = { fid: foodId, quantity: quantity.toString() };
+            $("button[class^='increase']").each(function (index, element) {
+                $(element).click(function () {
+                    var foodId = $(this).attr("data-foodid");
+                    var foodQuantityInput = $(".quantity-input-" + foodId);
+                    var quantity = parseInt(foodQuantityInput.val()) + 1;
+                    var price = parseInt($(element).attr("data-price"));
+                    var subTotalEls = $(`td.product-subtotal-${foodId}`);
+                    var data = { fid: foodId, quantity: quantity.toString() };
 
-                if (quantity < 1) {
-                    quantity = 1;
-                    $(this).val(1);
-                }
+                    if (quantity < 1) {
+                        quantity = 1;
+                        $(this).val(1);
+                    }
 
-                updateSubTotal(quantity, price, subTotalEls);
-                updateTotal();
+                    updateSubTotal(quantity, price, subTotalEls);
+                    updateTotal();
 
-                foodQuantityInput.val(quantity);
+                    foodQuantityInput.val(quantity);
 
 
-                // AJAX Call
-                $.ajax({
-                    type: "POST",
-                    url: "updatecartitem",
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify(data),
-                    dataType: "json",
-                });
+                    // AJAX Call
+                    $.ajax({
+                        type: "POST",
+                        url: "updatecartitem",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(data),
+                        dataType: "json",
+                    });
+                })
             })
         })
-    })
-</script>
+    </script>
+}
+
