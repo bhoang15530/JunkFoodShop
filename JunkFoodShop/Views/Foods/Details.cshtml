@@ -57,11 +57,11 @@
                         {
                             @for (int i = 0; i < ViewBag.StarRatingAvg; i++)
                             {
-                                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                                <i class="bi bi-star-fill" style="color: yellow" aria-hidden="true"></i>
                             }
                             @for (int i = 0; i < 5 - ViewBag.StarRatingAvg; i++)
                             {
-                                <i class="bi bi-star" aria-hidden="true"></i>
+                                <i class="bi bi-star-fill" style="color: #ccc" aria-hidden="true"></i>
                             }
                         }
                     </div>
@@ -89,11 +89,11 @@
                                         <p>
                                             @for (int i = 0; i < comment.Star; i++)
                                             {
-                                                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                                                <i class="bi bi-star-fill" style="color: yellow" aria-hidden="true"></i>
                                             }
                                             @for (int i = 0; i < 5 - comment.Star; i++)
                                             {
-                                                <i class="bi bi-star" aria-hidden="true"></i>
+                                                <i class="bi bi-star-fill" style="color: #ccc" aria-hidden="true"></i>
                                             }
                                         </p>
                                         <p>@comment.Content</p>
@@ -116,31 +116,35 @@
                                 <div class="comment-template">
                                     <h4>Leave a comment</h4>
                                     <p>If you have a comment dont feel hesitate to send us your opinion.</p>
-                                    <form asp-action="SaveRatings" asp-controller="User" method="post" id="form">
+                                    <form asp-action="SaveRatings" asp-controller="User" method="post" id="rating-form">
                                         <div class="col-lg-12">
                                             <div class="form-group">
                                                 <label>Ratings</label>
+                                                <br />
                                                 <p>
-                                                    <label id="first" class="bi bi-star">
-                                                        <input name="star" class="sr-only" type="radio" value="1">
+                                                    <label id="first" class="bi bi-star-fill">
+                                                        <input name="star" class="sr-only" type="radio" value="1" required>
                                                     </label>
-                                                    <label id="second" class="bi bi-star">
+                                                    <label id="second" class="bi bi-star-fill">
                                                         <input name="star" class="sr-only" type="radio" value="2">
                                                     </label>
-                                                    <label id="third" class="bi bi-star">
+                                                    <label id="third" class="bi bi-star-fill">
                                                         <input name="star" class="sr-only" type="radio" value="3">
                                                     </label>
-                                                    <label id="fourth" class="bi bi-star">
+                                                    <label id="fourth" class="bi bi-star-fill">
                                                         <input name="star" class="sr-only" type="radio" value="4">
                                                     </label>
-                                                    <label id="fifth" class="bi bi-star">
+                                                    <label id="fifth" class="bi bi-star-fill">
                                                         <input name="star" class="sr-only" type="radio" value="5">
                                                     </label>
                                                 </p>
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <textarea class="w-100 form-control" id="Comment" name="commentContent" cols="30" rows="10" placeholder="Your Message"></textarea>
+                                            <span class="form-message"></span>
+                                        </div>
                                         <input type="hidden" name="foodId" value="@ViewBag.FoodDetails.FoodId" />
-                                        <p><textarea name="commentContent" cols="30" rows="10" placeholder="Your Message"></textarea></p>
                                         <p><input type="submit" value="Submit"></p>
                                     </form>
                                 </div>
@@ -185,55 +189,59 @@
     </div>
 </div>
 <!-- end more products -->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/validator.js"></script>
+
 <script>
-    const one = document.getElementById("first");
-    const two = document.getElementById("second");
-    const three = document.getElementById("third");
-    const four = document.getElementById("fourth");
-    const five = document.getElementById("fifth");
+    $(document).ready(function () {
+        var selectedValue;
+        $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
 
-    const arr = [one, two, three, four, five]
+        Validator({
+            form: "#rating-form",
+            errorSelector: ".form-message",
+            rules: [
+                Validator.isRequired(
+                    "#Comment",
+                    "Comment is required"
+                ),
+                Validator.minLength(
+                    "#Comment",
+                    3,
+                    "Comment must greater than 3 characters"
+                ),
+            ],
+        });
 
-    const handleStarSelect = (size) => {
-        for (let i = 0; i < arr.length; i++) {
-            if (i < size) {
-                arr[i].classList.replace('bi-star', 'bi-star-fill');
-            }
-            else {
-                arr[i].classList.replace('bi-star-fill', 'bi-star');
-            }
-        }
-    }
+        $("#first").click(function () {
+            $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
+            $("#first").css("color", "yellow")
+        });
 
-    const handleSelect = (selection) => {
-        switch (selection) {
-            case 'first': {
-                handleStarSelect(1);
-                return
-            }
-            case 'second': {
-                handleStarSelect(2);
-                return
-            }
-            case 'third': {
-                handleStarSelect(3);
-                return
-            }
-            case 'fourth': {
-                handleStarSelect(4);
-                return
-            }
-            case 'fifth': {
-                handleStarSelect(5);
-                return
-            }
-            default: {
-                handleStarSelect(0);
-                return
-            }
-        }
-    }
-    arr.forEach(item => item.addEventListener('mouseover', (event) => {
-        handleSelect(event.target.id)
-    }))
+        $("#second").click(function () {
+            $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
+            $("#first, #second").css("color", "yellow")
+        });
+
+        $("#third").click(function () {
+            $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
+            $("#first, #second, #third").css("color", "yellow")
+        });
+
+        $("#fourth").click(function () {
+            $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
+            $("#first, #second, #third, #fourth").css("color", "yellow")
+        });
+
+        $("#fifth").click(function () {
+            $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
+            $("#first, #second, #third, #fourth, #fifth").css("color", "yellow")
+        });
+
+        $("input[name='star']").each(function (index, element) {
+            $(element).click(function () {
+                selectedValue = $(element).val();
+            })
+        });
+    })
 </script>

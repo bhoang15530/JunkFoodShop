@@ -14,39 +14,58 @@
 <!-- end breadcrumb section -->
 @if (!ViewBag.IsBoughtProduct)
 {
-    <div class="container"><h3>The order must be successfuly delivered to comment</h3></div>
+    <div class="container my-4 mx-auto"><h3>The order must be successfuly delivered to comment</h3></div>
 }
 else
 {
-    <div class="comment-template container">
+    <div class="comment-template container my-4 mx-auto">
         <h4>Leave a comment</h4>
         <p>If you have a comment dont feel hesitate to send us your opinion.</p>
         <form asp-action="SaveRatings" asp-controller="User" method="post" id="rating-form">
             <div class="col-lg-12">
                 <div class="form-group">
                     <label>Ratings</label>
+                    <br />
                     <p>
-                        <label id="first" class="bi bi-star">
-                            <input name="star" class="sr-only" type="radio" value="1">
-                        </label>
-                        <label id="second" class="bi bi-star">
-                            <input name="star" class="sr-only" type="radio" value="2">
-                        </label>
-                        <label id="third" class="bi bi-star">
-                            <input name="star" class="sr-only" type="radio" value="3">
-                        </label>
-                        <label id="fourth" class="bi bi-star">
-                            <input name="star" class="sr-only" type="radio" value="4">
-                        </label>
-                        <label id="fifth" class="bi bi-star">
-                            <input name="star" class="sr-only" type="radio" value="5">
-                        </label>
+                        @if (ViewBag.Rating != null)
+                        {
+                            string[] idArray = { "first", "second", "third", "fourth", "fifth" };
+                            for (int i = 0; i < ViewBag.Rating.Star; i++)
+                            {
+                                <label id="@idArray[i]" class="bi bi-star-fill" style="color: yellow">
+                                    <input name="star" class="sr-only" type="radio" value="@(i + 1)" required>
+                                </label>
+                            }
+                            // star = 4
+                            //      i <= 1 => fifth
+                            // star = 3
+                            //      i <= 5 - 3 -> 2 => fourth, fifth
+                            for (int i = ViewBag.Rating.Star; i < 5; i++)
+                            {
+                                <label id="@idArray[i]" class="bi bi-star-fill" style="color: #ccc">
+                                    <input name="star" class="sr-only" type="radio" value="@(i + 1)" required>
+                                </label>
+                            }
+                        }
+                        else
+                        {
+                            <label id="first" class="bi bi-star-fill">
+                                <input name="star" class="sr-only" type="radio" value="1" required>
+                            </label>
+                            <label id="second" class="bi bi-star-fill">
+                                <input name="star" class="sr-only" type="radio" value="2">
+                            </label>
+                            <label id="third" class="bi bi-star-fill">
+                                <input name="star" class="sr-only" type="radio" value="3">
+                            </label>
+                            <label id="fourth" class="bi bi-star-fill">
+                                <input name="star" class="sr-only" type="radio" value="4">
+                            </label>
+                            <label id="fifth" class="bi bi-star-fill">
+                                <input name="star" class="sr-only" type="radio" value="5">
+                            </label>
+                        }
                     </p>
-                    @*<input name="star1" type="radio" class="star" />
-                    <input name="star1" type="radio" class="star" />
-                    <input name="star1" type="radio" class="star" />
-                    <input name="star1" type="radio" class="star" />
-                    <input name="star1" type="radio" class="star" />*@
                 </div>
             </div>
 
@@ -76,130 +95,69 @@ else
             <p><input type="submit" value="Submit"></p>
         </form>
     </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
     <script src="~/js/validator.js"></script>
     <script>
-        Validator({
-            form: "#rating-form",
-            errorSelector: ".form-message",
-            rules: [
-                Validator.isRequired(
-                    "#Comment",
-                    "Comment is required"
-                ),
-                Validator.minLength(
-                    "#Comment",
-                    3,
-                    "Comment must greater than 3 characters"
-                ),
-            ],
-        });
+        $(document).ready(function () {
+            var selectedValue;
 
-        const one = document.getElementById("first");
-        const two = document.getElementById("second");
-        const three = document.getElementById("third");
-        const four = document.getElementById("fourth");
-        const five = document.getElementById("fifth");
+            Validator({
+                form: "#rating-form",
+                errorSelector: ".form-message",
+                rules: [
+                    Validator.isRequired(
+                        "#Comment",
+                        "Comment is required"
+                    ),
+                    Validator.minLength(
+                        "#Comment",
+                        3,
+                        "Comment must greater than 3 characters"
+                    ),
+                ],
+            });
 
-        const arr = [one, two, three, four, five]
-
-        const handleStarSelect = (size) => {
-            for (let i = 0; i < arr.length; i++) {
-                if (i < size) {
-                    arr[i].classList.replace('bi-star', 'bi-star-fill');
-                }
-                else {
-                    arr[i].classList.replace('bi-star-fill', 'bi-star');
-                }
+            function highlightFirstStar() {
+                $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
+                $("#first").css("color", "yellow")
             }
-        }
 
-        const handleSelect = (selection) => {
-            switch (selection) {
-                case 'first': {
-                    handleStarSelect(1);
-                    return
-                }
-                case 'second': {
-                    handleStarSelect(2);
-                    return
-                }
-                case 'third': {
-                    handleStarSelect(3);
-                    return
-                }
-                case 'fourth': {
-                    handleStarSelect(4);
-                    return
-                }
-                case 'fifth': {
-                    handleStarSelect(5);
-                    return
-                }
-                default: {
-                    handleStarSelect(0);
-                    return
-                }
+            function highlightSecondStar() {
+                $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
+                $("#first, #second").css("color", "yellow")
             }
-        }
-        arr.forEach(item => item.addEventListener('mouseover', (event) => {
-            handleSelect(event.target.id)
-        }));
+
+            function highlightThirdStar() {
+                $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
+                $("#first, #second, #third").css("color", "yellow")
+            }
+
+            function highlightFourthStar() {
+                $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
+                $("#first, #second, #third, #fourth").css("color", "yellow")
+            }
+
+            function highlightFifthStar() {
+                $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
+                $("#first, #second, #third, #fourth, #fifth").css("color", "yellow")
+            }
+
+            $("#first").click(highlightFirstStar);
+
+            $("#second").click(highlightSecondStar);
+
+            $("#third").click(highlightThirdStar);
+
+            $("#fourth").click(highlightFourthStar);
+
+            $("#fifth").click(highlightFifthStar);
+
+            $("input[name='star']").each(function (index, element) {
+                $(element).click(function () {
+                    selectedValue = $(element).val();
+                })
+            });
+        })
     </script>
 }
-
-<script src="~/js/jquery.rating.js"></script>
-<script src="~/js/jquery.rating.pack.js"></script>
-
-<style>
-    /* jQuery.Rating Plugin CSS - https://star-rating.fyneworks.com/ */
-    div.rating-cancel,
-    div.star-rating {
-        float: left;
-        width: 17px;
-        height: 15px;
-        text-indent: -999em;
-        cursor: pointer;
-        display: block;
-        background: transparent;
-        overflow: hidden;
-    }
-
-    div.rating-cancel,
-    div.rating-cancel a {
-        background: url(delete.gif) no-repeat 0 -16px;
-    }
-
-    div.star-rating,
-    div.star-rating a {
-        background: url(star.gif) no-repeat 0 0px;
-    }
-
-    div.rating-cancel a,
-    div.star-rating a {
-        display: block;
-        width: 16px;
-        height: 100%;
-        background-position: 0 0px;
-        border: 0;
-    }
-
-    div.star-rating-on a {
-        background-position: 0 -16px !important;
-    }
-
-    div.star-rating-hover a {
-        background-position: 0 -32px;
-    }
-    /* Read Only CSS */
-    div.star-rating-readonly a {
-        cursor: default !important;
-    }
-    /* Partial Star CSS */
-    div.star-rating {
-        background: transparent !important;
-        overflow: hidden !important;
-    }
-    /* END jQuery.Rating Plugin CSS */
-
-</style>
