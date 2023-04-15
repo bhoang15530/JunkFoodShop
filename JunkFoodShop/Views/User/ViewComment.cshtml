@@ -36,10 +36,6 @@ else
                                     <input name="star" class="sr-only" type="radio" value="@(i + 1)" required>
                                 </label>
                             }
-                            // star = 4
-                            //      i <= 1 => fifth
-                            // star = 3
-                            //      i <= 5 - 3 -> 2 => fourth, fifth
                             for (int i = ViewBag.Rating.Star; i < 5; i++)
                             {
                                 <label id="@idArray[i]" class="bi bi-star-fill" style="color: #ccc">
@@ -95,8 +91,8 @@ else
             <p><input type="submit" value="Submit"></p>
         </form>
     </div>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/validator.js"></script>
     <script>
         $(document).ready(function () {
