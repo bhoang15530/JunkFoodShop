@@ -34,23 +34,12 @@ namespace JunkFoodShop.Controllers
             // Checking Username and Email
             bool CheckUsername = await _context.UserAccounts.AnyAsync(x => x.Username == signUp.Username);
             bool CheckEmail = await _context.UserAccounts.AnyAsync(x => x.Email == signUp.Email);
-            bool CheckPhoneNumber = await _context..UserAccounts.AnyAsync(x => x.PhoneNumber == signUp.PhoneNumber);
-            
             if (CheckUsername)
             {
                 ViewBag.Error = "Username is already exist!";
                 return View(signUp);
             }
            
-             
-            else if (CheckPhoneNumber)
-            {
-                ViewBag.Error = "Your phone number is already exist!";
-                return View(signUp);
-            }
-            
-            
-            
             else if (CheckEmail)
             {
                 ViewBag.Error = "Email is already exist";
