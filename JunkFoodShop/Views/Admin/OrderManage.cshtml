@@ -48,7 +48,7 @@
                     <td>@order.OrderFoods[0].User.Username</td>
                     <td>@order.DateOrder</td>
                     <td class="total-price">@order.TotalPrice</td>
-                    <td>@order.Status.StatusName</td>
+                    <td class="status-type">@order.Status.StatusName</td>
                     <td class="payment-type">@order.PaymentId</td>
                     <td class="d-flex flex-row" style="gap: 10px">
                         @if (order.Status.StatusName != "Delivery Complete")
@@ -68,40 +68,60 @@
             }
         </tbody>
     </table>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Format thành đơn vị tiền tệ cho dễ nhìn
+            $("td[class='total-price']").each(function (index, element) {
+                var total = parseInt($(element).text());
+                $(element).text(total.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND"
+                }))
+            })
+
+            // Đổi từ chuỗi 1 và 2 thành từ dễ đọc
+            $("td[class='payment-type']").each(function (index, element) {
+                var paymentType = $(element).text();
+                $(element).text(paymentType == "1" ? "By Cash" : "By Bank");
+            });
+
+            $("td[class='status-type']").each(function (index, element) {
+                var statusType = $(element).text();
+                console.log(statusType)
+                switch (statusType) {
+                    case "Delivery Complete":
+                    case "Delivering":
+                        $(element).css("color", "green");
+                        break;
+                    case "Checking":
+                        $(element).css("color", "#e09834");
+                        break;
+                    case "Order Cancel":
+                        $(element).css("color", "red");
+                        break;
+                    default:
+                        $(element).css("color", "black");
+                }
+            })
+
+            $("#orderstatus").change(function () {
+                var statusId = $("option:selected", this).val();
+            })
+
+            $('.btn-danger').each(function (index, element) {
+                $(element).click(function (event) {
+                    event.preventDefault();
+                    if (confirm('Are you sure you want to delete this order?')) {
+                        button.closest('form').submit();
+                    }
+                })
+            })
+        })
+    </script>
 }
 else
 {
     <h2>No data in database!</h2>
 }
-<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-<script>
-    $(document).ready(function () {
-        // Format thành đơn vị tiền tệ cho dễ nhìn
-        $("td[class='total-price']").each(function (index, element) {
-            var total = parseInt($(element).text());
-            $(element).text(total.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND"
-            }))
-        })
-
-        // Đổi từ chuỗi 1 và 2 thành từ dễ đọc
-        $("td[class='payment-type']").each(function (index, element) {
-            var paymentType = $(element).text();
-            $(element).text(paymentType == "1" ? "By Cash" : "By Bank")
-        })
-
-        $("#orderstatus").change(function () {
-            var statusId = $("option:selected", this).val();
-        })
-    })
-
-    document.querySelectorAll('.btn-danger').forEach(function (button) {
-        button.addEventListener('click', function (event) {
-            event.preventDefault();
-            if (confirm('Are you sure you want to delete this order?')) {
-                button.closest('form').submit();
-            }
-        });
-    });
-</script>

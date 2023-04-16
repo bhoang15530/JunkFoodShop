@@ -34,7 +34,7 @@
     </div>
 }
 <div class="container-sm mx-auto" style="margin-inline: 75%">
-    <form asp-action="UpdateUserData" asp-controller="User" id="user-settings-form" style="margin: 15px 25%">
+    <form asp-action="UpdateUserData" asp-controller="User" id="user-settings-form" style="margin: 15px 25%; padding: 25px; border: 1px solid #ccc; border-radius: 10px;">
         <div class="mb-3">
             <label for="FullName" class="form-label">Full Name</label>
             <input type="text" class="form-control" value="@ViewBag.UserData.FullName" name="FullName" id="FullName">
@@ -98,8 +98,3 @@
         ],
     });
 </script>
-<style>
-    .form-message {
-        color: red;
-    }
-</style>

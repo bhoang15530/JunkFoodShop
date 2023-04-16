@@ -76,7 +76,7 @@
     document.querySelectorAll('.btn-danger').forEach(function (button) {
         button.addEventListener('click', function (event) {
             event.preventDefault();
-            if (confirm('Are you sure you want to delete this foods?')) {
+            if (confirm('Are you sure you want to delete this food?')) {
                 button.closest('form').submit();
             }
         });

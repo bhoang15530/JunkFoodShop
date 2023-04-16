@@ -76,19 +76,19 @@ else
         var statusType = $(element).text();
         switch (statusType) {
             case "1":
-                $(element).text("Checking");
+                $(element).text("Checking").css("color", "#e09834");
                 break;
             case "2":
-                $(element).text("Delivering");
+                $(element).text("Delivering").css("color", "green");
                 break;
             case "3":
-                $(element).text("Delivery Completed");
+                $(element).text("Delivery Completed").css("color", "green");
                 break;
             case "4":
-                $(element).text("Order Cancelled");
+                $(element).text("Order Cancelled").css("color", "red");
                 break;
             default:
-                $(element).text("Unknown");
+                $(element).text("Unknown").css("color", "black");
         }
     });
 </script>

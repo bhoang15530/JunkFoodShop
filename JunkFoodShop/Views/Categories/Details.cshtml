@@ -35,7 +35,7 @@
             <div class="row">
                 @foreach (var food in ViewBag.FoodListByCategory)
                 {
-                    <div class="col-lg-4 col-md-6 text-center">
+                    <div class="col-lg-4 col-md-6 text-center" title="@food.FoodName">
                         <div class="single-product-item">
                             <div class="product-image">
                                 <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName"></a>

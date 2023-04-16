@@ -51,7 +51,13 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var RandomFoodList = _context.Foods.OrderBy(x => Guid.NewGuid()).Take(3).ToList();
+            var FoodList = await _context.Foods.Select(f => new Food
+            {
+                FoodId = f.FoodId,
+                FoodImage = f.FoodImage,
+                FoodName = f.FoodName,
+                FoodPrice = f.FoodPrice,
+            }).OrderBy(x => Guid.NewGuid()).Take(9).ToListAsync();
 
             if (User.Identity!.IsAuthenticated)
             {
@@ -119,7 +125,7 @@ namespace JunkFoodShop.Controllers
             }
 
             ViewBag.FoodDetails = FoodDetails;
-            ViewBag.RandomFoodList = RandomFoodList;
+            ViewBag.FoodList = FoodList;
             ViewBag.CommentList = CommentList;
 
             return View();

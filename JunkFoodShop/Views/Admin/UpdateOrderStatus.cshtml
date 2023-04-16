@@ -82,8 +82,7 @@
         }
     </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
         // Format thành đơn vị tiền tệ cho dễ nhìn
@@ -101,6 +100,13 @@
                 style: "currency",
                 currency: "VND"
             }))
+        });
+
+        $("button[type='submit']").click(function (event) {
+            event.preventDefault();
+            if (confirm("Are you sure you want to change this order's status?")) {
+                $(this).closest('form').submit();
+            }
         })
     })
 </script>

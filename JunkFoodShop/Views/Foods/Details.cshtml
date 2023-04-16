@@ -57,7 +57,7 @@
                         {
                             @for (int i = 0; i < ViewBag.StarRatingAvg; i++)
                             {
-                                <i class="bi bi-star-fill" style="color: yellow" aria-hidden="true"></i>
+                                <i class="bi bi-star-fill" style="color: #e09834" aria-hidden="true"></i>
                             }
                             @for (int i = 0; i < 5 - ViewBag.StarRatingAvg; i++)
                             {
@@ -89,7 +89,7 @@
                                         <p>
                                             @for (int i = 0; i < comment.Star; i++)
                                             {
-                                                <i class="bi bi-star-fill" style="color: yellow" aria-hidden="true"></i>
+                                                <i class="bi bi-star-fill" style="color: #e09834" aria-hidden="true"></i>
                                             }
                                             @for (int i = 0; i < 5 - comment.Star; i++)
                                             {
@@ -142,6 +142,7 @@
                                         </div>
                                         <div class="form-group">
                                             <textarea class="w-100 form-control" id="Comment" name="commentContent" cols="30" rows="10" placeholder="Your Message"></textarea>
+                                            <span class="word-left"></span>
                                             <span class="form-message"></span>
                                         </div>
                                         <input type="hidden" name="foodId" value="@ViewBag.FoodDetails.FoodId" />
@@ -172,22 +173,42 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            @foreach (var food in ViewBag.RandomFoodList)
-            {
-                <div class="col-lg-4 col-md-6 text-center">
-                    <div class="single-product-item">
-                        <div class="product-image">
-                            <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName"></a>
+        <div id="foodCarousel" class="carousel slide row" data-ride="carousel">
+            <div class="carousel-inner">
+                @for (int i = 0; i < ViewBag.FoodList.Count; i += 3)
+                {
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="row">
+                            @foreach (var food in ((List<JunkFoodShop.Data.Food>)ViewBag.FoodList).Skip(i).Take(3))
+                            {
+                                <div class="col-lg-4 col-md-6 text-center" title="@food.FoodName">
+                                    <div class="single-product-item">
+                                        <div class="product-image">
+                                            <a asp-action="Details" asp-controller="Foods" asp-route-foodId="@food.FoodId"><img src="@food.FoodImage" alt="@food.FoodName"></a>
+                                        </div>
+                                        <h3>@food.FoodName</h3>
+                                        <p class="product-price">@food.FoodPrice.ToString("n0") ₫</p>
+                                    </div>
+                                </div>
+                            }
                         </div>
-                        <h3>@food.FoodName</h3>
-                        <p class="product-price">@food.FoodPrice.ToString("n0")₫</p>
                     </div>
-                </div>
-            }
+                }
+            </div>
+            <a class="carousel-control-prev" href="#foodCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#foodCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
     </div>
 </div>
+
+
+
 <!-- end more products -->
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/js/validator.js"></script>
@@ -195,6 +216,10 @@
 <script>
     $(document).ready(function () {
         var selectedValue;
+        var wordLeftElement = $(".word-left");
+        var numChar = +$("#Comment").val().length;
+        wordLeftElement.text(numChar + "/200 Characters")
+
         $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
 
         Validator({
@@ -210,32 +235,37 @@
                     3,
                     "Comment must greater than 3 characters"
                 ),
+                Validator.maxLength(
+                    "#Comment",
+                    200,
+                    "Comment must be smaller than or equal to 200 characters"
+                )
             ],
         });
 
         $("#first").click(function () {
             $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
-            $("#first").css("color", "yellow")
+            $("#first").css("color", "#e09834")
         });
 
         $("#second").click(function () {
             $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
-            $("#first, #second").css("color", "yellow")
+            $("#first, #second").css("color", "#e09834")
         });
 
         $("#third").click(function () {
             $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
-            $("#first, #second, #third").css("color", "yellow")
+            $("#first, #second, #third").css("color", "#e09834")
         });
 
         $("#fourth").click(function () {
             $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
-            $("#first, #second, #third, #fourth").css("color", "yellow")
+            $("#first, #second, #third, #fourth").css("color", "#e09834")
         });
 
         $("#fifth").click(function () {
             $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
-            $("#first, #second, #third, #fourth, #fifth").css("color", "yellow")
+            $("#first, #second, #third, #fourth, #fifth").css("color", "#e09834")
         });
 
         $("input[name='star']").each(function (index, element) {
@@ -243,5 +273,19 @@
                 selectedValue = $(element).val();
             })
         });
+
+        $("#Comment").keyup(function () {
+            // Get number of chars in the textarea
+            var numChar = $(this).val().length;
+            var wordLeftElement = $(".word-left");
+            wordLeftElement.text(numChar + "/200 Characters")
+            if (numChar > 200) {
+                $(this).css("color", "red");
+                wordLeftElement.css("color", "red")
+            } else {
+                $(this).css("color", "black");
+                wordLeftElement.css("color", "black")
+            }
+        })
     })
 </script>

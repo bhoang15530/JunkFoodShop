@@ -105,6 +105,16 @@ else
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
+            $("button[type='submit']").each(function (index, element) {
+                $(this).click(function (event) {
+                    event.preventDefault();
+                    if (confirm("Are you sure to remove this item from your cart?")) {
+                        $(this).closest("form").submit();
+                    }
+                })
+            })
+
+
             $("input[class^='quantity-input-']").each(function (index, element) {
                 $(element).change(function () {
                     var foodId = $(this).attr("data-foodid");

@@ -1,4 +1,11 @@
-﻿    <!-- breadcrumb-section -->
+﻿@{
+    int selectedStar = 0;
+    if (ViewBag.Rating != null)
+    {
+        selectedStar = ViewBag.Rating.Star;
+    }
+}
+<!-- breadcrumb-section -->
 <div class="breadcrumb-section breadcrumb-bg">
     <div class="container">
         <div class="row">
@@ -14,7 +21,14 @@
 <!-- end breadcrumb section -->
 @if (!ViewBag.IsBoughtProduct)
 {
-    <div class="container my-4 mx-auto"><h3>The order must be successfuly delivered to comment</h3></div>
+
+    <div class="container my-4 mx-auto d-flex flex-row align-items-center">
+        <img src="~/assets/img/comment.jpg" alt="comment" class="w-50 object-fit-cover mr-4" />
+        <div>
+            <h2>The order must be successfuly delivered to comment</h2>
+            <p>Check back later for the order to complete!</p>
+        </div>
+    </div>
 }
 else
 {
@@ -32,7 +46,7 @@ else
                             string[] idArray = { "first", "second", "third", "fourth", "fifth" };
                             for (int i = 0; i < ViewBag.Rating.Star; i++)
                             {
-                                <label id="@idArray[i]" class="bi bi-star-fill" style="color: yellow">
+                                <label id="@idArray[i]" class="bi bi-star-fill" style="color: #e09834">
                                     <input name="star" class="sr-only" type="radio" value="@(i + 1)" required>
                                 </label>
                             }
@@ -76,6 +90,7 @@ else
                 <div class="form-group">
                     <label for="commentContent">Your comment</label>
                     <textarea class="w-100 form-control" id="Comment" name="commentContent" cols="30" rows="10" placeholder="Your Message">@ViewBag.Comment.Content</textarea>
+                    <span class="word-left"></span>
                     <span class="form-message"></span>
                 </div>
             }
@@ -84,6 +99,7 @@ else
                 <div class="form-group">
                     <label for="commentContent">Your comment</label>
                     <textarea class="w-100 form-control" id="Comment" name="commentContent" cols="30" rows="10" placeholder="Your Message"></textarea>
+                    <span class="word-left"></span>
                     <span class="form-message"></span>
                 </div>
             }
@@ -92,11 +108,17 @@ else
         </form>
     </div>
 
+    @section Scripts {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/js/validator.js"></script>
+    <script src="~/js/validator.js" asp-append-version="true"></script>
     <script>
         $(document).ready(function () {
-            var selectedValue;
+            var selectedValue = @selectedStar;
+            var wordLeftElement = $(".word-left");
+            var numChar = +$("#Comment").val().length;
+            wordLeftElement.text(numChar + "/200 Characters");
+
+            $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
 
             Validator({
                 form: "#rating-form",
@@ -111,32 +133,37 @@ else
                         3,
                         "Comment must greater than 3 characters"
                     ),
+                    Validator.maxLength(
+                        "#Comment",
+                        200,
+                        "Comment must be smaller than or equal to 200 characters"
+                    )
                 ],
             });
 
             function highlightFirstStar() {
                 $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
-                $("#first").css("color", "yellow")
+                $("#first").css("color", "#e09834")
             }
 
             function highlightSecondStar() {
                 $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
-                $("#first, #second").css("color", "yellow")
+                $("#first, #second").css("color", "#e09834")
             }
 
             function highlightThirdStar() {
                 $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
-                $("#first, #second, #third").css("color", "yellow")
+                $("#first, #second, #third").css("color", "#e09834")
             }
 
             function highlightFourthStar() {
                 $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
-                $("#first, #second, #third, #fourth").css("color", "yellow")
+                $("#first, #second, #third, #fourth").css("color", "#e09834")
             }
 
             function highlightFifthStar() {
                 $("#first, #second, #third, #fourth, #fifth").css("color", "#ccc");
-                $("#first, #second, #third, #fourth, #fifth").css("color", "yellow")
+                $("#first, #second, #third, #fourth, #fifth").css("color", "#e09834")
             }
 
             $("#first").click(highlightFirstStar);
@@ -149,11 +176,41 @@ else
 
             $("#fifth").click(highlightFifthStar);
 
-            $("input[name='star']").each(function (index, element) {
-                $(element).click(function () {
-                    selectedValue = $(element).val();
-                })
-            });
+            // To auto-click when submitting form to deal with the required input radio.
+            switch (selectedValue) {
+                case 1:
+                    $("#first").click();
+                    break;
+                case 2:
+                    $("#second").click();
+                    break;
+                case 3:
+                    $("#third").click();
+                    break;
+                case 4:
+                    $("#fourth").click();
+                    break;
+                case 5:
+                    $("#fifth").click();
+                    break;
+                default:
+                    break;
+            }
+
+            $("#Comment").keyup(function () {
+                // Get number of chars in the textarea
+                var numChar = $(this).val().length;
+                var wordLeftElement = $(".word-left");
+                wordLeftElement.text(numChar + "/200 Characters")
+                if (numChar > 200) {
+                    $(this).css("color", "red");
+                    wordLeftElement.css("color", "red")
+                } else {
+                    $(this).css("color", "black");
+                    wordLeftElement.css("color", "black")
+                }
+            })
         })
     </script>
+    }
 }
