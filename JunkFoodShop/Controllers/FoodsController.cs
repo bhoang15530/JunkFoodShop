@@ -14,6 +14,8 @@ namespace JunkFoodShop.Controllers
         {
             _context = context;
         }
+        
+        // Display all food
         public async Task<IActionResult> Index(int page = 1)
         {
             // Set page size
@@ -36,14 +38,17 @@ namespace JunkFoodShop.Controllers
         // Get Food Details by FoodId
         public async Task<IActionResult> Details(int? foodId)
         {
+            // Check food exist
             if (foodId == null)
             {
                 TempData["NotFound"] = "Food not found";
                 return RedirectToAction(nameof(Index));
             }
 
+            // Get all comment by foodid
             var commentList = await _context.Comments.Where(x => x.FoodId == foodId).ToListAsync();
 
+            // Get food info
             var FoodDetails = await _context.Foods.Include(x => x.Category).Where(x => x.FoodId == foodId).FirstOrDefaultAsync();
             if (FoodDetails == null)
             {
@@ -97,6 +102,7 @@ namespace JunkFoodShop.Controllers
                 }
             }
 
+            // Display rating
             var StarList = _context.Ratings.Where(x => x.FoodId == foodId).ToList();
 
             var CommentList = await (from comment in _context.Comments
@@ -133,6 +139,7 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region Searching
+        // Display food by search keyword
         public async Task<IActionResult> SearchFood(string keyword, int page = 1)
         {
 
