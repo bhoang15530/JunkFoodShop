@@ -48,6 +48,7 @@ namespace JunkFoodShop.Controllers
                 ViewBag.Error = "Your phone number is already exist!";
                 return View(signUp);
             }
+           
             else if (CheckEmail)
             {
                 ViewBag.Error = "Email is already exist";
