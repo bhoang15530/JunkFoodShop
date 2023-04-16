@@ -47,4 +47,14 @@ else
             }
         </tbody>
     </table>
+    <script>
+        $("button[type='submit']").each(function (index, element) {
+            $(element).click(function (event) {
+                event.preventDefault();
+                if (confirm("Are you sure to delete this comment?")) {
+                    $(this).closest("form").submit();
+                }
+            })
+        })
+    </script>
 }
