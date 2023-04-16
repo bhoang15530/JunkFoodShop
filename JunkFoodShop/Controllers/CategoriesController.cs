@@ -15,7 +15,6 @@ namespace JunkFoodShop.Controllers
         }
 
         #region Category
-        // Dispaly all category
         public async Task<IActionResult> Index(int page = 1)
         {
             var CategoryList = await _context.FoodCategories.ToListAsync();
@@ -37,6 +36,8 @@ namespace JunkFoodShop.Controllers
             ViewBag.TotalPages = totalPages;
             ViewBag.CategoryList = paginatedCategory;
 
+            //ViewBag.FoodList = FoodList;
+
             ViewBag.NotFound = TempData["NotFound"]?.ToString();
 
             return View();
@@ -44,7 +45,6 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region Category Details
-        // Display all food in Category selected 
         public async Task<IActionResult> Details(int? cid, int page = 1)
         {
             if (cid == null)

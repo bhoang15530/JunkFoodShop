@@ -23,7 +23,6 @@ namespace JunkFoodShop.Controllers
         }
 
         #region FOOD
-
         // View all food
         public async Task<IActionResult> FoodManage()
         {
@@ -51,7 +50,7 @@ namespace JunkFoodShop.Controllers
             return View();
         }
 
-        // Display Create new food
+        // Create new food
         public async Task<IActionResult> CreateFood()
         {
             // Get category data
@@ -61,7 +60,7 @@ namespace JunkFoodShop.Controllers
             return View();
         }
 
-        // Function Create new food
+        // Function create new food
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateFood([Bind("FoodName,FoodImage,FoodPrice,FoodStock,FoodDescription,CategoryId")] CreateFood createFood)
@@ -76,7 +75,7 @@ namespace JunkFoodShop.Controllers
                 return View();
             }
 
-            // Check FoodName exist in database
+            // Check FoodName exist
             bool CheckFoodName = await _context.Foods.AnyAsync(x => x.FoodName == createFood.FoodName);
 
             if (CheckFoodName)
@@ -104,7 +103,7 @@ namespace JunkFoodShop.Controllers
             }
         }
 
-        // Display food edit
+        // View food edit
         public async Task<IActionResult> FoodEdit(int fId)
         {
             // Check if food exist
@@ -116,7 +115,7 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction(nameof(FoodManage));
             }
 
-            // Get data of Food by foodid
+            // Get data of Food follow foodid
             var FoodData = await (from foods in _context.Foods
                                   join categories in _context.FoodCategories on foods.CategoryId equals categories.Categoryid
                                   select new FoodEditViewModel
@@ -190,7 +189,7 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region CATEGORY
-        // Display all category
+        // View all category
         public async Task<IActionResult> CategoryManage()
         {
             // Get All Category
@@ -314,7 +313,7 @@ namespace JunkFoodShop.Controllers
 
         #region USER-MANAGEMENT
 
-        // Display all User
+        // View all User
         public IActionResult UserManage()
         {
             // Get all User
@@ -353,11 +352,12 @@ namespace JunkFoodShop.Controllers
             var GetCart = await _context.Carts.Where(x => x.UserId == uid).ToArrayAsync();
             var GetComment = await _context.Comments.Where(x => x.UserId == uid).ToArrayAsync();
             var GetRating = await _context.Ratings.Where(x => x.UserId == uid).ToArrayAsync();
+            // Get OrderId in OrderFoods and Orders
             var GetOrderFoods = await _context.OrderFoods.Where(x => x.UserId == uid).ToArrayAsync();
+
             var OrderId = await _context.OrderFoods.Where(x => x.UserId == uid).Select(x => x.OrderId).ToArrayAsync();
             var GetOrder = await _context.Orders.Where(x => OrderId.Contains(x.OrderId)).ToArrayAsync();
 
-            // Delete all relative
             _context.OrderFoods.RemoveRange(GetOrderFoods);
             _context.Orders.RemoveRange(GetOrder);
             _context.Carts.RemoveRange(GetCart);
@@ -373,7 +373,7 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region ORDER-MANAGEMENT
-        // Display all Orders
+        // View all Orders
         public async Task<IActionResult> OrderManage()
         {
             // Get all order
@@ -394,10 +394,9 @@ namespace JunkFoodShop.Controllers
             return View();
         }
 
-        // Display update status
+        // View update status
         public async Task<IActionResult> UpdateOrderStatus(int oid, int uid)
         {
-            // Get order by oid and uid
             var OrderData = await _context.Orders
                     .Include(o => o.OrderFoods)
                     .ThenInclude(of => of.Food)
@@ -527,10 +526,9 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region USER-COMMENTS-MANAGE
-        // Display all comment
+        // View all comment
         public IActionResult UserCommentManage()
         {
-            // Get all comment
             var CommentList = _context.Comments.Include(x => x.User).Select(x => new
             {
                 x.CommentId,

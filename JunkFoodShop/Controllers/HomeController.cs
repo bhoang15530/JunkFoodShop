@@ -16,7 +16,6 @@ namespace JunkFoodShop.Controllers
         }
 
         #region HOME
-        // Home Page
         public async Task<IActionResult> Index()
         {
             if (User.Identity.IsAuthenticated)
@@ -27,7 +26,7 @@ namespace JunkFoodShop.Controllers
                 }
             }
 
-            // Display 9 random food
+            // Only take 8 as it'll slow the Homepage as the Food table is too large
             var FoodList = await _context.Foods.Select(f => new Food
             {
                 FoodId = f.FoodId,
@@ -36,7 +35,6 @@ namespace JunkFoodShop.Controllers
                 FoodPrice = f.FoodPrice,
             }).OrderBy(x => Guid.NewGuid()).Take(9).ToListAsync();
 
-            // Display all category
             var CategoryList = await _context.FoodCategories.Select(c => new FoodCategory
             {
                 Categoryid = c.Categoryid,
@@ -50,8 +48,29 @@ namespace JunkFoodShop.Controllers
         }
         #endregion
 
+        #region List all foods
+        public async Task<IActionResult> AllFoods()
+        {
+            // Get all Food
+            var FoodList = await _context.Foods.Select(f => new Food
+            {
+                FoodId = f.FoodId,
+                FoodImage = f.FoodImage,
+                FoodName = f.FoodName,
+                FoodPrice = f.FoodPrice,
+                FoodDescription = f.FoodDescription,
+            }).ToListAsync();
+
+            if (FoodList == null)
+            {
+                return NoContent();
+            }
+            ViewBag.FoodList = FoodList;
+            return View();
+        }
+        #endregion
+
         #region List all categories
-        // Display all category 
         public async Task<IActionResult> AllFoodCategories()
         {
             // Get all Categories
@@ -72,7 +91,6 @@ namespace JunkFoodShop.Controllers
         }
         #endregion
 
-        // Display Privacy, Contact, AboutUs
         #region Privacy/ Contact/ AboutUs
         public IActionResult Privacy()
         {

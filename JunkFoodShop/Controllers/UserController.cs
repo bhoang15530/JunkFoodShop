@@ -24,7 +24,6 @@ namespace JunkFoodShop.Controllers
         }
 
         #region Account Setting
-        // Display account setting
         public async Task<IActionResult> AccountSetting()
         {
             if (!User.Identity!.IsAuthenticated)
@@ -32,7 +31,7 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction("SignIn", "Account");
             }
 
-            // Check if account is deleted or not
+            // Check if account exist
             var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
             bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
             if (UserEXIST is false)
@@ -63,7 +62,6 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region View Order List of User
-        // Display order list
         public async Task<IActionResult> OrderList()
         {
             if (!User.Identity!.IsAuthenticated)
@@ -71,7 +69,7 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction("SignIn", "Account");
             }
 
-            // Check if account is deleted or not
+            // Check if account exist
             var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
             bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
             if (UserEXIST is false)
@@ -99,7 +97,6 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region View Cart
-        // Display cart
         public async Task<IActionResult> Cart()
         {
             if (!User.Identity!.IsAuthenticated)
@@ -107,7 +104,7 @@ namespace JunkFoodShop.Controllers
                 return RedirectToAction("SignIn", "Account");
             }
 
-            // Check if account is deleted or not
+            // Check if account exist
             var ClaimEXIST = User.FindFirstValue(ClaimTypes.Name);
             bool UserEXIST = _context.UserAccounts.Any(x => x.Username == ClaimEXIST || x.Email == ClaimEXIST);
             if (UserEXIST is false)
