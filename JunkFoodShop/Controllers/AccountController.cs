@@ -21,6 +21,8 @@ namespace JunkFoodShop.Controllers
         }
 
         #region SignUp
+
+        // Display sign up
         public IActionResult SignUp()
         {
             return View();
@@ -34,10 +36,16 @@ namespace JunkFoodShop.Controllers
             // Checking Username and Email
             bool CheckUsername = await _context.UserAccounts.AnyAsync(x => x.Username == signUp.Username);
             bool CheckEmail = await _context.UserAccounts.AnyAsync(x => x.Email == signUp.Email);
+            bool CheckPhoneNumber = await _context.UserAccounts.AnyAsync(x => x.PhoneNumber == signUp.PhoneNumber);
 
             if (CheckUsername)
             {
                 ViewBag.Error = "Username is already exist!";
+                return View(signUp);
+            }
+            else if (CheckPhoneNumber)
+            {
+                ViewBag.Error = "Your phone number is already exist!";
                 return View(signUp);
             }
             else if (CheckEmail)
@@ -48,6 +56,7 @@ namespace JunkFoodShop.Controllers
             else
             {
                 // Encode Password 
+                #region Encode Password
                 byte[] encode = new byte[KeyLen];
                 encode = System.Text.Encoding.UTF8.GetBytes(KeyName);
 
@@ -59,8 +68,10 @@ namespace JunkFoodShop.Controllers
                     numBytesRequested: 256 / 8));
 
                 signUp.Password = hashed;
+                #endregion
 
                 // Save account to database
+                #region Save account
                 UserAccount user = new()
                 {
                     Username = signUp.Username,
@@ -72,6 +83,7 @@ namespace JunkFoodShop.Controllers
 
                 await _context.AddAsync(user);
                 await _context.SaveChangesAsync();
+                #endregion
 
                 TempData["Success"] = "Sign Up Successfully";
                 return RedirectToAction(nameof(SignIn));
@@ -81,6 +93,8 @@ namespace JunkFoodShop.Controllers
         #endregion
 
         #region SignIn
+
+        // Display Sign In
         public IActionResult SignIn()
         {
             ViewBag.SignUpSuccess = TempData["Success"]?.ToString();
@@ -112,9 +126,11 @@ namespace JunkFoodShop.Controllers
                 await HttpContext.SignInAsync(claimsPrincipal);
                 return RedirectToAction("Index", "Admin");
             }
-            // Check if sign in as user
+
+            // Check if sign in as User
             else if (isUsernameOrEmail != null)
             {
+                // Encode
                 byte[] encode = new byte[KeyLen];
                 encode = System.Text.Encoding.UTF8.GetBytes(KeyName);
 
