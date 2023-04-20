@@ -114,14 +114,15 @@ else
                 })
             })
 
-
             $("input[class^='quantity-input-']").each(function (index, element) {
-                $(element).change(function () {
-                    var foodId = $(this).attr("data-foodid");
-                    var quantity = $(this).val();
-                    var price = $(this).attr("data-price");
-                    var subTotalEls = $(`td.product-subtotal-${foodId}`);
+                var foodId = $(this).attr("data-foodid");
+                var quantity = $(this).val();
+                var price = $(this).attr("data-price");
+                var subTotalEls = $(`td.product-subtotal-${foodId}`);
 
+                updateSubTotal(quantity, price, subTotalEls);
+
+                $(element).change(function () {
                     console.log(quantity, price, subTotalEls);
                     if (quantity < 1) {
                         quantity = 1;
@@ -217,7 +218,6 @@ else
                     updateTotal();
 
                     foodQuantityInput.val(quantity);
-
 
                     // AJAX Call
                     $.ajax({

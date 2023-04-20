@@ -114,7 +114,7 @@
                 $(element).click(function (event) {
                     event.preventDefault();
                     if (confirm('Are you sure you want to delete this order?')) {
-                        button.closest('form').submit();
+                        $(element).closest('form').submit();
                     }
                 })
             })

@@ -319,6 +319,8 @@ namespace JunkFoodShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Pay(string address, int phone, string paymentType)
         {
+            // get time zone info for GMT+7 (SE Asia Standard Time)
+            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
             if (!User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("SignIn", "Account");
@@ -346,7 +348,7 @@ namespace JunkFoodShop.Controllers
 
             Order o = new()
             {
-                DateOrder = DateTime.Now,
+                DateOrder = TimeZoneInfo.ConvertTime(DateTime.Now, timeZone),
                 PaymentId = int.Parse(paymentType),
                 StatusId = 1,
             };
@@ -498,6 +500,9 @@ namespace JunkFoodShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveRatings(int foodId, int? commentId, int? ratingId, string? commentContent, string? star)
         {
+            // get time zone info for GMT+7 (SE Asia Standard Time)
+            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"); 
+
             // check user is login or not
             if (!User.Identity!.IsAuthenticated)
             {
@@ -535,7 +540,7 @@ namespace JunkFoodShop.Controllers
                 {
                     FoodId = foodId,
                     Content = commentContent ?? "",
-                    DateComment = DateTime.Now,
+                    DateComment = TimeZoneInfo.ConvertTime(DateTime.Now, timeZone),
                     UserId = userId
                 };
                 _context.Comments.Add(comment);
