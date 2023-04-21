@@ -4,6 +4,18 @@
     <a class="btn btn-primary text-white" href="/Admin/CreateCategory">Create A New Category</a>
 </div>
 
+@foreach (var item in ViewBag.totalPrice)
+{
+    <h1>Tổng tiền đơn hàng nhóm theo tháng và năm </h1>
+    <h4>@item.Month @item.TotalPrice</h4>
+}
+<hr />
+@foreach (var item in ViewBag.totalOrders)
+{
+    <h1>Tổng số lượng đơn hàng nhóm theo tháng và năm </h1>
+    <h4>@item.Month @item.TotalOrder</h4>
+}
+
 <style>
     .admin-index-page {
         margin-top: 3rem;

@@ -19,6 +19,29 @@ namespace JunkFoodShop.Controllers
 
         public IActionResult Index()
         {
+            // Get sum of total price group by year and month
+            var totalPrice = (from o in _context.Orders
+                            where o.StatusId == 3
+                            group o by new { o.DateOrder.Year, o.DateOrder.Month } into m
+                            select new
+                            {
+                                Month = m.Key,
+                                TotalPrice = m.Sum(o => o.TotalPrice)
+                            }).ToList();
+
+            // Get total order group by year and month
+            var totalOrders = (from o in _context.Orders
+                              where o.StatusId == 3
+                              group o by new { o.DateOrder.Year, o.DateOrder.Month } into m
+                              select new
+                              {
+                                  Month = m.Key,
+                                  TotalOrder = m.Count()
+                              }).ToList();
+
+            ViewBag.totalPrice = totalPrice;
+            ViewBag.totalOrders = totalOrders;
+
             return View();
         }
 

@@ -1,4 +1,4 @@
-INSERT INTO [Category]([CategoryName], [CategoryImage])
+INSERT INTO [FoodCategory]([CategoryName], [CategoryImage])
 VALUES
 (N'Mứt', N'http://res.cloudinary.com/db2vil8fw/image/upload/v1680814940/HNAG/Category/1.Mut.jpg'),
 (N'Kẹo', N'http://res.cloudinary.com/db2vil8fw/image/upload/v1680814942/HNAG/Category/2.Keo.jpg'),
