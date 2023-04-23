@@ -158,12 +158,13 @@ else
             function updateTotal() {
                 var total = 0;
                 $("td[class^='product-subtotal-']").each(function (index, element) {
-                    total += parseInt($(element).text().replaceAll(".", "").replace("₫", "").trim());
+                    total += parseInt($(element).text().replaceAll(".", "").replaceAll(".", "").replace("₫", "").trim());
                 })
                 $(".subtotal").text(total.toLocaleString("vi-VN", {
                     style: "currency",
                     currency: "VND"
                 }));
+                console.log(total);
             }
 
             $("button[class^='decrease']").each(function (index, element) {

@@ -1,27 +1,99 @@
-﻿<div class="admin-index-page">
+﻿@{
+    int counterPrice = 0;
+}
+<div class="admin-index-page container d-flex align-items-center flex-column mt-5">
     <h2>Welcome to Admin Dashboard! What would you want to do?</h2>
     <a class="btn btn-primary text-white" href="/Admin/CreateFood">Create A New Food</a>
     <a class="btn btn-primary text-white" href="/Admin/CreateCategory">Create A New Category</a>
+    <div class="w-100">
+        <h2>Total Revenue</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Month</th>
+                    <th>Total Orders</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ViewBag.totalPrice)
+                {
+                    counterPrice++;
+                    <tr>
+                        <td>@counterPrice</td>
+                        <td class="month">@item.Month.Month</td>
+                        <td>@item.TotalOrder</td>
+                        <td class="total-price">@item.TotalPrice</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".total-price").each(function (index, element) {
+            var price = parseInt($(element).text());
+            $(element).text(
+                price.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                })
+            );
+        });
 
-@foreach (var item in ViewBag.totalPrice)
-{
-    <h1>Tổng tiền đơn hàng nhóm theo tháng và năm </h1>
-    <h4>@item.Month @item.TotalPrice</h4>
-}
-<hr />
-@foreach (var item in ViewBag.totalOrders)
-{
-    <h1>Tổng số lượng đơn hàng nhóm theo tháng và năm </h1>
-    <h4>@item.Month @item.TotalOrder</h4>
-}
+        $(".month").each(function (index, element) {
+            var month = $(element).text();
+            console.log(month)
+            switch (month) {
+                case "1":
+                    $(element).text("January");
+                    break;
+                case "2":
+                    $(element).text("February");
+                    break;
+                case "3":
+                    $(element).text("March");
+                    break;
+                case "4":
+                    $(element).text("April");
+                    break;
+                case "5":
+                    $(element).text("May");
+                    break;
+                case "6":
+                    $(element).text("June");
+                    break;
+                case "7":
+                    $(element).text("July");
+                    break;
+                case "8":
+                    $(element).text("August");
+                    break;
+                case "9":
+                    $(element).text("September");
+                    break;
+                case "10":
+                    $(element).text("October");
+                    break;
+                case "11":
+                    $(element).text("November");
+                    break;
+                case "12":
+                    $(element).text("December");
+                    break;
+                default:
+                    $(element).text("Unknown");
+                    break;
+            }
+        })
+    });
+</script>
 
 <style>
     .admin-index-page {
-        margin-top: 3rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
         gap: 4rem;
         flex-grow: 1;
     }

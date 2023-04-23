@@ -116,8 +116,8 @@ else
             function updateTotal() {
                 var total = 0;
                 $("td[class^='product-subtotal-']").each(function (index, element) {
-                    total += parseInt($(element).text().replaceAll(".", "").replace("₫", "").trim());
-                    console.log($(this).text())
+                    total += parseInt($(element).text().replaceAll(",", "").replaceAll(".", "").replace("₫", "").trim());
+                    console.log(total)
                 })
                 $(".total").text(total.toLocaleString("vi-VN", {
                     style: "currency",

@@ -21,16 +21,17 @@ namespace JunkFoodShop.Controllers
         {
             // Get sum of total price group by year and month
             var totalPrice = (from o in _context.Orders
-                            where o.StatusId == 3
-                            group o by new { o.DateOrder.Year, o.DateOrder.Month } into m
-                            select new
-                            {
-                                Month = m.Key,
-                                TotalPrice = m.Sum(o => o.TotalPrice)
-                            }).ToList();
+                              where o.StatusId == 3
+                              group o by new { o.DateOrder.Year, o.DateOrder.Month } into m
+                              select new
+                              {
+                                  Month = m.Key,
+                                  TotalPrice = m.Sum(o => o.TotalPrice),
+                                  TotalOrder = m.Count()
+                              }).ToList();
 
             // Get total order group by year and month
-            var totalOrders = (from o in _context.Orders
+            /*var totalOrders = (from o in _context.Orders
                               where o.StatusId == 3
                               group o by new { o.DateOrder.Year, o.DateOrder.Month } into m
                               select new
@@ -38,9 +39,9 @@ namespace JunkFoodShop.Controllers
                                   Month = m.Key,
                                   TotalOrder = m.Count()
                               }).ToList();
+            ViewBag.totalOrders = totalOrders;*/
 
             ViewBag.totalPrice = totalPrice;
-            ViewBag.totalOrders = totalOrders;
 
             return View();
         }
