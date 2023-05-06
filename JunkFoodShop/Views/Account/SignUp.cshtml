@@ -1,10 +1,4 @@
-﻿@if (!string.IsNullOrEmpty(ViewBag.Error))
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>@ViewBag.Error</strong>
-        <button type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"><i class="bi bi-x-square-fill"></i></button>
-    </div>
-}
+﻿
 <div class="row w-100 mx-0" style="margin-top: 100px">
     <div class="col-lg-4 mx-auto">
         <div class="auth-form-light text-left py-5 px-4 px-sm-5">
@@ -12,6 +6,13 @@
                 <img src="~/images/logo.svg" alt="logo">
             </div>
             <h6 class="font-weight-light">Don't have an acocunt? Create now.</h6>
+            @if (!string.IsNullOrEmpty(ViewBag.Error))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>@ViewBag.Error</strong>
+                    <button type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"><i class="bi bi-x-square-fill"></i></button>
+                </div>
+            }
             <form id="sign-up-form" class="pt-3" asp-action="SignUp" asp-controller="Account">
                 <div class="form-group">
                     <input type="text" class="form-control form-control-lg" name="Username" id="Username" placeholder="Username">
