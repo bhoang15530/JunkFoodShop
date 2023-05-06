@@ -1,4 +1,11 @@
-﻿<div class="row w-100 mx-0" style="margin-top: 100px">
+﻿@if (!string.IsNullOrEmpty(ViewBag.Error))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>@ViewBag.Error</strong>
+        <button type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"><i class="bi bi-x-square-fill"></i></button>
+    </div>
+}
+<div class="row w-100 mx-0" style="margin-top: 100px">
     <div class="col-lg-4 mx-auto">
         <div class="auth-form-light text-left py-5 px-4 px-sm-5">
             <div class="brand-logo">
